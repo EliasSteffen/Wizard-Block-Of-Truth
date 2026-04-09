@@ -14,6 +14,7 @@ struct NewGameView: View {
   @State private var name: String = "New Game"
   @State private var playerCount: Int = 4
   @State private var playerNames: [String] = []
+  @State private var startingDealerIndex: Int = 0
 
   @State private var enabledGameConstraints: Set<Constraint.GameConstraint> = [.betSumNotEqualHandSize]
 
@@ -71,6 +72,16 @@ struct NewGameView: View {
           }
         } header: {
           playerCountBar
+        }
+
+        Section {
+          Picker("Starting dealer", selection: $startingDealerIndex) {
+            ForEach(0..<playerCount, id: \.self) { idx in
+              Text(playerNames[safe: idx] ?? "Player \(idx + 1)")
+                .tag(idx)
+            }
+          }
+          .pickerStyle(.menu)
         }
 
         Section {
@@ -175,6 +186,7 @@ struct NewGameView: View {
   private func resizeNames(to count: Int) {
     if playerNames.isEmpty {
       playerNames = (0..<count).map { "Player \($0 + 1)" }
+      startingDealerIndex = min(startingDealerIndex, max(0, count - 1))
       return
     }
     if playerNames.count < count {
@@ -183,6 +195,7 @@ struct NewGameView: View {
     } else if playerNames.count > count {
       playerNames = Array(playerNames.prefix(count))
     }
+    startingDealerIndex = min(startingDealerIndex, max(0, count - 1))
   }
 
   private func create() -> UUID? {
@@ -198,6 +211,11 @@ struct NewGameView: View {
       players: players,
       gameConstraints: constraints
     )
+
+    // Start immediately so the session doesn't need a separate "pick dealer" step.
+    if let dealerId = players[safe: startingDealerIndex]?.id {
+      store.apply(.startNewGame(startingDealer: dealerId))
+    }
     return store.currentGame?.id
   }
 }

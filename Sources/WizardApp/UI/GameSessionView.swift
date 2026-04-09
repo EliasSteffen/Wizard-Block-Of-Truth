@@ -15,7 +15,6 @@ struct GameSessionView: View {
 
   @State private var showingBets = false
   @State private var showingGot = false
-  @State private var selectedStartingDealerId: UUID?
   @State private var bombPlayedThisRound: Bool = false
 
   @State private var betsDetent: PresentationDetent = .medium
@@ -85,24 +84,24 @@ struct GameSessionView: View {
     let round = game.currentRound
     let totals = (try? game.totalPoints()) ?? [:]
 
-    VStack(spacing: 16) {
-      header(round: round, players: game.players)
-        .padding(.horizontal)
-        .padding(.top, 8)
-
-      if round == nil {
-        startCard(players: game.players)
+    ScrollView {
+      VStack(spacing: 16) {
+        header(round: round, players: game.players)
           .padding(.horizontal)
+          .padding(.top, 8)
+
+        scoreboard(game: game, totals: totals)
+          .padding(.horizontal)
+          .padding(.bottom, 8)
       }
-
-      scoreboard(game: game, totals: totals)
-        .padding(.horizontal)
-
-      Spacer(minLength: 0)
-
+    }
+    // Mirror `GameListView`: the bottom control overlays the content, so the list is "under" it.
+    .safeAreaInset(edge: .bottom) {
       primaryAction(game: game)
         .padding(.horizontal)
         .padding(.bottom, 12)
+        .padding(.top, 8)
+        .background(Color.clear)
     }
     .sheet(isPresented: $showingBets) {
       if let round = game.currentRound {
@@ -181,37 +180,6 @@ struct GameSessionView: View {
     return [bombPlayed ? .gotSumEqualsHandSizeMinusOne : .gotSumEqualsHandSize]
   }
 
-  private func startCard(players: [Player]) -> some View {
-    VStack(alignment: .leading, spacing: 12) {
-      Text("Pick the starting Dealer")
-        .font(.headline)
-
-      Picker("", selection: Binding(
-        get: { selectedStartingDealerId ?? players.first?.id ?? UUID() },
-        set: { selectedStartingDealerId = $0 }
-      )) {
-        ForEach(players, id: \.id) { p in
-          Text(p.name).tag(p.id)
-        }
-      }
-      .pickerStyle(.menu)
-    }
-    .padding(14)
-    .background {
-      LinearGradient(
-        colors: [
-          Color.white.opacity(0.55),
-          Color.white.opacity(0.30),
-          Color.white.opacity(0.18),
-        ],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-      )
-      .background(.ultraThinMaterial)
-    }
-    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-  }
-
   private func header(round: Round?, players: [Player]) -> some View {
     HStack(spacing: 12) {
       glassPill(title: "Round", value: round == nil ? "—" : "\(round?.handSize ?? 0)")
@@ -243,34 +211,28 @@ struct GameSessionView: View {
         let currentEntry = game.currentRound.flatMap { $0.entries[p.id] }
         let lastDelta = lastFinalizedDelta(for: p.id, in: game)
 
-        HStack {
+        VStack(alignment: .leading, spacing: 10) {
           Text(p.name)
             .font(.headline)
             .lineLimit(1)
             .truncationMode(.tail)
-            // Fixed name column so Bet/Won stays aligned across rows.
-            .frame(width: 140, alignment: .leading)
 
-          Spacer(minLength: 10)
+          HStack(alignment: .bottom, spacing: 10) {
+            entryChip(title: "Bet", value: currentEntry?.bet)
+            entryChip(title: "Won", value: currentEntry?.got)
 
-          VStack(alignment: .center, spacing: 2) {
-            HStack(spacing: 8) {
-              entryPill(title: "Bet", value: currentEntry?.bet.map(String.init) ?? "—")
-              entryPill(title: "Won", value: currentEntry?.got.map(String.init) ?? "—")
-            }
-          }
+            Spacer(minLength: 10)
 
-          Spacer(minLength: 10)
-
-          VStack(alignment: .trailing, spacing: 2) {
-            Text("\(total)")
-              .font(.title3.weight(.semibold))
-            if let lastDelta {
-              Text(deltaString(lastDelta))
-                .font(.caption)
-                .foregroundStyle(lastDelta >= 0 ? .green : .red)
-            } else {
-              Text("—").font(.caption).foregroundStyle(.secondary)
+            VStack(alignment: .trailing, spacing: 2) {
+              Text("\(total)")
+                .font(.title3.weight(.semibold).monospacedDigit())
+              if let lastDelta {
+                Text(deltaString(lastDelta))
+                  .font(.caption)
+                  .foregroundStyle(lastDelta >= 0 ? .green : .red)
+              } else {
+                Text("—").font(.caption).foregroundStyle(.secondary)
+              }
             }
           }
         }
@@ -280,17 +242,26 @@ struct GameSessionView: View {
     }
   }
 
-  private func entryPill(title: String, value: String) -> some View {
-    HStack(spacing: 6) {
-      Text(title)
+  private func entryChip(title: String, value: Int?) -> some View {
+    let text = value.map(String.init) ?? "—"
+    let isMissing = value == nil
+
+    return VStack(alignment: .leading, spacing: 2) {
+      Text(title.uppercased())
         .font(.caption2.weight(.semibold))
         .foregroundStyle(.secondary)
-      Text(value)
-        .font(.caption.weight(.semibold))
+      Text(text)
+        .font(.headline.weight(.semibold).monospacedDigit())
+        .foregroundStyle(isMissing ? .secondary : .primary)
     }
     .padding(.horizontal, 10)
-    .padding(.vertical, 6)
-    .background(Color.white.opacity(0.35), in: Capsule())
+    .padding(.vertical, 8)
+    .frame(width: 72, alignment: .leading)
+    .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+    .overlay {
+      RoundedRectangle(cornerRadius: 12, style: .continuous)
+        .strokeBorder(Color.white.opacity(0.20), lineWidth: 1)
+    }
   }
 
   private func primaryAction(game: Game) -> some View {
@@ -341,10 +312,8 @@ struct GameSessionView: View {
 
   private func startAndShowBetsIfNeeded(game: Game) {
     if game.currentRound == nil {
-      let dealerId = selectedStartingDealerId ?? game.players.first?.id
-      if let dealerId {
-        storeHolder.store?.apply(.startNewGame(startingDealer: dealerId))
-      }
+      let dealerId = game.players.first?.id
+      if let dealerId { storeHolder.store?.apply(.startNewGame(startingDealer: dealerId)) }
     }
     showingBets = true
   }
@@ -365,10 +334,8 @@ struct GameSessionView: View {
     if storeHolder.store == nil {
       storeHolder.store = GameStore(modelContext: modelContext)
       storeHolder.store?.loadGame(id: gameId)
-      selectedStartingDealerId = storeHolder.store?.currentGame?.players.first?.id
     } else if force || storeHolder.store?.currentGame?.id != gameId {
       storeHolder.store?.loadGame(id: gameId)
-      selectedStartingDealerId = storeHolder.store?.currentGame?.players.first?.id
     }
   }
 }
