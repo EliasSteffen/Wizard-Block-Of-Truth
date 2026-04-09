@@ -1,10 +1,13 @@
 import Foundation
 import SwiftData
+#if canImport(WizardDomain)
+import WizardDomain
+#endif
 
 @MainActor
 final class GameStore: ObservableObject {
   @Published private(set) var currentGame: Game?
-  @Published var lastError: DomainError?
+  @Published var lastError: Error?
 
   private let modelContext: ModelContext
 
@@ -20,8 +23,7 @@ final class GameStore: ObservableObject {
       guard let entity = try modelContext.fetch(descriptor).first else { return }
       currentGame = try GameCodec.decode(entity.gameJSON)
     } catch {
-      // For now we only surface domain errors.
-      lastError = error as? DomainError
+      lastError = error
     }
   }
 
@@ -31,7 +33,7 @@ final class GameStore: ObservableObject {
       currentGame = game
       try upsert(game: game)
     } catch {
-      lastError = error as? DomainError
+      lastError = error
     }
   }
 
@@ -42,7 +44,7 @@ final class GameStore: ObservableObject {
       currentGame = game
       try upsert(game: game)
     } catch {
-      lastError = error as? DomainError
+      lastError = error
     }
   }
 

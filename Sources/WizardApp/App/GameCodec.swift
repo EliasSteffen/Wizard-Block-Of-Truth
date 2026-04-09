@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(WizardDomain)
+import WizardDomain
+#endif
 
 enum GameCodec {
   static func encode(_ game: Game) throws -> Data {

@@ -1,5 +1,8 @@
 import SwiftUI
 import SwiftData
+#if canImport(WizardDomain)
+import WizardDomain
+#endif
 
 struct GameSessionView: View {
   let gameId: UUID
@@ -15,6 +18,12 @@ struct GameSessionView: View {
     Group {
       if let game = storeHolder.store?.currentGame {
         content(game: game)
+      } else if storeHolder.store?.lastError != nil {
+        ContentUnavailableView(
+          "Couldn’t open game",
+          systemImage: "exclamationmark.triangle",
+          description: Text(storeHolder.store?.lastError?.localizedDescription ?? "")
+        )
       } else {
         ProgressView()
           .task { loadIfNeeded() }
@@ -31,7 +40,7 @@ struct GameSessionView: View {
     )) {
       Button("OK", role: .cancel) { storeHolder.store?.lastError = nil }
     } message: {
-      Text(storeHolder.store?.lastError.map(String.init(describing:)) ?? "")
+      Text(storeHolder.store?.lastError?.localizedDescription ?? "")
     }
   }
 

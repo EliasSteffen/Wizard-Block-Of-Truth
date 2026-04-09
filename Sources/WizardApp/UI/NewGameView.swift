@@ -1,5 +1,8 @@
 import SwiftUI
 import SwiftData
+#if canImport(WizardDomain)
+import WizardDomain
+#endif
 
 struct NewGameView: View {
   @Environment(\.dismiss) private var dismiss
@@ -9,35 +12,51 @@ struct NewGameView: View {
 
   @State private var name: String = "New Game"
   @State private var playerCount: Int = 4
-  @State private var playerNames: [String] = ["Alice", "Bob", "Cara", "Dan"]
+  @State private var playerNames: [String] = []
+
+  @FocusState private var focusedField: Field?
+
+  private enum Field: Hashable {
+    case gameName
+    case playerName(Int)
+  }
 
   var body: some View {
     NavigationStack {
       Form {
-        Section("Game") {
-          TextField("Name", text: $name)
-          Picker("Players", selection: $playerCount) {
-            ForEach(2..<7, id: \.self) { n in
-              Text("\(n)").tag(n)
-            }
+        Section {
+          HStack {
+            Spacer()
+            TextField("Game name", text: $name)
+              .font(.title2.weight(.semibold))
+              .textFieldStyle(.plain)
+              .multilineTextAlignment(.center)
+              .focused($focusedField, equals: .gameName)
+            Spacer()
           }
-          .onChange(of: playerCount) { _, newValue in
-            resizeNames(to: newValue)
-          }
+          .frame(maxWidth: .infinity)
+          .contentShape(Rectangle())
+          .onTapGesture { focusedField = .gameName }
         }
 
-        Section("Players") {
+        Section {
           ForEach(0..<playerCount, id: \.self) { idx in
-            TextField("Player \(idx + 1)", text: Binding(
-              get: { playerNames[safe: idx] ?? "" },
-              set: { newValue in
-                if idx < playerNames.count { playerNames[idx] = newValue }
-              }
-            ))
+            HStack {
+              TextField("Player \(idx + 1)", text: Binding(
+                get: { playerNames[safe: idx] ?? "" },
+                set: { newValue in
+                  if idx < playerNames.count { playerNames[idx] = newValue }
+                }
+              ))
+              .focused($focusedField, equals: .playerName(idx))
+            }
+            .contentShape(Rectangle())
+            .onTapGesture { focusedField = .playerName(idx) }
           }
+        } header: {
+          playerCountBar
         }
       }
-      .navigationTitle("New Game")
       .toolbar {
         ToolbarItem(placement: .cancellationAction) {
           Button("Cancel") { dismiss() }
@@ -53,7 +72,52 @@ struct NewGameView: View {
         }
       }
     }
-    .onAppear { resizeNames(to: playerCount) }
+    .onAppear {
+      resizeNames(to: playerCount)
+      focusedField = .gameName
+    }
+  }
+
+  private var playerCountBar: some View {
+    HStack(spacing: 12) {
+      Spacer(minLength: 0)
+
+      Button {
+        playerCount = max(2, playerCount - 1)
+      } label: {
+        pillText("-")
+      }
+      .buttonStyle(.plain)
+      .accessibilityLabel("Decrease player count")
+      .disabled(playerCount <= 2)
+
+      pillText("\(playerCount) Players")
+        .accessibilityLabel("\(playerCount) players")
+
+      Button {
+        playerCount = min(6, playerCount + 1)
+      } label: {
+        pillText("+")
+      }
+      .buttonStyle(.plain)
+      .accessibilityLabel("Increase player count")
+      .disabled(playerCount >= 6)
+
+      Spacer(minLength: 0)
+    }
+    .padding(.vertical, 6)
+    .onChange(of: playerCount) { _, newValue in
+      resizeNames(to: newValue)
+    }
+  }
+
+  private func pillText(_ text: String) -> some View {
+    Text(text)
+      .font(.headline)
+      .foregroundStyle(.primary)
+      .padding(.horizontal, 16)
+      .padding(.vertical, 10)
+      .background(Color.white.opacity(0.65), in: Capsule())
   }
 
   private var canCreate: Bool {
@@ -63,8 +127,13 @@ struct NewGameView: View {
   }
 
   private func resizeNames(to count: Int) {
+    if playerNames.isEmpty {
+      playerNames = (0..<count).map { "Player \($0 + 1)" }
+      return
+    }
     if playerNames.count < count {
-      playerNames.append(contentsOf: Array(repeating: "", count: count - playerNames.count))
+      let start = playerNames.count
+      playerNames.append(contentsOf: (start..<count).map { "Player \($0 + 1)" })
     } else if playerNames.count > count {
       playerNames = Array(playerNames.prefix(count))
     }

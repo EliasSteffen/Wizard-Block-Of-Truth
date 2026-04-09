@@ -1,4 +1,7 @@
 import SwiftUI
+#if canImport(WizardDomain)
+import WizardDomain
+#endif
 
 struct EntrySheetView: View {
   let title: String

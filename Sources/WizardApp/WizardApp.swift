@@ -1,5 +1,8 @@
 import SwiftUI
 import SwiftData
+#if canImport(WizardDomain)
+import WizardDomain
+#endif
 
 @main
 struct WizardApp: App {

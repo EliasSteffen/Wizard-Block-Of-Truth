@@ -36,7 +36,14 @@ struct GameListView: View {
         GameSessionView(gameId: id)
       }
       .navigationTitle("Wizard")
+#if os(iOS)
+      .navigationBarTitleDisplayMode(.inline)
+#endif
       .toolbar {
+        ToolbarItem(placement: .principal) {
+          Text("Wizard")
+            .font(.headline)
+        }
         ToolbarItem(placement: toolbarPlacement) {
           Button {
             showingNewGame = true
@@ -49,7 +56,7 @@ struct GameListView: View {
         NewGameView { newId in
           path = [newId]
         }
-          .presentationDetents([.medium, .large])
+          .presentationDetents([.large])
       }
     }
   }
