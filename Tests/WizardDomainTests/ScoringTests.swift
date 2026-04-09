@@ -11,5 +11,14 @@ final class ScoringTests: XCTestCase {
     XCTAssertEqual(try RoundEntry(bet: 3, got: 1).pointsDelta(), -20)
     XCTAssertEqual(try RoundEntry(bet: 0, got: 2).pointsDelta(), -20)
   }
+
+  func testPointsDeltaRequiresInputs() throws {
+    XCTAssertThrowsError(try RoundEntry(bet: nil, got: 0).pointsDelta()) { err in
+      XCTAssertEqual(err as? DomainError, .missingInputs)
+    }
+    XCTAssertThrowsError(try RoundEntry(bet: 0, got: nil).pointsDelta()) { err in
+      XCTAssertEqual(err as? DomainError, .missingInputs)
+    }
+  }
 }
 

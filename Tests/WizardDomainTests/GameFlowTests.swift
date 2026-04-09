@@ -21,6 +21,24 @@ final class GameFlowTests: XCTestCase {
     XCTAssertFalse(game.currentRound?.isFinalized ?? true)
   }
 
+  func testStartNewGameRejectsUnknownDealer() throws {
+    let players = TestSupport.makePlayers(3)
+    var game = try Game(id: UUID(), name: "Test", mode: .singlePhone, players: players)
+    let unknown = UUID()
+    XCTAssertThrowsError(try game.apply(.startNewGame(startingDealer: unknown))) { err in
+      XCTAssertEqual(err as? DomainError, .unknownPlayerId(unknown))
+    }
+  }
+
+  func testStartNewGameRejectsWhenAlreadyStarted() throws {
+    let players = TestSupport.makePlayers(3)
+    var game = try Game(id: UUID(), name: "Test", mode: .singlePhone, players: players)
+    try game.apply(.startNewGame(startingDealer: players[0].id))
+    XCTAssertThrowsError(try game.apply(.startNewGame(startingDealer: players[1].id))) { err in
+      XCTAssertEqual(err as? DomainError, .gameAlreadyStarted)
+    }
+  }
+
   func testFinalizeCurrentRoundRequiresAllInputs() throws {
     let players = TestSupport.makePlayers(3)
     var game = try Game(id: UUID(), name: "Test", mode: .singlePhone, players: players)
@@ -155,6 +173,72 @@ final class GameFlowTests: XCTestCase {
     XCTAssertThrowsError(try game.apply(.finalizeCurrentRound())) { err in
       XCTAssertEqual(err as? DomainError, .constraintNotSatisfied(.round(.gotSumEqualsHandSize)))
     }
+  }
+
+  func testSubmitGotRejectsOutOfRangeImmediately() throws {
+    let players = TestSupport.makePlayers(3)
+    var game = try Game(id: UUID(), name: "Test", mode: .singlePhone, players: players)
+    try game.apply(.startNewGame(startingDealer: players[0].id))
+
+    XCTAssertThrowsError(try game.apply(.submitGot(playerId: players[0].id, roundIndex: 0, got: 2))) { err in
+      XCTAssertEqual(err as? DomainError, .invalidGot(playerId: players[0].id, got: 2, handSize: 1))
+    }
+  }
+
+  func testSubmitBetRejectsUnknownPlayer() throws {
+    let players = TestSupport.makePlayers(3)
+    var game = try Game(id: UUID(), name: "Test", mode: .singlePhone, players: players)
+    try game.apply(.startNewGame(startingDealer: players[0].id))
+    let unknown = UUID()
+    XCTAssertThrowsError(try game.apply(.submitBet(playerId: unknown, roundIndex: 0, bet: 0))) { err in
+      XCTAssertEqual(err as? DomainError, .unknownPlayerId(unknown))
+    }
+  }
+
+  func testSubmitGotRejectsInvalidRoundIndex() throws {
+    let players = TestSupport.makePlayers(3)
+    var game = try Game(id: UUID(), name: "Test", mode: .singlePhone, players: players)
+    try game.apply(.startNewGame(startingDealer: players[0].id))
+    XCTAssertThrowsError(try game.apply(.submitGot(playerId: players[0].id, roundIndex: 99, got: 0))) { err in
+      XCTAssertEqual(err as? DomainError, .invalidRoundIndex(99))
+    }
+  }
+
+  func testFinalizeRejectsAlreadyFinalized() throws {
+    let players = TestSupport.makePlayers(2)
+    var game = try Game(id: UUID(), name: "Test", mode: .singlePhone, players: players)
+    try game.apply(.startNewGame(startingDealer: players[0].id))
+
+    // avoid betSum==1 by using (0,0)
+    try game.apply(.submitBet(playerId: players[0].id, roundIndex: 0, bet: 0))
+    try game.apply(.submitBet(playerId: players[1].id, roundIndex: 0, bet: 0))
+    try game.apply(.submitGot(playerId: players[0].id, roundIndex: 0, got: 1))
+    try game.apply(.submitGot(playerId: players[1].id, roundIndex: 0, got: 0))
+    try game.apply(.finalizeCurrentRound())
+
+    // Finalize advances to the next round; switch back to the finalized round.
+    game.currentRoundIndex = 0
+    XCTAssertThrowsError(try game.apply(.finalizeCurrentRound())) { err in
+      XCTAssertEqual(err as? DomainError, .roundAlreadyFinalized)
+    }
+  }
+
+  func testFinalizeWithBombConstraintVariant() throws {
+    let players = TestSupport.makePlayers(3)
+    var game = try Game(id: UUID(), name: "Test", mode: .singlePhone, players: players)
+    try game.apply(.startNewGame(startingDealer: players[0].id))
+
+    // bets avoid betSum==1 by using (0,0,0)
+    try game.apply(.submitBet(playerId: players[0].id, roundIndex: 0, bet: 0))
+    try game.apply(.submitBet(playerId: players[1].id, roundIndex: 0, bet: 0))
+    try game.apply(.submitBet(playerId: players[2].id, roundIndex: 0, bet: 0))
+
+    // For handSize=1, bomb constraint expects gotSum == 0.
+    try game.apply(.submitGot(playerId: players[0].id, roundIndex: 0, got: 0))
+    try game.apply(.submitGot(playerId: players[1].id, roundIndex: 0, got: 0))
+    try game.apply(.submitGot(playerId: players[2].id, roundIndex: 0, got: 0))
+
+    XCTAssertNoThrow(try game.apply(.finalizeCurrentRound(roundConstraints: [.gotSumEqualsHandSizeMinusOne])))
   }
 }
 
