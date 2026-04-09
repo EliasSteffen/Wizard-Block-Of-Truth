@@ -12,6 +12,28 @@ public enum GameConstraint: String, Codable, Sendable, Hashable {
 }
 
 extension GameConstraint {
+  public var title: String {
+    switch self {
+    case .gotSumEqualsHandSize:
+      return "Got sum = hand size"
+    case .gotSumEqualsHandSizeMinusOne:
+      return "Bomb played (got sum = hand size - 1)"
+    case .betSumNotEqualHandSize:
+      return "Bet sum does not equal hand size"
+    }
+  }
+
+  public var detail: String {
+    switch self {
+    case .gotSumEqualsHandSize:
+      return "The sum of all “got” values must equal the hand size."
+    case .gotSumEqualsHandSizeMinusOne:
+      return "Use this for rounds where a Bomb was played and the total tricks are reduced by 1."
+    case .betSumNotEqualHandSize:
+      return "The sum of all bets cannot equal the hand size."
+    }
+  }
+
   public func isSatisfied(round: Round, players: [Player]) -> Bool {
     switch self {
     case .gotSumEqualsHandSize:

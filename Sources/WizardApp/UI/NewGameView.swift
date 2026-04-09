@@ -14,6 +14,8 @@ struct NewGameView: View {
   @State private var playerCount: Int = 4
   @State private var playerNames: [String] = []
 
+  @State private var enforceBetSumNotEqualHandSize: Bool = true
+
   @FocusState private var focusedField: Field?
 
   private enum Field: Hashable {
@@ -55,6 +57,14 @@ struct NewGameView: View {
           }
         } header: {
           playerCountBar
+        }
+
+        Section {
+          Toggle(GameConstraint.betSumNotEqualHandSize.title, isOn: $enforceBetSumNotEqualHandSize)
+        } header: {
+          Text("Constraints")
+        } footer: {
+          Text(GameConstraint.betSumNotEqualHandSize.detail)
         }
       }
       .toolbar {
@@ -145,7 +155,17 @@ struct NewGameView: View {
     }
 
     let store = GameStore(modelContext: modelContext)
-    store.createGame(name: name.trimmingCharacters(in: .whitespacesAndNewlines), mode: .singlePhone, players: players)
+    var constraints: [GameConstraint] = []
+    constraints.append(.gotSumEqualsHandSize)
+    if enforceBetSumNotEqualHandSize {
+      constraints.append(.betSumNotEqualHandSize)
+    }
+    store.createGame(
+      name: name.trimmingCharacters(in: .whitespacesAndNewlines),
+      mode: .singlePhone,
+      players: players,
+      additionalConstraints: constraints
+    )
     return store.currentGame?.id
   }
 }

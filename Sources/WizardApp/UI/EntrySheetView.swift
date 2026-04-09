@@ -9,15 +9,22 @@ struct EntrySheetView: View {
   let players: [Player]
   let currentValues: [UUID: Int?]
   let valueLabel: String
-  let onSubmit: ([UUID: Int]) -> Void
+  let accessory: AnyView?
+  let onSubmit: ([UUID: Int]) -> Error?
 
   @Environment(\.dismiss) private var dismiss
 
   @State private var values: [UUID: Int] = [:]
+  @State private var submitError: Error?
 
   var body: some View {
     NavigationStack {
       VStack(spacing: 0) {
+        if let accessory {
+          accessory
+            .padding(.horizontal, 16)
+            .padding(.top, 12)
+        }
         List {
           ForEach(players, id: \.id) { player in
             HStack {
@@ -53,11 +60,22 @@ struct EntrySheetView: View {
         }
         ToolbarItem(placement: .confirmationAction) {
           Button("Done") {
-            onSubmit(valuesWithFallbacks)
-            dismiss()
+            if let err = onSubmit(valuesWithFallbacks) {
+              submitError = err
+            } else {
+              dismiss()
+            }
           }
         }
       }
+    }
+    .alert("Invalid input", isPresented: Binding(
+      get: { submitError != nil },
+      set: { newValue in if !newValue { submitError = nil } }
+    )) {
+      Button("OK", role: .cancel) { submitError = nil }
+    } message: {
+      Text(submitError?.localizedDescription ?? "")
     }
     .onAppear {
       // Seed values so the sheet is always fully specified.

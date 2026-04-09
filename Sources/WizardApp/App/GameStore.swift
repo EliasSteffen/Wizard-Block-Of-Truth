@@ -39,9 +39,20 @@ final class GameStore: ObservableObject {
     }
   }
 
-  func createGame(name: String, mode: GameMode, players: [Player]) {
+  func createGame(
+    name: String,
+    mode: GameMode,
+    players: [Player],
+    additionalConstraints: [GameConstraint] = [.gotSumEqualsHandSize, .betSumNotEqualHandSize]
+  ) {
     do {
-      let game = try Game(id: UUID(), name: name, mode: mode, players: players)
+      let game = try Game(
+        id: UUID(),
+        name: name,
+        mode: mode,
+        players: players,
+        additionalConstraints: additionalConstraints
+      )
       currentGame = game
       try upsert(game: game)
     } catch {

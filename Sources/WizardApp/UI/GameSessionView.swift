@@ -16,9 +16,18 @@ struct GameSessionView: View {
   @State private var showingBets = false
   @State private var showingGot = false
   @State private var selectedStartingDealerId: UUID?
+  @State private var bombPlayedThisRound: Bool = false
 
   @State private var betsDetent: PresentationDetent = .medium
-  @State private var gotDetent: PresentationDetent = .medium
+  @State private var gotDetent: PresentationDetent = Self.defaultGotDetent
+
+  private static var defaultGotDetent: PresentationDetent {
+#if os(iOS)
+    return .fraction(0.75)
+#else
+    return .medium
+#endif
+  }
 
   var body: some View {
     Group {
@@ -96,13 +105,34 @@ struct GameSessionView: View {
           players: game.players,
           currentValues: game.rounds[game.currentRoundIndex].entries.mapValues { $0.bet },
           valueLabel: "Bet",
+          accessory: nil,
           onSubmit: { values in
+            guard let store = storeHolder.store else { return NSError(domain: "WizardApp", code: 1, userInfo: [NSLocalizedDescriptionKey: "Store not ready."]) }
+            store.lastError = nil
             for (pid, bet) in values {
-              storeHolder.store?.apply(.submitBet(playerId: pid, roundIndex: game.currentRoundIndex, bet: bet))
+              store.apply(.submitBet(playerId: pid, roundIndex: game.currentRoundIndex, bet: bet))
+            }
+            if let err = store.lastError { return err }
+            guard let updated = store.currentGame else {
+              return NSError(domain: "WizardApp", code: 2, userInfo: [NSLocalizedDescriptionKey: "Missing game state after submitting bets."])
+            }
+            do {
+              try updated.rounds[updated.currentRoundIndex].validateConstraints(
+                players: updated.players,
+                additionalConstraints: updated.additionalConstraints
+              )
+              return nil
+            } catch {
+              return error
             }
           }
         )
-        .presentationDetents([.medium], selection: $betsDetent)
+#if os(iOS)
+        // Slightly taller than the standard `.medium`.
+        .presentationDetents([.fraction(0.75)], selection: $gotDetent)
+#else
+        .presentationDetents([.medium], selection: $gotDetent)
+#endif
       }
     }
     .sheet(isPresented: $showingGot) {
@@ -113,15 +143,64 @@ struct GameSessionView: View {
           players: game.players,
           currentValues: game.rounds[game.currentRoundIndex].entries.mapValues { $0.got },
           valueLabel: "Got",
-          onSubmit: { values in
-            for (pid, got) in values {
-              storeHolder.store?.apply(.submitGot(playerId: pid, roundIndex: game.currentRoundIndex, got: got))
+          accessory: AnyView(
+            Toggle(isOn: $bombPlayedThisRound) {
+              VStack(alignment: .leading, spacing: 2) {
+                Text(GameConstraint.gotSumEqualsHandSizeMinusOne.title)
+                  .font(.subheadline.weight(.semibold))
+                Text(GameConstraint.gotSumEqualsHandSizeMinusOne.detail)
+                  .font(.caption)
+                  .foregroundStyle(.secondary)
+              }
             }
+          ),
+          onSubmit: { values in
+            guard let store = storeHolder.store else { return NSError(domain: "WizardApp", code: 1, userInfo: [NSLocalizedDescriptionKey: "Store not ready."]) }
+            store.lastError = nil
+            for (pid, got) in values {
+              store.apply(.submitGot(playerId: pid, roundIndex: game.currentRoundIndex, got: got))
+            }
+            if let err = store.lastError { return err }
+            guard let updated = store.currentGame else {
+              return NSError(domain: "WizardApp", code: 2, userInfo: [NSLocalizedDescriptionKey: "Missing game state after submitting got."])
+            }
+
+            // Validate round-specific constraints (e.g. Bomb) before closing the sheet.
+            let constraints = constraintsForFinalize(game: updated, bombPlayed: bombPlayedThisRound) ?? updated.additionalConstraints
+            do {
+              try updated.rounds[updated.currentRoundIndex].validateConstraints(
+                players: updated.players,
+                additionalConstraints: constraints
+              )
+            } catch {
+              return error
+            }
+
+            // Auto-finalize once got values are entered.
+            store.apply(.finalizeCurrentRound(roundConstraints: constraints))
+            if store.lastError == nil {
+              bombPlayedThisRound = false
+            }
+            return store.lastError
           }
         )
+#if os(iOS)
+        // Slightly taller than the standard `.medium`.
+        .presentationDetents([.fraction(0.75)], selection: $gotDetent)
+#else
         .presentationDetents([.medium], selection: $gotDetent)
+#endif
       }
     }
+  }
+
+  private func constraintsForFinalize(game: Game?, bombPlayed: Bool) -> [GameConstraint]? {
+    guard let game else { return nil }
+    var constraints = game.additionalConstraints.filter {
+      $0 != .gotSumEqualsHandSize && $0 != .gotSumEqualsHandSizeMinusOne
+    }
+    constraints.append(bombPlayed ? .gotSumEqualsHandSizeMinusOne : .gotSumEqualsHandSize)
+    return constraints
   }
 
   private func startCard(players: [Player]) -> some View {
@@ -257,7 +336,14 @@ struct GameSessionView: View {
       enabled = true
     } else {
       label = "Finalize Round"
-      action = { storeHolder.store?.apply(.finalizeCurrentRound) }
+      action = {
+        guard let store = storeHolder.store else { return }
+        let constraints = constraintsForFinalize(game: store.currentGame, bombPlayed: bombPlayedThisRound)
+        store.apply(.finalizeCurrentRound(roundConstraints: constraints))
+        if store.lastError == nil {
+          bombPlayedThisRound = false
+        }
+      }
       enabled = true
     }
 
