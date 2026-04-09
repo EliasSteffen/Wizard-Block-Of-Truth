@@ -205,8 +205,15 @@ struct GameSessionView: View {
   }
 
   private func scoreboard(game: Game, totals: [UUID: Int]) -> some View {
-    VStack(spacing: 10) {
-      ForEach(game.players, id: \.id) { p in
+    let sortedPlayers = game.players.sorted { a, b in
+      let ta = totals[a.id, default: 0]
+      let tb = totals[b.id, default: 0]
+      if ta != tb { return ta > tb }
+      return a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
+    }
+
+    return VStack(spacing: 10) {
+      ForEach(sortedPlayers, id: \.id) { p in
         let total = totals[p.id, default: 0]
         let currentEntry = game.currentRound.flatMap { $0.entries[p.id] }
         let lastDelta = lastFinalizedDelta(for: p.id, in: game)
