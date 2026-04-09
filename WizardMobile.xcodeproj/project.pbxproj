@@ -1,0 +1,431 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 60;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		000000000000000000000101 /* WizardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000201 /* WizardApp.swift */; };
+		000000000000000000000102 /* GameCodec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000202 /* GameCodec.swift */; };
+		00000000000000000000010B /* AppColorScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000020B /* AppColorScheme.swift */; };
+		000000000000000000000103 /* GameStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000203 /* GameStore.swift */; };
+		000000000000000000000104 /* GameSnapshotEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000204 /* GameSnapshotEntity.swift */; };
+		000000000000000000000105 /* GameListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000205 /* GameListView.swift */; };
+		000000000000000000000106 /* NewGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000206 /* NewGameView.swift */; };
+		000000000000000000000107 /* GameSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000207 /* GameSessionView.swift */; };
+		000000000000000000000108 /* EntrySheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000208 /* EntrySheetView.swift */; };
+		000000000000000000000109 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000209 /* SettingsView.swift */; };
+		00000000000000000000010A /* WizardBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000020A /* WizardBackground.swift */; };
+
+		000000000000000000000111 /* Commands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000211 /* Commands.swift */; };
+		000000000000000000000112 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000212 /* Game.swift */; };
+		000000000000000000000113 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000213 /* Models.swift */; };
+		000000000000000000000114 /* Constraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000214 /* Constraints.swift */; };
+		000000000000000000000115 /* Rules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000215 /* Rules.swift */; };
+		000000000000000000000116 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000216 /* Errors.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		000000000000000000000001 /* WizardMobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WizardMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		000000000000000000000010 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+
+		000000000000000000000201 /* WizardApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WizardApp.swift; path = Sources/WizardApp/WizardApp.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000202 /* GameCodec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameCodec.swift; path = Sources/WizardApp/App/GameCodec.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000020B /* AppColorScheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppColorScheme.swift; path = Sources/WizardApp/App/AppColorScheme.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000203 /* GameStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameStore.swift; path = Sources/WizardApp/App/GameStore.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000204 /* GameSnapshotEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameSnapshotEntity.swift; path = Sources/WizardApp/Persistence/GameSnapshotEntity.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000205 /* GameListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameListView.swift; path = Sources/WizardApp/UI/GameListView.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000206 /* NewGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NewGameView.swift; path = Sources/WizardApp/UI/NewGameView.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000207 /* GameSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameSessionView.swift; path = Sources/WizardApp/UI/GameSessionView.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000208 /* EntrySheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EntrySheetView.swift; path = Sources/WizardApp/UI/EntrySheetView.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000209 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SettingsView.swift; path = Sources/WizardApp/UI/SettingsView.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000020A /* WizardBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WizardBackground.swift; path = Sources/WizardApp/UI/WizardBackground.swift; sourceTree = SOURCE_ROOT; };
+
+		000000000000000000000211 /* Commands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Commands.swift; path = Sources/WizardDomain/Game/Commands.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000212 /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Game.swift; path = Sources/WizardDomain/Game/Game.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000213 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Models.swift; path = Sources/WizardDomain/Models/Models.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000214 /* Constraints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Constraints.swift; path = Sources/WizardDomain/Rules/Constraints.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000215 /* Rules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Rules.swift; path = Sources/WizardDomain/Rules/Rules.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000216 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Errors.swift; path = Sources/WizardDomain/Support/Errors.swift; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		000000000000000000000301 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		000000000000000000000400 = {
+			isa = PBXGroup;
+			children = (
+				000000000000000000000401 /* WizardMobileApp */,
+				000000000000000000000402 /* WizardDomain */,
+				000000000000000000000403 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+
+		000000000000000000000401 /* WizardMobileApp */ = {
+			isa = PBXGroup;
+			children = (
+				000000000000000000000010 /* Info.plist */,
+				000000000000000000000201 /* WizardApp.swift */,
+				000000000000000000000404 /* App */,
+				000000000000000000000405 /* Persistence */,
+				000000000000000000000406 /* UI */,
+			);
+			path = WizardMobileApp;
+			sourceTree = "<group>";
+		};
+
+		000000000000000000000404 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				000000000000000000000202 /* GameCodec.swift */,
+				00000000000000000000020B /* AppColorScheme.swift */,
+				000000000000000000000203 /* GameStore.swift */,
+			);
+			name = App;
+			sourceTree = "<group>";
+		};
+
+		000000000000000000000405 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				000000000000000000000204 /* GameSnapshotEntity.swift */,
+			);
+			name = Persistence;
+			sourceTree = "<group>";
+		};
+
+		000000000000000000000406 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				000000000000000000000205 /* GameListView.swift */,
+				000000000000000000000206 /* NewGameView.swift */,
+				000000000000000000000207 /* GameSessionView.swift */,
+				000000000000000000000208 /* EntrySheetView.swift */,
+				000000000000000000000209 /* SettingsView.swift */,
+				00000000000000000000020A /* WizardBackground.swift */,
+			);
+			name = UI;
+			sourceTree = "<group>";
+		};
+
+		000000000000000000000402 /* WizardDomain */ = {
+			isa = PBXGroup;
+			children = (
+				000000000000000000000407 /* Game */,
+				000000000000000000000408 /* Models */,
+				000000000000000000000409 /* Rules */,
+				000000000000000000000410 /* Support */,
+			);
+			name = WizardDomain;
+			sourceTree = "<group>";
+		};
+
+		000000000000000000000407 /* Game */ = {
+			isa = PBXGroup;
+			children = (
+				000000000000000000000211 /* Commands.swift */,
+				000000000000000000000212 /* Game.swift */,
+			);
+			name = Game;
+			sourceTree = "<group>";
+		};
+
+		000000000000000000000408 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				000000000000000000000213 /* Models.swift */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+
+		000000000000000000000409 /* Rules */ = {
+			isa = PBXGroup;
+			children = (
+				000000000000000000000214 /* Constraints.swift */,
+				000000000000000000000215 /* Rules.swift */,
+			);
+			name = Rules;
+			sourceTree = "<group>";
+		};
+
+		000000000000000000000410 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				000000000000000000000216 /* Errors.swift */,
+			);
+			name = Support;
+			sourceTree = "<group>";
+		};
+
+		000000000000000000000403 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				000000000000000000000001 /* WizardMobile.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		000000000000000000000500 /* WizardMobile */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 000000000000000000000700 /* Build configuration list for PBXNativeTarget "WizardMobile" */;
+			buildPhases = (
+				000000000000000000000600 /* Sources */,
+				000000000000000000000301 /* Frameworks */,
+				000000000000000000000602 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WizardMobile;
+			productName = WizardMobile;
+			productReference = 000000000000000000000001 /* WizardMobile.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		000000000000000000000800 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					000000000000000000000500 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = 000000000000000000000900 /* Build configuration list for PBXProject "WizardMobile" */;
+			compatibilityVersion = "Xcode 16.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 000000000000000000000400;
+			productRefGroup = 000000000000000000000403 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				000000000000000000000500 /* WizardMobile */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		000000000000000000000602 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		000000000000000000000600 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				000000000000000000000101 /* WizardApp.swift in Sources */,
+				000000000000000000000102 /* GameCodec.swift in Sources */,
+				00000000000000000000010B /* AppColorScheme.swift in Sources */,
+				000000000000000000000103 /* GameStore.swift in Sources */,
+				000000000000000000000104 /* GameSnapshotEntity.swift in Sources */,
+				000000000000000000000105 /* GameListView.swift in Sources */,
+				000000000000000000000106 /* NewGameView.swift in Sources */,
+				000000000000000000000107 /* GameSessionView.swift in Sources */,
+				000000000000000000000108 /* EntrySheetView.swift in Sources */,
+				000000000000000000000109 /* SettingsView.swift in Sources */,
+				00000000000000000000010A /* WizardBackground.swift in Sources */,
+
+				000000000000000000000111 /* Commands.swift in Sources */,
+				000000000000000000000112 /* Game.swift in Sources */,
+				000000000000000000000113 /* Models.swift in Sources */,
+				000000000000000000000114 /* Constraints.swift in Sources */,
+				000000000000000000000115 /* Rules.swift in Sources */,
+				000000000000000000000116 /* Errors.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		000000000000000000000901 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGNING_ALLOWED = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = WizardMobileApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.WizardMobile;
+				PRODUCT_NAME = Wizard;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1";
+			};
+			name = Debug;
+		};
+
+		000000000000000000000902 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGNING_ALLOWED = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = WizardMobileApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.WizardMobile;
+				PRODUCT_NAME = Wizard;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1";
+			};
+			name = Release;
+		};
+
+		000000000000000000000903 /* Project Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_COMPILATION_MODE = incremental;
+			};
+			name = Debug;
+		};
+
+		000000000000000000000904 /* Project Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		000000000000000000000700 /* Build configuration list for PBXNativeTarget "WizardMobile" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				000000000000000000000901 /* Debug */,
+				000000000000000000000902 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+
+		000000000000000000000900 /* Build configuration list for PBXProject "WizardMobile" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				000000000000000000000903 /* Project Debug */,
+				000000000000000000000904 /* Project Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = 000000000000000000000800 /* Project object */;
+}
+
