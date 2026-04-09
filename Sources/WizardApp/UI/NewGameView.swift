@@ -12,6 +12,7 @@ struct NewGameView: View {
   let onCreated: (UUID) -> Void
 
   @State private var name: String = "New Game"
+  @AppStorage("newGame.defaultPlayerCount") private var defaultPlayerCount: Int = 4
   @State private var playerCount: Int = 4
   @State private var playerNames: [String] = []
   @State private var startingDealerIndex: Int = 0
@@ -125,7 +126,9 @@ struct NewGameView: View {
     }
     .wizardBackground()
     .onAppear {
+      playerCount = min(6, max(2, defaultPlayerCount))
       resizeNames(to: playerCount)
+
       if name == "New Game" {
         name = Self.defaultGameName()
       }
