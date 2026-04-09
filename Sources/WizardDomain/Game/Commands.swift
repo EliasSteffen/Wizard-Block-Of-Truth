@@ -5,7 +5,6 @@ public enum GameCommand: Hashable, Codable, Sendable {
   case submitBet(playerId: UUID, roundIndex: Int, bet: Int)
   case submitGot(playerId: UUID, roundIndex: Int, got: Int)
   case finalizeCurrentRound
-  case editEntry(playerId: UUID, roundIndex: Int, bet: Int?, got: Int?)
 }
 
 extension GameCommand {
@@ -31,20 +30,13 @@ extension GameCommand {
       try mutateEntry(game: &game, playerId: playerId, roundIndex: roundIndex) { entry in
         entry.bet = bet
       }
+      try validateImmediateInputs(game: game, roundIndex: roundIndex)
 
     case .submitGot(let playerId, let roundIndex, let got):
       try mutateEntry(game: &game, playerId: playerId, roundIndex: roundIndex) { entry in
         entry.got = got
       }
-
-    case .editEntry(let playerId, let roundIndex, let bet, let got):
-      try mutateEntry(game: &game, playerId: playerId, roundIndex: roundIndex) { entry in
-        if let bet { entry.bet = bet }
-        if let got { entry.got = got }
-        if bet == nil && got == nil {
-          // no-op
-        }
-      }
+      try validateImmediateInputs(game: game, roundIndex: roundIndex)
 
     case .finalizeCurrentRound:
       guard !game.rounds.isEmpty else {
@@ -115,6 +107,25 @@ extension GameCommand {
     }
     mutate(&entry)
     game.rounds[roundIndex].entries[playerId] = entry
+  }
+
+  private func validateImmediateInputs(game: Game, roundIndex: Int) throws {
+    guard (0..<game.rounds.count).contains(roundIndex) else {
+      throw DomainError.invalidRoundIndex(roundIndex)
+    }
+
+    let round = game.rounds[roundIndex]
+    let handSize = round.handSize
+
+    // Minimal immediate validation: range-only.
+    for (pid, entry) in round.entries {
+      if let bet = entry.bet, !(0...handSize).contains(bet) {
+        throw DomainError.invalidBet(playerId: pid, bet: bet, handSize: handSize)
+      }
+      if let got = entry.got, !(0...handSize).contains(got) {
+        throw DomainError.invalidGot(playerId: pid, got: got, handSize: handSize)
+      }
+    }
   }
 }
 

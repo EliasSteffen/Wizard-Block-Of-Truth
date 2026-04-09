@@ -41,7 +41,7 @@ final class GameFlowTests: XCTestCase {
     var game = try Game(id: UUID(), name: "Test", mode: .singlePhone, players: players)
     try game.apply(.startNewGame(startingDealer: players[0].id))
 
-    // Bets sum equals handSize (1) -> disallowed.
+    // Bets sum equals handSize (1) -> disallowed at finalize.
     try game.apply(.submitBet(playerId: players[0].id, roundIndex: 0, bet: 1))
     try game.apply(.submitBet(playerId: players[1].id, roundIndex: 0, bet: 0))
     try game.apply(.submitBet(playerId: players[2].id, roundIndex: 0, bet: 0))
@@ -124,6 +124,36 @@ final class GameFlowTests: XCTestCase {
     // Now locked.
     XCTAssertThrowsError(try game.setAdditionalConstraints([.betSumNotEqualHandSize])) { err in
       XCTAssertEqual(err as? DomainError, .constraintsLocked)
+    }
+  }
+
+  func testSubmitBetRejectsOutOfRangeImmediately() throws {
+    let players = TestSupport.makePlayers(3)
+    var game = try Game(id: UUID(), name: "Test", mode: .singlePhone, players: players)
+    try game.apply(.startNewGame(startingDealer: players[0].id))
+
+    XCTAssertThrowsError(try game.apply(.submitBet(playerId: players[0].id, roundIndex: 0, bet: 2))) { err in
+      XCTAssertEqual(err as? DomainError, .invalidBet(playerId: players[0].id, bet: 2, handSize: 1))
+    }
+  }
+
+  func testFinalizeCurrentRoundRejectsWrongGotSum() throws {
+    let players = TestSupport.makePlayers(3)
+    var game = try Game(id: UUID(), name: "Test", mode: .singlePhone, players: players)
+    try game.apply(.startNewGame(startingDealer: players[0].id))
+
+    // Valid bets (avoid betSum==1).
+    try game.apply(.submitBet(playerId: players[0].id, roundIndex: 0, bet: 0))
+    try game.apply(.submitBet(playerId: players[1].id, roundIndex: 0, bet: 0))
+    try game.apply(.submitBet(playerId: players[2].id, roundIndex: 0, bet: 0))
+
+    // gotSum should be 1, but we make it 0.
+    try game.apply(.submitGot(playerId: players[0].id, roundIndex: 0, got: 0))
+    try game.apply(.submitGot(playerId: players[1].id, roundIndex: 0, got: 0))
+    try game.apply(.submitGot(playerId: players[2].id, roundIndex: 0, got: 0))
+
+    XCTAssertThrowsError(try game.apply(.finalizeCurrentRound)) { err in
+      XCTAssertEqual(err as? DomainError, .constraintNotSatisfied(.gotSumEqualsHandSize))
     }
   }
 }

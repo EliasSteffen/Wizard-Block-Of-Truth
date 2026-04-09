@@ -58,6 +58,14 @@ public struct Round: Hashable, Codable, Sendable {
       throw DomainError.invalidHandSize(handSize)
     }
 
+    let playerIds = Set(players.map(\.id))
+    guard playerIds.contains(dealer) else {
+      throw DomainError.unknownPlayerId(dealer)
+    }
+    guard Set(entries.keys) == playerIds else {
+      throw DomainError.entriesDoNotMatchPlayers
+    }
+
     for (pid, entry) in entries {
       if let bet = entry.bet, !(0...handSize).contains(bet) {
         throw DomainError.invalidBet(playerId: pid, bet: bet, handSize: handSize)
