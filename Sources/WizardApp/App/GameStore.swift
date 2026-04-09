@@ -8,6 +8,7 @@ import WizardDomain
 final class GameStore: ObservableObject {
   @Published private(set) var currentGame: Game?
   @Published var lastError: Error?
+  @Published private(set) var didAttemptLoad: Bool = false
 
   private let modelContext: ModelContext
 
@@ -16,12 +17,23 @@ final class GameStore: ObservableObject {
   }
 
   func loadGame(id: UUID) {
+    didAttemptLoad = false
+    defer { didAttemptLoad = true }
     do {
       let descriptor = FetchDescriptor<GameSnapshotEntity>(
         predicate: #Predicate { $0.id == id }
       )
-      guard let entity = try modelContext.fetch(descriptor).first else { return }
+      guard let entity = try modelContext.fetch(descriptor).first else {
+        currentGame = nil
+        lastError = NSError(
+          domain: "WizardApp",
+          code: 404,
+          userInfo: [NSLocalizedDescriptionKey: "Game not found (id: \(id.uuidString))."]
+        )
+        return
+      }
       currentGame = try GameCodec.decode(entity.gameJSON)
+      lastError = nil
     } catch {
       lastError = error
     }

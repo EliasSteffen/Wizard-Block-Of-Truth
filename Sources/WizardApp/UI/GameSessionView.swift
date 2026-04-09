@@ -1,5 +1,8 @@
 import SwiftUI
 import SwiftData
+#if canImport(Combine)
+import Combine
+#endif
 #if canImport(WizardDomain)
 import WizardDomain
 #endif
@@ -18,12 +21,17 @@ struct GameSessionView: View {
     Group {
       if let game = storeHolder.store?.currentGame {
         content(game: game)
-      } else if storeHolder.store?.lastError != nil {
+      } else if storeHolder.store?.didAttemptLoad == true {
         ContentUnavailableView(
           "Couldn’t open game",
           systemImage: "exclamationmark.triangle",
-          description: Text(storeHolder.store?.lastError?.localizedDescription ?? "")
+          description: Text(storeHolder.store?.lastError?.localizedDescription ?? "Unknown error.")
         )
+        .overlay(alignment: .bottom) {
+          Button("Retry") { loadIfNeeded(force: true) }
+            .buttonStyle(.borderedProminent)
+            .padding(.bottom, 16)
+        }
       } else {
         ProgressView()
           .task { loadIfNeeded() }
@@ -34,8 +42,8 @@ struct GameSessionView: View {
     .navigationBarTitleDisplayMode(.inline)
 #endif
     .onAppear { loadIfNeeded() }
-    .alert("Invalid input", isPresented: Binding(
-      get: { storeHolder.store?.lastError != nil },
+    .alert("Error", isPresented: Binding(
+      get: { storeHolder.store?.currentGame != nil && storeHolder.store?.lastError != nil },
       set: { newValue in if !newValue { storeHolder.store?.lastError = nil } }
     )) {
       Button("OK", role: .cancel) { storeHolder.store?.lastError = nil }
@@ -269,12 +277,12 @@ struct GameSessionView: View {
     return nil
   }
 
-  private func loadIfNeeded() {
+  private func loadIfNeeded(force: Bool = false) {
     if storeHolder.store == nil {
       storeHolder.store = GameStore(modelContext: modelContext)
       storeHolder.store?.loadGame(id: gameId)
       selectedStartingDealerId = storeHolder.store?.currentGame?.players.first?.id
-    } else if storeHolder.store?.currentGame?.id != gameId {
+    } else if force || storeHolder.store?.currentGame?.id != gameId {
       storeHolder.store?.loadGame(id: gameId)
       selectedStartingDealerId = storeHolder.store?.currentGame?.players.first?.id
     }
@@ -283,6 +291,18 @@ struct GameSessionView: View {
 
 @MainActor
 private final class StoreHolder: ObservableObject {
-  var store: GameStore?
+  @Published var store: GameStore? {
+    didSet { bindStoreChanges() }
+  }
+
+  private var cancellable: AnyCancellable?
+
+  private func bindStoreChanges() {
+    cancellable = nil
+    guard let store else { return }
+    cancellable = store.objectWillChange.sink { [weak self] _ in
+      self?.objectWillChange.send()
+    }
+  }
 }
 
