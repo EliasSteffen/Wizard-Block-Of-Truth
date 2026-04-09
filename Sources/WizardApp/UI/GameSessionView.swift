@@ -138,11 +138,11 @@ struct GameSessionView: View {
     .sheet(isPresented: $showingGot) {
       if let round = game.currentRound {
         EntrySheetView(
-          title: "Enter Got",
+          title: "Enter Won Tricks",
           handSize: round.handSize,
           players: game.players,
           currentValues: game.rounds[game.currentRoundIndex].entries.mapValues { $0.got },
-          valueLabel: "Got",
+          valueLabel: "Won",
           accessory: AnyView(
             Toggle(isOn: $bombPlayedThisRound) {
               VStack(alignment: .leading, spacing: 2) {
@@ -309,7 +309,7 @@ struct GameSessionView: View {
       action = { showingBets = true }
       enabled = true
     } else if !allGotPresent {
-      label = "Enter Got"
+      label = "Enter Won Tricks"
       action = { showingGot = true }
       enabled = true
     } else {
@@ -348,7 +348,7 @@ struct GameSessionView: View {
   private func currentEntryLine(_ entry: RoundEntry) -> String {
     let bet = entry.bet.map(String.init) ?? "—"
     let got = entry.got.map(String.init) ?? "—"
-    return "Bet \(bet) · Got \(got)"
+    return "Bet \(bet) · Won \(got)"
   }
 
   private func deltaString(_ delta: Int) -> String {
