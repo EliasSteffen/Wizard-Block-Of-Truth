@@ -17,6 +17,9 @@ struct GameSessionView: View {
   @State private var showingGot = false
   @State private var selectedStartingDealerId: UUID?
 
+  @State private var betsDetent: PresentationDetent = .medium
+  @State private var gotDetent: PresentationDetent = .medium
+
   var body: some View {
     Group {
       if let game = storeHolder.store?.currentGame {
@@ -99,7 +102,7 @@ struct GameSessionView: View {
             }
           }
         )
-        .presentationDetents([.medium, .large])
+        .presentationDetents([.medium], selection: $betsDetent)
       }
     }
     .sheet(isPresented: $showingGot) {
@@ -116,7 +119,7 @@ struct GameSessionView: View {
             }
           }
         )
-        .presentationDetents([.medium, .large])
+        .presentationDetents([.medium], selection: $gotDetent)
       }
     }
   }
@@ -125,22 +128,41 @@ struct GameSessionView: View {
     VStack(alignment: .leading, spacing: 12) {
       Text("Game overview")
         .font(.headline)
-      Text("Start the game to create Round 1 and enter bets.")
+
+      Text("Pick a starting dealer, then enter bets for Round 1.")
         .font(.subheadline)
         .foregroundStyle(.secondary)
 
-      Picker("Starting dealer", selection: Binding(
-        get: { selectedStartingDealerId ?? players.first?.id ?? UUID() },
-        set: { selectedStartingDealerId = $0 }
-      )) {
-        ForEach(players, id: \.id) { p in
-          Text(p.name).tag(p.id)
+      VStack(alignment: .leading, spacing: 8) {
+        Text("Starting dealer")
+          .font(.caption)
+          .foregroundStyle(.secondary)
+
+        Picker("", selection: Binding(
+          get: { selectedStartingDealerId ?? players.first?.id ?? UUID() },
+          set: { selectedStartingDealerId = $0 }
+        )) {
+          ForEach(players, id: \.id) { p in
+            Text(p.name).tag(p.id)
+          }
         }
+        .pickerStyle(.menu)
       }
-      .pickerStyle(.menu)
     }
     .padding(14)
-    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+    .background {
+      LinearGradient(
+        colors: [
+          Color.white.opacity(0.55),
+          Color.white.opacity(0.30),
+          Color.white.opacity(0.18),
+        ],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+      )
+      .background(.ultraThinMaterial)
+    }
+    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
   }
 
   private func header(round: Round?, players: [Player]) -> some View {

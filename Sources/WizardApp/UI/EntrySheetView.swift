@@ -17,38 +17,31 @@ struct EntrySheetView: View {
 
   var body: some View {
     NavigationStack {
-      List {
-        Section {
+      VStack(spacing: 0) {
+        List {
           ForEach(players, id: \.id) { player in
             HStack {
               Text(player.name)
+                .lineLimit(1)
+                .truncationMode(.tail)
+                .layoutPriority(1)
               Spacer()
-              Picker(valueLabel, selection: Binding(
-                get: { values[player.id, default: currentValue(for: player.id)] },
-                set: { values[player.id] = $0 }
-              )) {
-                ForEach(0...handSize, id: \.self) { v in
-                  Text("\(v)").tag(v)
-                }
-              }
-              .pickerStyle(.menu)
-              .frame(minWidth: 64)
+              StepperPills(
+                value: Binding(
+                  get: { values[player.id, default: currentValue(for: player.id)] },
+                  set: { values[player.id] = $0 }
+                ),
+                range: 0...handSize
+              )
             }
           }
-        } header: {
-          Text("Hand size: \(handSize)")
-        } footer: {
-          Text("Pick values from 0 to \(handSize).")
         }
+        .scrollDisabled(true)
 
-        Section {
-          HStack {
-            Text("Sum")
-            Spacer()
-            Text("\(sum)")
-              .foregroundStyle(sum == handSize ? .primary : .secondary)
-          }
-        }
+        sumBar
+          .padding(.horizontal, 16)
+          .padding(.top, 8)
+          .padding(.bottom, 16)
       }
       .navigationTitle(title)
 #if os(iOS)
@@ -91,10 +84,93 @@ struct EntrySheetView: View {
     valuesWithFallbacks.values.reduce(0, +)
   }
 
+  private var sumBar: some View {
+    HStack {
+      Text("Sum")
+      Spacer()
+      Text("\(sum)")
+        .foregroundStyle(sum == handSize ? .primary : .secondary)
+    }
+    .font(.subheadline.weight(.semibold))
+    .padding(.horizontal, 14)
+    .padding(.vertical, 12)
+    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+  }
+
   private func currentValue(for playerId: UUID) -> Int {
     // currentValues[playerId] is Int?? because the dictionary value is optional (Int?).
     // Treat nil as 0 for editing convenience.
     return (currentValues[playerId] ?? nil) ?? 0
+  }
+}
+
+private struct StepperPills: View {
+  @Binding var value: Int
+  let range: ClosedRange<Int>
+
+  @State private var text: String = ""
+  @FocusState private var isFocused: Bool
+
+  var body: some View {
+    HStack(spacing: 10) {
+      Button {
+        isFocused = false
+        value = max(range.lowerBound, value - 1)
+      } label: {
+        pill("-")
+      }
+      .buttonStyle(.plain)
+      .disabled(value <= range.lowerBound)
+
+      TextField("", text: $text)
+        .focused($isFocused)
+        .multilineTextAlignment(.center)
+        .frame(width: 44)
+        .font(.headline)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 8)
+        .background(Color.white.opacity(0.65), in: Capsule())
+#if os(iOS)
+        .keyboardType(.numberPad)
+        .textInputAutocapitalization(.never)
+#endif
+
+      Button {
+        isFocused = false
+        value = min(range.upperBound, value + 1)
+      } label: {
+        pill("+")
+      }
+      .buttonStyle(.plain)
+      .disabled(value >= range.upperBound)
+    }
+    .onAppear {
+      text = "\(value)"
+    }
+    .onChange(of: value) { _, newValue in
+      guard !isFocused else { return }
+      text = "\(newValue)"
+    }
+    .onChange(of: text) { _, newValue in
+      let filtered = newValue.filter(\.isNumber)
+      if filtered != newValue {
+        text = filtered
+        return
+      }
+      guard let parsed = Int(filtered) else { return }
+      let clamped = min(range.upperBound, max(range.lowerBound, parsed))
+      if clamped != value {
+        value = clamped
+      }
+    }
+  }
+
+  private func pill(_ text: String) -> some View {
+    Text(text)
+      .font(.headline)
+      .padding(.horizontal, 14)
+      .padding(.vertical, 8)
+      .background(Color.white.opacity(0.65), in: Capsule())
   }
 }
 
