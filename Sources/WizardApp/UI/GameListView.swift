@@ -16,36 +16,16 @@ struct GameListView: View {
 
   var body: some View {
     NavigationStack(path: $path) {
-      List {
-        if filteredGames.isEmpty {
-          ContentUnavailableView(
-            "No games yet",
-            systemImage: "wand.and.stars",
-            description: Text("Create a game to start tracking scores.")
-          )
-        } else {
-          ForEach(filteredGames) { game in
-            NavigationLink {
-              GameSessionView(gameId: game.id)
-            } label: {
-              VStack(alignment: .leading, spacing: 4) {
-                Text(game.name).font(.headline)
-                Text("Updated \(game.updatedAt.formatted(date: .abbreviated, time: .shortened))")
-                  .font(.caption)
-                  .foregroundStyle(.secondary)
-              }
-            }
-          }
-          .onDelete(perform: deleteGames)
-        }
+      ZStack {
+        WizardBackground.gradient
+          .ignoresSafeArea()
+
+        gamesList
       }
-#if os(iOS)
-      .scrollContentBackground(.hidden)
-#endif
+      .navigationTitle("Wizard")
       .navigationDestination(for: UUID.self) { id in
         GameSessionView(gameId: id)
       }
-      .navigationTitle("Wizard")
 #if os(iOS)
       .navigationBarTitleDisplayMode(.inline)
       .environment(\.editMode, $editMode)
@@ -95,7 +75,50 @@ struct GameListView: View {
           .presentationDetents([.medium, .large])
       }
     }
+    .background(Color.clear)
     .wizardBackground()
+  }
+
+  private var gamesList: some View {
+    List {
+      listRows
+    }
+#if os(iOS)
+    .scrollContentBackground(.hidden)
+    .listStyle(.insetGrouped)
+    .toolbarBackground(.hidden, for: .navigationBar)
+    .toolbarBackground(.hidden, for: .tabBar)
+    .listRowSeparatorTint(.white.opacity(0.18))
+#endif
+    .background(Color.clear)
+  }
+
+  @ViewBuilder
+  private var listRows: some View {
+    if filteredGames.isEmpty {
+      ContentUnavailableView(
+        "No games yet",
+        systemImage: "wand.and.stars",
+        description: Text("Create a game to start tracking scores.")
+      )
+      .listRowBackground(Color.clear)
+    } else {
+      ForEach(filteredGames) { game in
+        NavigationLink {
+          GameSessionView(gameId: game.id)
+        } label: {
+          VStack(alignment: .leading, spacing: 4) {
+            Text(game.name)
+              .font(.headline)
+            Text("Updated \(game.updatedAt.formatted(date: .abbreviated, time: .shortened))")
+              .font(.caption)
+              .foregroundStyle(.secondary)
+          }
+        }
+        .listRowBackground(Rectangle().fill(.ultraThinMaterial))
+      }
+      .onDelete(perform: deleteGames)
+    }
   }
 
   private var filteredGames: [GameSnapshotEntity] {

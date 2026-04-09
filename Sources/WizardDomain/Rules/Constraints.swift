@@ -28,6 +28,15 @@ extension Constraint {
     }
   }
 
+  public var showOnFailure: String {
+    switch self {
+    case .game(let gameConstraint):
+      return gameConstraint.showOnFailure
+    case .round(let roundConstraint):
+      return roundConstraint.showOnFailure
+    }
+  }
+
   public func isSatisfied(round: Round, players: [Player]) -> Bool {
     switch self {
     case .game(let gameConstraint):
@@ -43,6 +52,13 @@ extension Constraint.GameConstraint {
     switch self {
     case .betSumNotEqualHandSize:
       return "Sum of all Bets is not allowed to be equal to the hand size"
+    }
+  }
+
+  public var showOnFailure: String {
+    switch self {
+    case .betSumNotEqualHandSize:
+      return "Bets cannot add up to the hand size."
     }
   }
 
@@ -63,6 +79,15 @@ extension Constraint.RoundConstraint {
       return "Sum of all Won tricks must be equal to the Hand Size"
     case .gotSumEqualsHandSizeMinusOne:
       return "Bomb was played"
+    }
+  }
+
+  public var showOnFailure: String {
+    switch self {
+    case .gotSumEqualsHandSize:
+      return "Won tricks must add up to the hand size."
+    case .gotSumEqualsHandSizeMinusOne:
+      return "With Bomb, won tricks must add up to hand size − 1."
     }
   }
 

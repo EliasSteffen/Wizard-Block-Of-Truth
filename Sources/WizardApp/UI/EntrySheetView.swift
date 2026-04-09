@@ -16,6 +16,7 @@ struct EntrySheetView: View {
 
   @State private var values: [UUID: Int] = [:]
   @State private var submitError: Error?
+  @State private var constraintFailureText: String?
 
   var body: some View {
     NavigationStack {
@@ -36,7 +37,10 @@ struct EntrySheetView: View {
               StepperPills(
                 value: Binding(
                   get: { values[player.id, default: currentValue(for: player.id)] },
-                  set: { values[player.id] = $0 }
+                  set: {
+                    constraintFailureText = nil
+                    values[player.id] = $0
+                  }
                 ),
                 range: 0...handSize
               )
@@ -44,6 +48,13 @@ struct EntrySheetView: View {
           }
         }
         .scrollDisabled(true)
+#if os(iOS)
+        .scrollContentBackground(.hidden)
+#endif
+        .onTapGesture {
+          // Any tap inside the list clears the failure hint.
+          constraintFailureText = nil
+        }
 
         sumBar
           .padding(.horizontal, 16)
@@ -60,8 +71,19 @@ struct EntrySheetView: View {
         }
         ToolbarItem(placement: .confirmationAction) {
           Button("Done") {
+            submitError = nil
+            constraintFailureText = nil
+
             if let err = onSubmit(valuesWithFallbacks) {
+#if canImport(WizardDomain)
+              if let domainErr = err as? DomainError,
+                 case .constraintNotSatisfied(let constraint) = domainErr {
+                constraintFailureText = constraint.showOnFailure
+                return
+              }
+#endif
               submitError = err
+              return
             } else {
               dismiss()
             }
@@ -69,6 +91,7 @@ struct EntrySheetView: View {
         }
       }
     }
+    .wizardBackground()
     .alert("Invalid input", isPresented: Binding(
       get: { submitError != nil },
       set: { newValue in if !newValue { submitError = nil } }
@@ -103,16 +126,32 @@ struct EntrySheetView: View {
   }
 
   private var sumBar: some View {
-    HStack {
-      Text("Sum")
-      Spacer()
-      Text("\(sum)")
-        .foregroundStyle(sum == handSize ? .primary : .secondary)
+    VStack(alignment: .leading, spacing: 6) {
+      if let constraintFailureText {
+        Text(constraintFailureText)
+          .font(.footnote.weight(.semibold))
+          .foregroundStyle(.red)
+      }
+
+      HStack {
+        Text("Sum")
+        Spacer()
+        Text("\(sum)")
+          .foregroundStyle(sum == handSize ? .primary : .secondary)
+      }
     }
     .font(.subheadline.weight(.semibold))
     .padding(.horizontal, 14)
     .padding(.vertical, 12)
-    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+    .background(sumBarBackground, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+  }
+
+  private var sumBarBackground: Color {
+#if os(iOS)
+    return Color(uiColor: .secondarySystemGroupedBackground)
+#else
+    return Color.black.opacity(0.10)
+#endif
   }
 
   private func currentValue(for playerId: UUID) -> Int {

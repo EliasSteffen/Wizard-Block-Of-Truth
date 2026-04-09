@@ -55,7 +55,7 @@ struct GameSessionView: View {
 #endif
     .onAppear { loadIfNeeded() }
     .alert("Error", isPresented: Binding(
-      get: { storeHolder.store?.currentGame != nil && storeHolder.store?.lastError != nil },
+      get: { shouldPresentGlobalErrorAlert },
       set: { newValue in if !newValue { storeHolder.store?.lastError = nil } }
     )) {
       Button("OK", role: .cancel) { storeHolder.store?.lastError = nil }
@@ -63,6 +63,21 @@ struct GameSessionView: View {
       Text(storeHolder.store?.lastError?.localizedDescription ?? "")
     }
     .wizardBackground()
+  }
+
+  private var shouldPresentGlobalErrorAlert: Bool {
+    // Avoid presenting an alert on top of (or during dismissal of) a sheet.
+    if showingBets || showingGot { return false }
+    guard storeHolder.store?.currentGame != nil else { return false }
+    guard let err = storeHolder.store?.lastError else { return false }
+
+#if canImport(WizardDomain)
+    // Constraint failures are shown inline in `EntrySheetView`; don't also show a global alert.
+    if let domainErr = err as? DomainError, case .constraintNotSatisfied = domainErr {
+      return false
+    }
+#endif
+    return true
   }
 
   @ViewBuilder
@@ -100,23 +115,15 @@ struct GameSessionView: View {
           accessory: nil,
           onSubmit: { values in
             guard let store = storeHolder.store else { return NSError(domain: "WizardApp", code: 1, userInfo: [NSLocalizedDescriptionKey: "Store not ready."]) }
-            store.lastError = nil
-            for (pid, bet) in values {
-              store.apply(.submitBet(playerId: pid, roundIndex: game.currentRoundIndex, bet: bet))
+            let cmds: [GameCommand] = values.map { (pid, bet) in
+              .submitBet(playerId: pid, roundIndex: game.currentRoundIndex, bet: bet)
             }
-            if let err = store.lastError { return err }
-            guard let updated = store.currentGame else {
-              return NSError(domain: "WizardApp", code: 2, userInfo: [NSLocalizedDescriptionKey: "Missing game state after submitting bets."])
-            }
-            do {
+            return store.applyBatch(cmds) { updated in
               try updated.rounds[updated.currentRoundIndex].validateConstraints(
                 players: updated.players,
                 gameConstraints: updated.gameConstraints,
                 roundConstraints: [.gotSumEqualsHandSize]
               )
-              return nil
-            } catch {
-              return error
             }
           }
         )
@@ -146,33 +153,17 @@ struct GameSessionView: View {
           ),
           onSubmit: { values in
             guard let store = storeHolder.store else { return NSError(domain: "WizardApp", code: 1, userInfo: [NSLocalizedDescriptionKey: "Store not ready."]) }
-            store.lastError = nil
-            for (pid, got) in values {
-              store.apply(.submitGot(playerId: pid, roundIndex: game.currentRoundIndex, got: got))
+            let constraints = constraintsForFinalize(game: game, bombPlayed: bombPlayedThisRound) ?? [.gotSumEqualsHandSize]
+            var cmds: [GameCommand] = values.map { (pid, got) in
+              .submitGot(playerId: pid, roundIndex: game.currentRoundIndex, got: got)
             }
-            if let err = store.lastError { return err }
-            guard let updated = store.currentGame else {
-              return NSError(domain: "WizardApp", code: 2, userInfo: [NSLocalizedDescriptionKey: "Missing game state after submitting got."])
-            }
+            cmds.append(.finalizeCurrentRound(roundConstraints: constraints))
 
-            // Validate round-specific constraints (e.g. Bomb) before closing the sheet.
-            let constraints = constraintsForFinalize(game: updated, bombPlayed: bombPlayedThisRound) ?? [.gotSumEqualsHandSize]
-            do {
-              try updated.rounds[updated.currentRoundIndex].validateConstraints(
-                players: updated.players,
-                gameConstraints: updated.gameConstraints,
-                roundConstraints: constraints
-              )
-            } catch {
-              return error
-            }
-
-            // Auto-finalize once got values are entered.
-            store.apply(.finalizeCurrentRound(roundConstraints: constraints))
-            if store.lastError == nil {
+            let err = store.applyBatch(cmds)
+            if err == nil {
               bombPlayedThisRound = false
             }
-            return store.lastError
+            return err
           }
         )
 #if os(iOS)

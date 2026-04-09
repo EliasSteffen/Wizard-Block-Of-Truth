@@ -71,6 +71,31 @@ final class GameStore: ObservableObject {
     }
   }
 
+  /// Applies multiple commands atomically.
+  ///
+  /// If any command (or `validate`) fails, no changes are persisted to `currentGame`.
+  @discardableResult
+  func applyBatch(_ commands: [GameCommand], validate: ((Game) throws -> Void)? = nil) -> Error? {
+    guard var game = currentGame else {
+      let err = NSError(domain: "WizardApp", code: 1, userInfo: [NSLocalizedDescriptionKey: "No game loaded."])
+      lastError = err
+      return err
+    }
+    do {
+      for cmd in commands {
+        try game.apply(cmd)
+      }
+      try validate?(game)
+      currentGame = game
+      lastError = nil
+      try upsert(game: game)
+      return nil
+    } catch {
+      lastError = error
+      return error
+    }
+  }
+
   private func upsert(game: Game) throws {
     let data = try GameCodec.encode(game)
     let descriptor = FetchDescriptor<GameSnapshotEntity>(

@@ -90,7 +90,7 @@ struct NewGameView: View {
             )
           }
         } header: {
-          Text("Constraints")
+          Text("House Rules")
         }
       }
 #if os(iOS)
