@@ -15,7 +15,7 @@ public enum DomainError: Error, Equatable {
   case invalidGot(playerId: UUID, got: Int, handSize: Int)
   case invalidGotSum(expected: Int, actual: Int)
   case invalidBetSum(disallowed: Int)
-  case constraintNotSatisfied(GameConstraint)
+  case constraintNotSatisfied(Constraint)
   case constraintsLocked
 }
 
@@ -51,7 +51,7 @@ extension DomainError: LocalizedError {
     case .invalidBetSum(let disallowed):
       return "Invalid bet sum: cannot equal \(disallowed)."
     case .constraintNotSatisfied(let constraint):
-      return "Constraint not satisfied: \(constraint.rawValue)."
+      return "Constraint not satisfied: \(constraint.title)."
     case .constraintsLocked:
       return "Constraints are locked after the first finalized round."
     }

@@ -43,7 +43,7 @@ final class GameStore: ObservableObject {
     name: String,
     mode: GameMode,
     players: [Player],
-    additionalConstraints: [GameConstraint] = [.gotSumEqualsHandSize, .betSumNotEqualHandSize]
+    gameConstraints: [Constraint.GameConstraint] = [.betSumNotEqualHandSize]
   ) {
     do {
       let game = try Game(
@@ -51,7 +51,7 @@ final class GameStore: ObservableObject {
         name: name,
         mode: mode,
         players: players,
-        additionalConstraints: additionalConstraints
+        gameConstraints: gameConstraints
       )
       currentGame = game
       try upsert(game: game)

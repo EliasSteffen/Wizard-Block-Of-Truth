@@ -7,6 +7,7 @@ import WizardDomain
 struct NewGameView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.modelContext) private var modelContext
+  @Environment(\.colorScheme) private var colorScheme
 
   let onCreated: (UUID) -> Void
 
@@ -14,13 +15,26 @@ struct NewGameView: View {
   @State private var playerCount: Int = 4
   @State private var playerNames: [String] = []
 
-  @State private var enforceBetSumNotEqualHandSize: Bool = true
+  @State private var enabledGameConstraints: Set<Constraint.GameConstraint> = [.betSumNotEqualHandSize]
 
   @FocusState private var focusedField: Field?
 
   private enum Field: Hashable {
     case gameName
     case playerName(Int)
+  }
+
+  private static let defaultNameFormatter: DateFormatter = {
+    let f = DateFormatter()
+    f.calendar = Calendar(identifier: .gregorian)
+    f.locale = Locale(identifier: "en_GB")
+    f.timeZone = .current
+    f.dateFormat = "dd/MM/yy HH:mm"
+    return f
+  }()
+
+  private static func defaultGameName(now: Date = .now) -> String {
+    defaultNameFormatter.string(from: now)
   }
 
   var body: some View {
@@ -60,13 +74,29 @@ struct NewGameView: View {
         }
 
         Section {
-          Toggle(GameConstraint.betSumNotEqualHandSize.title, isOn: $enforceBetSumNotEqualHandSize)
+          ForEach(Constraint.GameConstraint.allCases, id: \.self) { constraint in
+            Toggle(
+              constraint.title,
+              isOn: Binding(
+                get: { enabledGameConstraints.contains(constraint) },
+                set: { isEnabled in
+                  if isEnabled {
+                    enabledGameConstraints.insert(constraint)
+                  } else {
+                    enabledGameConstraints.remove(constraint)
+                  }
+                }
+              )
+            )
+          }
         } header: {
           Text("Constraints")
-        } footer: {
-          Text(GameConstraint.betSumNotEqualHandSize.detail)
         }
       }
+#if os(iOS)
+      .scrollContentBackground(.hidden)
+      .scrollDisabled(true)
+#endif
       .toolbar {
         ToolbarItem(placement: .cancellationAction) {
           Button("Cancel") { dismiss() }
@@ -82,8 +112,12 @@ struct NewGameView: View {
         }
       }
     }
+    .wizardBackground()
     .onAppear {
       resizeNames(to: playerCount)
+      if name == "New Game" {
+        name = Self.defaultGameName()
+      }
       focusedField = .gameName
     }
   }
@@ -122,12 +156,14 @@ struct NewGameView: View {
   }
 
   private func pillText(_ text: String) -> some View {
-    Text(text)
+    let fg = colorScheme == .dark ? Color.white : Color.black
+    let bg = colorScheme == .dark ? Color.black.opacity(0.35) : Color.white.opacity(0.65)
+    return Text(text)
       .font(.headline)
-      .foregroundStyle(.primary)
+      .foregroundStyle(fg)
       .padding(.horizontal, 16)
       .padding(.vertical, 10)
-      .background(Color.white.opacity(0.65), in: Capsule())
+      .background(bg, in: Capsule())
   }
 
   private var canCreate: Bool {
@@ -155,16 +191,12 @@ struct NewGameView: View {
     }
 
     let store = GameStore(modelContext: modelContext)
-    var constraints: [GameConstraint] = []
-    constraints.append(.gotSumEqualsHandSize)
-    if enforceBetSumNotEqualHandSize {
-      constraints.append(.betSumNotEqualHandSize)
-    }
+    let constraints = Constraint.GameConstraint.allCases.filter { enabledGameConstraints.contains($0) }
     store.createGame(
       name: name.trimmingCharacters(in: .whitespacesAndNewlines),
       mode: .singlePhone,
       players: players,
-      additionalConstraints: constraints
+      gameConstraints: constraints
     )
     return store.currentGame?.id
   }

@@ -1,36 +1,68 @@
 import Foundation
 
-public enum GameConstraint: String, Codable, Sendable, Hashable {
-  /// All `got` values must equal `handSize`.
-  case gotSumEqualsHandSize
+public enum Constraint: Codable, Sendable, Hashable {
+  case game(GameConstraint)
+  case round(RoundConstraint)
 
-  /// All `got` values must equal `handSize - 1`. Because the "Bomb" card was played and therefore the whole trick amount is reduced by one.
-  case gotSumEqualsHandSizeMinusOne
+  public enum GameConstraint: String, Codable, Sendable, Hashable, CaseIterable {
+    /// All `bet` values must NOT equal `handSize`.
+    case betSumNotEqualHandSize
+  }
 
-  /// All `bet` values must NOT equal `handSize`.
-  case betSumNotEqualHandSize
+  public enum RoundConstraint: String, Codable, Sendable, Hashable, CaseIterable {
+    /// All `got` values must equal `handSize`.
+    case gotSumEqualsHandSize
+
+    /// All `got` values must equal `handSize - 1`. Because the "Bomb" card was played and therefore the whole trick amount is reduced by one.
+    case gotSumEqualsHandSizeMinusOne
+  }
 }
 
-extension GameConstraint {
+extension Constraint {
   public var title: String {
     switch self {
-    case .gotSumEqualsHandSize:
-      return "Got sum = hand size"
-    case .gotSumEqualsHandSizeMinusOne:
-      return "Bomb played (got sum = hand size - 1)"
-    case .betSumNotEqualHandSize:
-      return "Bet sum does not equal hand size"
+    case .game(let gameConstraint):
+      return gameConstraint.title
+    case .round(let roundConstraint):
+      return roundConstraint.title
     }
   }
 
-  public var detail: String {
+  public func isSatisfied(round: Round, players: [Player]) -> Bool {
+    switch self {
+    case .game(let gameConstraint):
+      return gameConstraint.isSatisfied(round: round, players: players)
+    case .round(let roundConstraint):
+      return roundConstraint.isSatisfied(round: round, players: players)
+    }
+  }
+}
+
+extension Constraint.GameConstraint {
+  public var title: String {
+    switch self {
+    case .betSumNotEqualHandSize:
+      return "Sum of all Bets is not allowed to be equal to the hand size"
+    }
+  }
+
+  public func isSatisfied(round: Round, players: [Player]) -> Bool {
+    switch self {
+    case .betSumNotEqualHandSize:
+      guard round.entries.values.allSatisfy({ $0.bet != nil }) else { return true }
+      let betSum = round.entries.values.reduce(0) { $0 + ($1.bet ?? 0) }
+      return betSum != round.handSize
+    }
+  }
+}
+
+extension Constraint.RoundConstraint {
+  public var title: String {
     switch self {
     case .gotSumEqualsHandSize:
-      return "The sum of all “got” values must equal the hand size."
+      return "Sum of all Won tricks must be equal to the Hand Size"
     case .gotSumEqualsHandSizeMinusOne:
-      return "Use this for rounds where a Bomb was played and the total tricks are reduced by 1."
-    case .betSumNotEqualHandSize:
-      return "The sum of all bets cannot equal the hand size."
+      return "Bomb was played"
     }
   }
 
@@ -45,11 +77,6 @@ extension GameConstraint {
       guard round.entries.values.allSatisfy({ $0.got != nil }) else { return true }
       let gotSum = round.entries.values.reduce(0) { $0 + ($1.got ?? 0) }
       return gotSum == round.handSize - 1
-
-    case .betSumNotEqualHandSize:
-      guard round.entries.values.allSatisfy({ $0.bet != nil }) else { return true }
-      let betSum = round.entries.values.reduce(0) { $0 + ($1.bet ?? 0) }
-      return betSum != round.handSize
     }
   }
 }

@@ -62,6 +62,7 @@ struct GameSessionView: View {
     } message: {
       Text(storeHolder.store?.lastError?.localizedDescription ?? "")
     }
+    .wizardBackground()
   }
 
   @ViewBuilder
@@ -88,15 +89,6 @@ struct GameSessionView: View {
         .padding(.horizontal)
         .padding(.bottom, 12)
     }
-    .background {
-      // Liquid-glass friendly background.
-      LinearGradient(
-        colors: [.indigo.opacity(0.25), .cyan.opacity(0.18), .purple.opacity(0.15)],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-      )
-      .ignoresSafeArea()
-    }
     .sheet(isPresented: $showingBets) {
       if let round = game.currentRound {
         EntrySheetView(
@@ -119,7 +111,8 @@ struct GameSessionView: View {
             do {
               try updated.rounds[updated.currentRoundIndex].validateConstraints(
                 players: updated.players,
-                additionalConstraints: updated.additionalConstraints
+                gameConstraints: updated.gameConstraints,
+                roundConstraints: [.gotSumEqualsHandSize]
               )
               return nil
             } catch {
@@ -146,11 +139,8 @@ struct GameSessionView: View {
           accessory: AnyView(
             Toggle(isOn: $bombPlayedThisRound) {
               VStack(alignment: .leading, spacing: 2) {
-                Text(GameConstraint.gotSumEqualsHandSizeMinusOne.title)
+                Text(Constraint.RoundConstraint.gotSumEqualsHandSizeMinusOne.title)
                   .font(.subheadline.weight(.semibold))
-                Text(GameConstraint.gotSumEqualsHandSizeMinusOne.detail)
-                  .font(.caption)
-                  .foregroundStyle(.secondary)
               }
             }
           ),
@@ -166,11 +156,12 @@ struct GameSessionView: View {
             }
 
             // Validate round-specific constraints (e.g. Bomb) before closing the sheet.
-            let constraints = constraintsForFinalize(game: updated, bombPlayed: bombPlayedThisRound) ?? updated.additionalConstraints
+            let constraints = constraintsForFinalize(game: updated, bombPlayed: bombPlayedThisRound) ?? [.gotSumEqualsHandSize]
             do {
               try updated.rounds[updated.currentRoundIndex].validateConstraints(
                 players: updated.players,
-                additionalConstraints: constraints
+                gameConstraints: updated.gameConstraints,
+                roundConstraints: constraints
               )
             } catch {
               return error
@@ -194,13 +185,9 @@ struct GameSessionView: View {
     }
   }
 
-  private func constraintsForFinalize(game: Game?, bombPlayed: Bool) -> [GameConstraint]? {
-    guard let game else { return nil }
-    var constraints = game.additionalConstraints.filter {
-      $0 != .gotSumEqualsHandSize && $0 != .gotSumEqualsHandSizeMinusOne
-    }
-    constraints.append(bombPlayed ? .gotSumEqualsHandSizeMinusOne : .gotSumEqualsHandSize)
-    return constraints
+  private func constraintsForFinalize(game: Game?, bombPlayed: Bool) -> [Constraint.RoundConstraint]? {
+    guard game != nil else { return nil }
+    return [bombPlayed ? .gotSumEqualsHandSizeMinusOne : .gotSumEqualsHandSize]
   }
 
   private func startCard(players: [Player]) -> some View {

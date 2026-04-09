@@ -4,7 +4,7 @@ public enum GameCommand: Hashable, Codable, Sendable {
   case startNewGame(startingDealer: UUID)
   case submitBet(playerId: UUID, roundIndex: Int, bet: Int)
   case submitGot(playerId: UUID, roundIndex: Int, got: Int)
-  case finalizeCurrentRound(roundConstraints: [GameConstraint]? = nil)
+  case finalizeCurrentRound(roundConstraints: [Constraint.RoundConstraint]? = nil)
 }
 
 extension GameCommand {
@@ -50,10 +50,11 @@ extension GameCommand {
         throw DomainError.roundAlreadyFinalized
       }
       // Validate constraints before finalizing.
-      let constraintsToUse = roundConstraints ?? game.additionalConstraints
+      let roundConstraintsToUse = roundConstraints ?? [.gotSumEqualsHandSize]
       try game.rounds[roundIndex].validateConstraints(
         players: game.players,
-        additionalConstraints: constraintsToUse
+        gameConstraints: game.gameConstraints,
+        roundConstraints: roundConstraintsToUse
       )
       // Ensure all inputs present.
       let entries = game.rounds[roundIndex].entries

@@ -7,7 +7,20 @@ public struct Game: Hashable, Codable, Sendable {
   public var players: [Player] // order matters (dealer rotation)
   public var rounds: [Round]
   public var currentRoundIndex: Int
-  public private(set) var additionalConstraints: [GameConstraint]
+  public private(set) var gameConstraints: [Constraint.GameConstraint]
+
+  private enum CodingKeys: String, CodingKey {
+    case id
+    case name
+    case mode
+    case players
+    case rounds
+    case currentRoundIndex
+    case gameConstraints
+
+    // Legacy key (pre split into game/round constraints).
+    case additionalConstraints
+  }
 
   public init(
     id: UUID,
@@ -16,7 +29,7 @@ public struct Game: Hashable, Codable, Sendable {
     players: [Player],
     rounds: [Round] = [],
     currentRoundIndex: Int? = nil,
-    additionalConstraints: [GameConstraint] = [.gotSumEqualsHandSize, .betSumNotEqualHandSize]
+    gameConstraints: [Constraint.GameConstraint] = [.betSumNotEqualHandSize]
   ) throws {
     guard (2...6).contains(players.count) else {
       throw DomainError.invalidPlayerCount(players.count)
@@ -30,7 +43,7 @@ public struct Game: Hashable, Codable, Sendable {
     self.players = players
     self.rounds = rounds
     self.currentRoundIndex = currentRoundIndex ?? max(0, rounds.count - 1)
-    self.additionalConstraints = additionalConstraints
+    self.gameConstraints = gameConstraints
 
     if rounds.isEmpty {
       // Require caller to create first round via command so rules are consistent.
@@ -38,6 +51,53 @@ public struct Game: Hashable, Codable, Sendable {
     } else if !(0..<rounds.count).contains(self.currentRoundIndex) {
       throw DomainError.invalidCurrentRoundIndex(self.currentRoundIndex)
     }
+  }
+
+  public init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    let id = try container.decode(UUID.self, forKey: .id)
+    let name = try container.decode(String.self, forKey: .name)
+    let mode = try container.decode(GameMode.self, forKey: .mode)
+    let players = try container.decode([Player].self, forKey: .players)
+    let rounds = try container.decode([Round].self, forKey: .rounds)
+    let currentRoundIndex = try container.decode(Int.self, forKey: .currentRoundIndex)
+
+    let decodedGameConstraints: [Constraint.GameConstraint]
+    if let gc = try container.decodeIfPresent([Constraint.GameConstraint].self, forKey: .gameConstraints) {
+      decodedGameConstraints = gc
+    } else if let legacy = try container.decodeIfPresent([String].self, forKey: .additionalConstraints) {
+      decodedGameConstraints = legacy.compactMap { raw in
+        Constraint.GameConstraint(rawValue: raw)
+      }
+    } else {
+      decodedGameConstraints = []
+    }
+
+    try self.init(
+      id: id,
+      name: name,
+      mode: mode,
+      players: players,
+      rounds: rounds,
+      currentRoundIndex: currentRoundIndex,
+      gameConstraints: decodedGameConstraints
+    )
+  }
+
+  public func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(id, forKey: .id)
+    try container.encode(name, forKey: .name)
+    try container.encode(mode, forKey: .mode)
+    try container.encode(players, forKey: .players)
+    try container.encode(rounds, forKey: .rounds)
+    try container.encode(currentRoundIndex, forKey: .currentRoundIndex)
+    try container.encode(gameConstraints, forKey: .gameConstraints)
+
+    // Encode legacy key too, so older stored snapshots stay readable by older builds.
+    var legacy: [String] = [Constraint.RoundConstraint.gotSumEqualsHandSize.rawValue]
+    legacy.append(contentsOf: gameConstraints.map(\.rawValue))
+    try container.encode(legacy, forKey: .additionalConstraints)
   }
 
   public var maxHandSizeClassic: Int {
@@ -66,11 +126,11 @@ public struct Game: Hashable, Codable, Sendable {
   }
 
   /// Constraints can only be changed at creation time or before the first round is finalized.
-  public mutating func setAdditionalConstraints(_ constraints: [GameConstraint]) throws {
+  public mutating func setGameConstraints(_ constraints: [Constraint.GameConstraint]) throws {
     if rounds.contains(where: { $0.isFinalized }) {
       throw DomainError.constraintsLocked
     }
-    additionalConstraints = constraints
+    gameConstraints = constraints
   }
 }
 

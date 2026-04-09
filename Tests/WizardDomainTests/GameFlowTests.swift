@@ -31,7 +31,7 @@ final class GameFlowTests: XCTestCase {
     try game.apply(.submitBet(playerId: players[1].id, roundIndex: 0, bet: 0))
     try game.apply(.submitBet(playerId: players[2].id, roundIndex: 0, bet: 0))
 
-    XCTAssertThrowsError(try game.apply(.finalizeCurrentRound)) { err in
+    XCTAssertThrowsError(try game.apply(.finalizeCurrentRound())) { err in
       XCTAssertEqual(err as? DomainError, .missingInputs)
     }
   }
@@ -51,8 +51,8 @@ final class GameFlowTests: XCTestCase {
     try game.apply(.submitGot(playerId: players[1].id, roundIndex: 0, got: 0))
     try game.apply(.submitGot(playerId: players[2].id, roundIndex: 0, got: 0))
 
-    XCTAssertThrowsError(try game.apply(.finalizeCurrentRound)) { err in
-      XCTAssertEqual(err as? DomainError, .constraintNotSatisfied(.betSumNotEqualHandSize))
+    XCTAssertThrowsError(try game.apply(.finalizeCurrentRound())) { err in
+      XCTAssertEqual(err as? DomainError, .constraintNotSatisfied(.game(.betSumNotEqualHandSize)))
     }
   }
 
@@ -72,7 +72,7 @@ final class GameFlowTests: XCTestCase {
     try game.apply(.submitGot(playerId: players[1].id, roundIndex: 0, got: 0))
     try game.apply(.submitGot(playerId: players[2].id, roundIndex: 0, got: 0))
 
-    try game.apply(.finalizeCurrentRound)
+    try game.apply(.finalizeCurrentRound())
 
     XCTAssertTrue(game.rounds[0].isFinalized)
     XCTAssertEqual(game.rounds.count, 2)
@@ -96,7 +96,7 @@ final class GameFlowTests: XCTestCase {
     XCTAssertEqual(beforeFinalize[players[0].id], 0)
     XCTAssertEqual(beforeFinalize[players[1].id], 0)
 
-    try game.apply(.finalizeCurrentRound)
+    try game.apply(.finalizeCurrentRound())
 
     let totals = try game.totalPoints()
     // P1 bet0 got1 => -10, P2 bet0 got0 => +20
@@ -110,7 +110,7 @@ final class GameFlowTests: XCTestCase {
     try game.apply(.startNewGame(startingDealer: players[0].id))
 
     // Allowed before finalize.
-    XCTAssertNoThrow(try game.setAdditionalConstraints([.gotSumEqualsHandSize]))
+    XCTAssertNoThrow(try game.setGameConstraints([]))
 
     // Finalize round 1 (need valid inputs).
     try game.apply(.submitBet(playerId: players[0].id, roundIndex: 0, bet: 0))
@@ -119,10 +119,10 @@ final class GameFlowTests: XCTestCase {
     try game.apply(.submitGot(playerId: players[0].id, roundIndex: 0, got: 1))
     try game.apply(.submitGot(playerId: players[1].id, roundIndex: 0, got: 0))
     try game.apply(.submitGot(playerId: players[2].id, roundIndex: 0, got: 0))
-    try game.apply(.finalizeCurrentRound)
+    try game.apply(.finalizeCurrentRound())
 
     // Now locked.
-    XCTAssertThrowsError(try game.setAdditionalConstraints([.betSumNotEqualHandSize])) { err in
+    XCTAssertThrowsError(try game.setGameConstraints([.betSumNotEqualHandSize])) { err in
       XCTAssertEqual(err as? DomainError, .constraintsLocked)
     }
   }
@@ -152,8 +152,8 @@ final class GameFlowTests: XCTestCase {
     try game.apply(.submitGot(playerId: players[1].id, roundIndex: 0, got: 0))
     try game.apply(.submitGot(playerId: players[2].id, roundIndex: 0, got: 0))
 
-    XCTAssertThrowsError(try game.apply(.finalizeCurrentRound)) { err in
-      XCTAssertEqual(err as? DomainError, .constraintNotSatisfied(.gotSumEqualsHandSize))
+    XCTAssertThrowsError(try game.apply(.finalizeCurrentRound())) { err in
+      XCTAssertEqual(err as? DomainError, .constraintNotSatisfied(.round(.gotSumEqualsHandSize)))
     }
   }
 }

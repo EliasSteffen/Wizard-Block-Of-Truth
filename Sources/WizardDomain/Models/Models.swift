@@ -53,7 +53,11 @@ public struct Round: Hashable, Codable, Sendable {
     self.isFinalized = isFinalized
   }
 
-  public func validateConstraints(players: [Player], additionalConstraints: [GameConstraint]) throws {
+  public func validateConstraints(
+    players: [Player],
+    gameConstraints: [Constraint.GameConstraint],
+    roundConstraints: [Constraint.RoundConstraint]
+  ) throws {
     if handSize <= 0 {
       throw DomainError.invalidHandSize(handSize)
     }
@@ -75,9 +79,16 @@ public struct Round: Hashable, Codable, Sendable {
       }
     }
 
-    for constraint in additionalConstraints {
-      if !constraint.isSatisfied(round: self, players: players) {
-        throw DomainError.constraintNotSatisfied(constraint)
+    for constraint in gameConstraints {
+      let wrapped: Constraint = .game(constraint)
+      if !wrapped.isSatisfied(round: self, players: players) {
+        throw DomainError.constraintNotSatisfied(wrapped)
+      }
+    }
+    for constraint in roundConstraints {
+      let wrapped: Constraint = .round(constraint)
+      if !wrapped.isSatisfied(round: self, players: players) {
+        throw DomainError.constraintNotSatisfied(wrapped)
       }
     }
   }

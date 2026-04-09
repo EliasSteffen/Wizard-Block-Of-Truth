@@ -7,18 +7,24 @@ struct GameListView: View {
 
   @State private var showingNewGame = false
   @State private var path: [UUID] = []
+  @State private var searchText: String = ""
+  @State private var showingSettings = false
+
+#if os(iOS)
+  @State private var editMode: EditMode = .inactive
+#endif
 
   var body: some View {
     NavigationStack(path: $path) {
       List {
-        if games.isEmpty {
+        if filteredGames.isEmpty {
           ContentUnavailableView(
             "No games yet",
             systemImage: "wand.and.stars",
             description: Text("Create a game to start tracking scores.")
           )
         } else {
-          ForEach(games) { game in
+          ForEach(filteredGames) { game in
             NavigationLink {
               GameSessionView(gameId: game.id)
             } label: {
@@ -30,43 +36,120 @@ struct GameListView: View {
               }
             }
           }
+          .onDelete(perform: deleteGames)
         }
       }
+#if os(iOS)
+      .scrollContentBackground(.hidden)
+#endif
       .navigationDestination(for: UUID.self) { id in
         GameSessionView(gameId: id)
       }
       .navigationTitle("Wizard")
 #if os(iOS)
       .navigationBarTitleDisplayMode(.inline)
+      .environment(\.editMode, $editMode)
 #endif
       .toolbar {
+#if os(iOS)
+        ToolbarItemGroup(placement: .topBarTrailing) {
+          Button(editMode == .active ? "Done" : "Edit") {
+            withAnimation {
+              editMode = (editMode == .active) ? .inactive : .active
+            }
+          }
+
+          Button {
+            showingSettings = true
+          } label: {
+            Image(systemName: "gearshape")
+          }
+        }
+#else
+        ToolbarItemGroup(placement: .automatic) {
+          Button("Edit") { }
+          Button {
+            // Placeholder for settings screen.
+          } label: {
+            Image(systemName: "gearshape")
+          }
+        }
+#endif
+
         ToolbarItem(placement: .principal) {
           Text("Wizard")
             .font(.headline)
         }
-        ToolbarItem(placement: toolbarPlacement) {
-          Button {
-            showingNewGame = true
-          } label: {
-            Label("New Game", systemImage: "plus")
-          }
-        }
+      }
+      .safeAreaInset(edge: .bottom) {
+        bottomBar
       }
       .sheet(isPresented: $showingNewGame) {
         NewGameView { newId in
           path = [newId]
         }
-          .presentationDetents([.large])
+        .presentationDetents([.large])
+      }
+      .sheet(isPresented: $showingSettings) {
+        SettingsView()
+          .presentationDetents([.medium, .large])
       }
     }
+    .wizardBackground()
   }
 
-  private var toolbarPlacement: ToolbarItemPlacement {
+  private var filteredGames: [GameSnapshotEntity] {
+    let q = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !q.isEmpty else { return games }
+    return games.filter { $0.name.localizedCaseInsensitiveContains(q) }
+  }
+
+  private var bottomBar: some View {
+    HStack(spacing: 12) {
+      HStack(spacing: 8) {
+        Image(systemName: "magnifyingglass")
+          .foregroundStyle(.secondary)
+        TextField("Search", text: $searchText)
+          .textFieldStyle(.plain)
 #if os(iOS)
-    return .topBarTrailing
-#else
-    return .automatic
+          .textInputAutocapitalization(.never)
 #endif
+      }
+      .frame(maxWidth: .infinity)
+      .contentShape(Rectangle())
+      .padding(.horizontal, 12)
+      .padding(.vertical, 10)
+      .background(.ultraThinMaterial, in: Capsule())
+
+      Button {
+        showingNewGame = true
+      } label: {
+        Image(systemName: "plus")
+          .font(.headline)
+          .frame(width: 44, height: 44)
+          .background(.ultraThinMaterial, in: Capsule())
+          .overlay {
+            Capsule().strokeBorder(Color.white.opacity(0.25), lineWidth: 1)
+          }
+      }
+      .buttonStyle(.plain)
+      .accessibilityLabel("New game")
+    }
+    .padding(.horizontal, 16)
+    .padding(.bottom, 12)
+    .background(Color.clear)
+  }
+
+  private func deleteGames(at offsets: IndexSet) {
+    for idx in offsets {
+      let game = filteredGames[idx]
+      modelContext.delete(game)
+    }
+    do {
+      try modelContext.save()
+    } catch {
+      // Ignore for now; the list will refresh on next load.
+    }
   }
 }
 

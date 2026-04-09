@@ -9,12 +9,15 @@
 /* Begin PBXBuildFile section */
 		000000000000000000000101 /* WizardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000201 /* WizardApp.swift */; };
 		000000000000000000000102 /* GameCodec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000202 /* GameCodec.swift */; };
+		00000000000000000000010B /* AppColorScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000020B /* AppColorScheme.swift */; };
 		000000000000000000000103 /* GameStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000203 /* GameStore.swift */; };
 		000000000000000000000104 /* GameSnapshotEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000204 /* GameSnapshotEntity.swift */; };
 		000000000000000000000105 /* GameListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000205 /* GameListView.swift */; };
 		000000000000000000000106 /* NewGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000206 /* NewGameView.swift */; };
 		000000000000000000000107 /* GameSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000207 /* GameSessionView.swift */; };
 		000000000000000000000108 /* EntrySheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000208 /* EntrySheetView.swift */; };
+		000000000000000000000109 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000209 /* SettingsView.swift */; };
+		00000000000000000000010A /* WizardBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000020A /* WizardBackground.swift */; };
 
 		000000000000000000000111 /* Commands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000211 /* Commands.swift */; };
 		000000000000000000000112 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000212 /* Game.swift */; };
@@ -30,12 +33,15 @@
 
 		000000000000000000000201 /* WizardApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WizardApp.swift; path = Sources/WizardApp/WizardApp.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000202 /* GameCodec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameCodec.swift; path = Sources/WizardApp/App/GameCodec.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000020B /* AppColorScheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppColorScheme.swift; path = Sources/WizardApp/App/AppColorScheme.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000203 /* GameStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameStore.swift; path = Sources/WizardApp/App/GameStore.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000204 /* GameSnapshotEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameSnapshotEntity.swift; path = Sources/WizardApp/Persistence/GameSnapshotEntity.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000205 /* GameListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameListView.swift; path = Sources/WizardApp/UI/GameListView.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000206 /* NewGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NewGameView.swift; path = Sources/WizardApp/UI/NewGameView.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000207 /* GameSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameSessionView.swift; path = Sources/WizardApp/UI/GameSessionView.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000208 /* EntrySheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EntrySheetView.swift; path = Sources/WizardApp/UI/EntrySheetView.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000209 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SettingsView.swift; path = Sources/WizardApp/UI/SettingsView.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000020A /* WizardBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WizardBackground.swift; path = Sources/WizardApp/UI/WizardBackground.swift; sourceTree = SOURCE_ROOT; };
 
 		000000000000000000000211 /* Commands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Commands.swift; path = Sources/WizardDomain/Game/Commands.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000212 /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Game.swift; path = Sources/WizardDomain/Game/Game.swift; sourceTree = SOURCE_ROOT; };
@@ -83,6 +89,7 @@
 			isa = PBXGroup;
 			children = (
 				000000000000000000000202 /* GameCodec.swift */,
+				00000000000000000000020B /* AppColorScheme.swift */,
 				000000000000000000000203 /* GameStore.swift */,
 			);
 			name = App;
@@ -105,6 +112,8 @@
 				000000000000000000000206 /* NewGameView.swift */,
 				000000000000000000000207 /* GameSessionView.swift */,
 				000000000000000000000208 /* EntrySheetView.swift */,
+				000000000000000000000209 /* SettingsView.swift */,
+				00000000000000000000020A /* WizardBackground.swift */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -238,12 +247,15 @@
 			files = (
 				000000000000000000000101 /* WizardApp.swift in Sources */,
 				000000000000000000000102 /* GameCodec.swift in Sources */,
+				00000000000000000000010B /* AppColorScheme.swift in Sources */,
 				000000000000000000000103 /* GameStore.swift in Sources */,
 				000000000000000000000104 /* GameSnapshotEntity.swift in Sources */,
 				000000000000000000000105 /* GameListView.swift in Sources */,
 				000000000000000000000106 /* NewGameView.swift in Sources */,
 				000000000000000000000107 /* GameSessionView.swift in Sources */,
 				000000000000000000000108 /* EntrySheetView.swift in Sources */,
+				000000000000000000000109 /* SettingsView.swift in Sources */,
+				00000000000000000000010A /* WizardBackground.swift in Sources */,
 
 				000000000000000000000111 /* Commands.swift in Sources */,
 				000000000000000000000112 /* Game.swift in Sources */,
