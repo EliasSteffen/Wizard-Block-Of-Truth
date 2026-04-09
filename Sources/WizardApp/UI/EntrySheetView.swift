@@ -32,7 +32,8 @@ struct EntrySheetView: View {
               Text(player.name)
                 .lineLimit(1)
                 .truncationMode(.tail)
-                .layoutPriority(1)
+                // Fixed name column so steppers stay aligned across rows.
+                .frame(width: 140, alignment: .leading)
               Spacer()
               StepperPills(
                 value: Binding(

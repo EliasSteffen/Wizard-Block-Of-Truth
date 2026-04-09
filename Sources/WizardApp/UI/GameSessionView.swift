@@ -183,28 +183,18 @@ struct GameSessionView: View {
 
   private func startCard(players: [Player]) -> some View {
     VStack(alignment: .leading, spacing: 12) {
-      Text("Game overview")
+      Text("Pick the starting Dealer")
         .font(.headline)
 
-      Text("Pick a starting dealer, then enter bets for Round 1.")
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
-
-      VStack(alignment: .leading, spacing: 8) {
-        Text("Starting dealer")
-          .font(.caption)
-          .foregroundStyle(.secondary)
-
-        Picker("", selection: Binding(
-          get: { selectedStartingDealerId ?? players.first?.id ?? UUID() },
-          set: { selectedStartingDealerId = $0 }
-        )) {
-          ForEach(players, id: \.id) { p in
-            Text(p.name).tag(p.id)
-          }
+      Picker("", selection: Binding(
+        get: { selectedStartingDealerId ?? players.first?.id ?? UUID() },
+        set: { selectedStartingDealerId = $0 }
+      )) {
+        ForEach(players, id: \.id) { p in
+          Text(p.name).tag(p.id)
         }
-        .pickerStyle(.menu)
       }
+      .pickerStyle(.menu)
     }
     .padding(14)
     .background {
@@ -230,12 +220,6 @@ struct GameSessionView: View {
       } else {
         glassPill(title: "Dealer", value: "—")
       }
-      Spacer()
-      Text(round == nil ? "Not started" : (round?.isFinalized == true ? "Finalized" : "In Progress"))
-        .font(.caption.weight(.semibold))
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
-        .background(.thinMaterial, in: Capsule())
     }
   }
 
@@ -260,8 +244,24 @@ struct GameSessionView: View {
         let lastDelta = lastFinalizedDelta(for: p.id, in: game)
 
         HStack {
-          Text(p.name).font(.headline)
-          Spacer()
+          Text(p.name)
+            .font(.headline)
+            .lineLimit(1)
+            .truncationMode(.tail)
+            // Fixed name column so Bet/Won stays aligned across rows.
+            .frame(width: 140, alignment: .leading)
+
+          Spacer(minLength: 10)
+
+          VStack(alignment: .center, spacing: 2) {
+            HStack(spacing: 8) {
+              entryPill(title: "Bet", value: currentEntry?.bet.map(String.init) ?? "—")
+              entryPill(title: "Won", value: currentEntry?.got.map(String.init) ?? "—")
+            }
+          }
+
+          Spacer(minLength: 10)
+
           VStack(alignment: .trailing, spacing: 2) {
             Text("\(total)")
               .font(.title3.weight(.semibold))
@@ -276,17 +276,21 @@ struct GameSessionView: View {
         }
         .padding(14)
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
-        .overlay(alignment: .bottomLeading) {
-          if let currentEntry, (currentEntry.bet != nil || currentEntry.got != nil) {
-            Text(currentEntryLine(currentEntry))
-              .font(.caption)
-              .foregroundStyle(.secondary)
-              .padding(.horizontal, 14)
-              .padding(.bottom, 10)
-          }
-        }
       }
     }
+  }
+
+  private func entryPill(title: String, value: String) -> some View {
+    HStack(spacing: 6) {
+      Text(title)
+        .font(.caption2.weight(.semibold))
+        .foregroundStyle(.secondary)
+      Text(value)
+        .font(.caption.weight(.semibold))
+    }
+    .padding(.horizontal, 10)
+    .padding(.vertical, 6)
+    .background(Color.white.opacity(0.35), in: Capsule())
   }
 
   private func primaryAction(game: Game) -> some View {
@@ -343,12 +347,6 @@ struct GameSessionView: View {
       }
     }
     showingBets = true
-  }
-
-  private func currentEntryLine(_ entry: RoundEntry) -> String {
-    let bet = entry.bet.map(String.init) ?? "—"
-    let got = entry.got.map(String.init) ?? "—"
-    return "Bet \(bet) · Won \(got)"
   }
 
   private func deltaString(_ delta: Int) -> String {
