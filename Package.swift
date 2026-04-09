@@ -9,11 +9,17 @@ let package = Package(
   ],
   products: [
     .library(name: "WizardDomain", targets: ["WizardDomain"]),
+    .executable(name: "WizardApp", targets: ["WizardApp"]),
   ],
   targets: [
     .target(
       name: "WizardDomain",
       path: "Sources/WizardDomain"
+    ),
+    .executableTarget(
+      name: "WizardApp",
+      dependencies: ["WizardDomain"],
+      path: "Sources/WizardApp"
     ),
     .testTarget(
       name: "WizardDomainTests",
