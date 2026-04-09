@@ -181,27 +181,42 @@ struct GameSessionView: View {
   }
 
   private func header(round: Round?, players: [Player]) -> some View {
-    HStack(spacing: 12) {
-      glassPill(title: "Round", value: round == nil ? "—" : "\(round?.handSize ?? 0)")
-      if let dealerId = round?.dealer, let dealer = players.first(where: { $0.id == dealerId }) {
-        glassPill(title: "Dealer", value: dealer.name)
-      } else {
-        glassPill(title: "Dealer", value: "—")
-      }
-    }
-  }
+    let roundText = round == nil ? "—" : "\(round?.handSize ?? 0)"
+    let dealerName: String = {
+      guard let dealerId = round?.dealer,
+            let dealer = players.first(where: { $0.id == dealerId }) else { return "—" }
+      return dealer.name
+    }()
 
-  private func glassPill(title: String, value: String) -> some View {
-    VStack(alignment: .leading, spacing: 2) {
-      Text(title)
-        .font(.caption)
+    return HStack(alignment: .center, spacing: 10) {
+      Text("Round")
+        .font(.caption.weight(.semibold))
         .foregroundStyle(.secondary)
-      Text(value)
-        .font(.headline)
+        .baselineOffset(0)
+      Text(roundText)
+        .font(.headline.weight(.semibold).monospacedDigit())
+
+      Text("·")
+        .foregroundStyle(.secondary.opacity(0.7))
+
+      Text("Dealer")
+        .font(.caption.weight(.semibold))
+        .foregroundStyle(.secondary)
+        .baselineOffset(0)
+      Text(dealerName)
+        .font(.headline.weight(.semibold))
+        .lineLimit(1)
+        .truncationMode(.tail)
+
+      Spacer(minLength: 0)
     }
-    .padding(.horizontal, 12)
-    .padding(.vertical, 10)
-    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+    .padding(.horizontal, 14)
+    .padding(.vertical, 12)
+    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+    .overlay {
+      RoundedRectangle(cornerRadius: 18, style: .continuous)
+        .strokeBorder(Color.white.opacity(0.18), lineWidth: 1)
+    }
   }
 
   private func scoreboard(game: Game, totals: [UUID: Int]) -> some View {
@@ -213,16 +228,31 @@ struct GameSessionView: View {
     }
 
     return VStack(spacing: 10) {
-      ForEach(sortedPlayers, id: \.id) { p in
+      ForEach(Array(sortedPlayers.enumerated()), id: \.element.id) { idx, p in
         let total = totals[p.id, default: 0]
         let currentEntry = game.currentRound.flatMap { $0.entries[p.id] }
         let lastDelta = lastFinalizedDelta(for: p.id, in: game)
 
         VStack(alignment: .leading, spacing: 10) {
-          Text(p.name)
-            .font(.headline)
-            .lineLimit(1)
-            .truncationMode(.tail)
+          HStack(spacing: 10) {
+            Text("#\(idx + 1)")
+              .font(.caption.weight(.semibold).monospacedDigit())
+              .foregroundStyle(.secondary)
+              .frame(width: 28, alignment: .leading)
+
+            Text(p.name)
+              .font(.headline.weight(.semibold))
+              .lineLimit(1)
+              .truncationMode(.tail)
+
+            Spacer(minLength: 0)
+
+            if idx == 0 {
+              Image(systemName: "crown.fill")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.yellow.opacity(0.9))
+            }
+          }
 
           HStack(alignment: .bottom, spacing: 10) {
             entryChip(title: "Bet", value: currentEntry?.bet)
@@ -244,7 +274,27 @@ struct GameSessionView: View {
           }
         }
         .padding(14)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .background {
+          RoundedRectangle(cornerRadius: 18, style: .continuous)
+            .fill(.ultraThinMaterial)
+            .overlay {
+              LinearGradient(
+                colors: [
+                  Color.white.opacity(0.20),
+                  Color.white.opacity(0.06),
+                  Color.white.opacity(0.02),
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+              )
+              .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            }
+            .overlay {
+              RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .strokeBorder(Color.white.opacity(0.16), lineWidth: 1)
+            }
+        }
+        .shadow(color: Color.black.opacity(0.10), radius: 10, x: 0, y: 6)
       }
     }
   }
