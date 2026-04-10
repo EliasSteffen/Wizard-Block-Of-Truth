@@ -43,6 +43,7 @@ final class GameStore: ObservableObject {
     name: String,
     mode: GameMode,
     players: [Player],
+    playWithSpecialCards: Bool = true,
     gameConstraints: [Constraint.GameConstraint] = [.betSumNotEqualHandSize]
   ) {
     do {
@@ -50,6 +51,7 @@ final class GameStore: ObservableObject {
         id: UUID(),
         name: name,
         mode: mode,
+        playWithSpecialCards: playWithSpecialCards,
         players: players,
         gameConstraints: gameConstraints
       )

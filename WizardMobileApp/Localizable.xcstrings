@@ -569,7 +569,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wolkenkarte eintragen"
+            "value" : "Wolke eintragen"
           }
         },
         "en" : {
@@ -1142,6 +1142,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Player %lld"
+          }
+        }
+      }
+    },
+    "UI.NewGame.PlayWithSpecialCards.Toggle" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit Spezialkarten spielen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Play with special cards"
           }
         }
       }

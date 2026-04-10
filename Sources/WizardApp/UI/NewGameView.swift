@@ -20,6 +20,7 @@ struct NewGameView: View {
   @State private var startingDealerIndex: Int = 0
 
   @State private var enabledGameConstraints: Set<Constraint.GameConstraint> = [.betSumNotEqualHandSize]
+  @State private var playWithSpecialCards: Bool = true
 
   @FocusState private var focusedField: Field?
 
@@ -104,6 +105,12 @@ struct NewGameView: View {
           }
         } header: {
           Text("UI.NewGame.HouseRules.Header")
+        }
+
+        Section {
+          Toggle(isOn: $playWithSpecialCards) {
+            Text("UI.NewGame.PlayWithSpecialCards.Toggle")
+          }
         }
       }
 #if os(iOS)
@@ -232,6 +239,7 @@ struct NewGameView: View {
       name: name.trimmingCharacters(in: .whitespacesAndNewlines),
       mode: .singlePhone,
       players: players,
+      playWithSpecialCards: playWithSpecialCards,
       gameConstraints: constraints
     )
 

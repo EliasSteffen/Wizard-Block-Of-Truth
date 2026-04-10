@@ -4,6 +4,7 @@ public struct Game: Hashable, Codable, Sendable {
   public var id: UUID
   public var name: String
   public var mode: GameMode
+  public var playWithSpecialCards: Bool
   public var players: [Player] // order matters (dealer rotation)
   public var rounds: [Round]
   public var currentRoundIndex: Int
@@ -13,6 +14,7 @@ public struct Game: Hashable, Codable, Sendable {
     case id
     case name
     case mode
+    case playWithSpecialCards
     case players
     case rounds
     case currentRoundIndex
@@ -26,6 +28,7 @@ public struct Game: Hashable, Codable, Sendable {
     id: UUID,
     name: String,
     mode: GameMode,
+    playWithSpecialCards: Bool = true,
     players: [Player],
     rounds: [Round] = [],
     currentRoundIndex: Int? = nil,
@@ -40,6 +43,7 @@ public struct Game: Hashable, Codable, Sendable {
     self.id = id
     self.name = name
     self.mode = mode
+    self.playWithSpecialCards = playWithSpecialCards
     self.players = players
     self.rounds = rounds
     self.currentRoundIndex = currentRoundIndex ?? max(0, rounds.count - 1)
@@ -58,6 +62,7 @@ public struct Game: Hashable, Codable, Sendable {
     let id = try container.decode(UUID.self, forKey: .id)
     let name = try container.decode(String.self, forKey: .name)
     let mode = try container.decode(GameMode.self, forKey: .mode)
+    let playWithSpecialCards = try container.decodeIfPresent(Bool.self, forKey: .playWithSpecialCards) ?? true
     let players = try container.decode([Player].self, forKey: .players)
     let rounds = try container.decode([Round].self, forKey: .rounds)
     let currentRoundIndex = try container.decode(Int.self, forKey: .currentRoundIndex)
@@ -77,6 +82,7 @@ public struct Game: Hashable, Codable, Sendable {
       id: id,
       name: name,
       mode: mode,
+      playWithSpecialCards: playWithSpecialCards,
       players: players,
       rounds: rounds,
       currentRoundIndex: currentRoundIndex,
@@ -89,6 +95,7 @@ public struct Game: Hashable, Codable, Sendable {
     try container.encode(id, forKey: .id)
     try container.encode(name, forKey: .name)
     try container.encode(mode, forKey: .mode)
+    try container.encode(playWithSpecialCards, forKey: .playWithSpecialCards)
     try container.encode(players, forKey: .players)
     try container.encode(rounds, forKey: .rounds)
     try container.encode(currentRoundIndex, forKey: .currentRoundIndex)

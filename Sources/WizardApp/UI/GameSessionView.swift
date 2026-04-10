@@ -145,14 +145,14 @@ struct GameSessionView: View {
           players: game.players,
           currentValues: game.rounds[game.currentRoundIndex].entries.mapValues { $0.got },
           valueLabel: String(localized: "UI.GameSession.Entry.Won", defaultValue: "Won"),
-          accessory: AnyView(
+          accessory: game.playWithSpecialCards ? AnyView(
             Toggle(isOn: $bombPlayedThisRound) {
               VStack(alignment: .leading, spacing: 2) {
                 Text(LocalizedStringKey(Constraint.RoundConstraint.gotSumEqualsHandSizeMinusOne.titleKey))
                   .font(.subheadline.weight(.semibold))
               }
             }
-          ),
+          ) : nil,
           allowedRange: nil,
           isPlayerDisabled: nil,
           onSubmit: { values in
@@ -214,7 +214,10 @@ struct GameSessionView: View {
   }
 
   private func constraintsForFinalize(game: Game?, bombPlayed: Bool) -> [Constraint.RoundConstraint]? {
-    guard game != nil else { return nil }
+    guard let game else { return nil }
+    if !game.playWithSpecialCards {
+      return [.gotSumEqualsHandSize]
+    }
     return [bombPlayed ? .gotSumEqualsHandSizeMinusOne : .gotSumEqualsHandSize]
   }
 
@@ -389,13 +392,15 @@ struct GameSessionView: View {
     } else if !allGotPresent {
       return AnyView(
         HStack(spacing: 10) {
-          Button(action: { showingCloudCard = true }) {
-            Text("UI.Button.EnterCloudCard")
-              .frame(maxWidth: .infinity)
-              .padding(.vertical, 14)
-              .font(.headline)
+          if game.playWithSpecialCards {
+            Button(action: { showingCloudCard = true }) {
+              Text("UI.Button.EnterCloudCard")
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+                .font(.headline)
+            }
+            .buttonStyle(.bordered)
           }
-          .buttonStyle(.bordered)
 
           Button(action: { showingGot = true }) {
             Text("UI.Button.EnterWonTricks")

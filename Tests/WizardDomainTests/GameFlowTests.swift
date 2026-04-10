@@ -240,5 +240,45 @@ final class GameFlowTests: XCTestCase {
 
     XCTAssertNoThrow(try game.apply(.finalizeCurrentRound(roundConstraints: [.gotSumEqualsHandSizeMinusOne])))
   }
+
+  func testGameDefaultsToPlayWithSpecialCardsEnabled() throws {
+    let players = TestSupport.makePlayers(3)
+    let game = try Game(id: UUID(), name: "Test", mode: .singlePhone, players: players)
+    XCTAssertTrue(game.playWithSpecialCards)
+  }
+
+  func testGameRoundTripsPlayWithSpecialCardsThroughCodable() throws {
+    let players = TestSupport.makePlayers(3)
+    let original = try Game(
+      id: UUID(),
+      name: "Test",
+      mode: .singlePhone,
+      playWithSpecialCards: false,
+      players: players
+    )
+    let data = try JSONEncoder().encode(original)
+    let decoded = try JSONDecoder().decode(Game.self, from: data)
+    XCTAssertFalse(decoded.playWithSpecialCards)
+  }
+
+  func testGameDecodesLegacyPayloadWithoutSpecialCardsFlagAsEnabled() throws {
+    let players = TestSupport.makePlayers(3)
+    let original = try Game(
+      id: UUID(),
+      name: "Legacy",
+      mode: .singlePhone,
+      playWithSpecialCards: false,
+      players: players
+    )
+
+    let encoded = try JSONEncoder().encode(original)
+    var json = try XCTUnwrap(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+    json.removeValue(forKey: "playWithSpecialCards")
+
+    let legacyData = try JSONSerialization.data(withJSONObject: json, options: [])
+    let decoded = try JSONDecoder().decode(Game.self, from: legacyData)
+
+    XCTAssertTrue(decoded.playWithSpecialCards)
+  }
 }
 
