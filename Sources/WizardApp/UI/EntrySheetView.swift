@@ -4,7 +4,7 @@ import WizardDomain
 #endif
 
 struct EntrySheetView: View {
-  let title: String
+  let title: LocalizedStringKey
   let handSize: Int
   let players: [Player]
   let currentValues: [UUID: Int?]
@@ -73,10 +73,10 @@ struct EntrySheetView: View {
 #endif
       .toolbar {
         ToolbarItem(placement: .cancellationAction) {
-          Button("Cancel") { dismiss() }
+          Button("UI.Common.Cancel") { dismiss() }
         }
         ToolbarItem(placement: .confirmationAction) {
-          Button("Done") {
+          Button("UI.Common.Done") {
             submitError = nil
             constraintFailureText = nil
 
@@ -98,11 +98,11 @@ struct EntrySheetView: View {
       }
     }
     .wizardBackground()
-    .alert("Invalid input", isPresented: Binding(
+    .alert("UI.EntrySheet.InvalidInput.Title", isPresented: Binding(
       get: { submitError != nil },
       set: { newValue in if !newValue { submitError = nil } }
     )) {
-      Button("OK", role: .cancel) { submitError = nil }
+      Button("UI.Common.OK", role: .cancel) { submitError = nil }
     } message: {
       Text(submitError?.localizedDescription ?? "")
     }
@@ -140,7 +140,7 @@ struct EntrySheetView: View {
       }
 
       HStack {
-        Text("Sum")
+        Text("UI.EntrySheet.Sum.Label")
         Spacer()
         Text("\(sum)")
           .foregroundStyle(sum == handSize ? .primary : .secondary)
@@ -181,7 +181,7 @@ private struct StepperPills: View {
         isFocused = false
         value = max(range.lowerBound, value - 1)
       } label: {
-        pill("-")
+        pill(String(localized: "UI.Common.Symbol.Minus", defaultValue: "-"))
       }
       .buttonStyle(.plain)
       .disabled(isDisabled || value <= range.lowerBound)
@@ -204,7 +204,7 @@ private struct StepperPills: View {
         isFocused = false
         value = min(range.upperBound, value + 1)
       } label: {
-        pill("+")
+        pill(String(localized: "UI.Common.Symbol.Plus", defaultValue: "+"))
       }
       .buttonStyle(.plain)
       .disabled(isDisabled || value >= range.upperBound)

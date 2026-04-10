@@ -3,6 +3,8 @@ import SwiftData
 
 struct GameListView: View {
   @Environment(\.modelContext) private var modelContext
+  @Environment(\.locale) private var locale
+  @AppStorage("app.language") private var appLanguageRaw: String = AppLanguage.system.rawValue
   @Query(sort: \GameSnapshotEntity.updatedAt, order: .reverse) private var games: [GameSnapshotEntity]
 
   @State private var showingNewGame = false
@@ -22,7 +24,7 @@ struct GameListView: View {
 
         gamesList
       }
-      .navigationTitle("Wizard")
+      .navigationTitle("UI.GameList.NavigationTitle")
       .navigationDestination(for: UUID.self) { id in
         GameSessionView(gameId: id)
       }
@@ -33,7 +35,7 @@ struct GameListView: View {
       .toolbar {
 #if os(iOS)
         ToolbarItemGroup(placement: .topBarTrailing) {
-          Button(editMode == .active ? "Done" : "Edit") {
+          Button(editMode == .active ? "UI.Common.Done" : "UI.Common.Edit") {
             withAnimation {
               editMode = (editMode == .active) ? .inactive : .active
             }
@@ -47,7 +49,7 @@ struct GameListView: View {
         }
 #else
         ToolbarItemGroup(placement: .automatic) {
-          Button("Edit") { }
+          Button("UI.Common.Edit") { }
           Button {
             // Placeholder for settings screen.
           } label: {
@@ -57,7 +59,7 @@ struct GameListView: View {
 #endif
 
         ToolbarItem(placement: .principal) {
-          Text("Wizard")
+          Text("UI.GameList.NavigationTitle")
             .font(.headline)
         }
       }
@@ -97,9 +99,9 @@ struct GameListView: View {
   private var listRows: some View {
     if filteredGames.isEmpty {
       ContentUnavailableView(
-        "No games yet",
+        "UI.GameList.Empty.Title",
         systemImage: "wand.and.stars",
-        description: Text("Create a game to start tracking scores.")
+        description: Text("UI.GameList.Empty.Description")
       )
       .listRowBackground(Color.clear)
     } else {
@@ -110,7 +112,16 @@ struct GameListView: View {
           VStack(alignment: .leading, spacing: 4) {
             Text(game.name)
               .font(.headline)
-            Text("Updated \(game.updatedAt.formatted(date: .abbreviated, time: .shortened))")
+            Text(
+              String(
+                format: AppLocalization.string("UI.GameList.UpdatedAt", languageCode: currentLanguageCode),
+                locale: locale
+                ,
+                game.updatedAt.formatted(
+                  Date.FormatStyle(date: .abbreviated, time: .shortened).locale(locale)
+                )
+              )
+            )
               .font(.caption)
               .foregroundStyle(.secondary)
           }
@@ -132,7 +143,7 @@ struct GameListView: View {
       HStack(spacing: 8) {
         Image(systemName: "magnifyingglass")
           .foregroundStyle(.secondary)
-        TextField("Search", text: $searchText)
+        TextField("UI.GameList.Search.Placeholder", text: $searchText)
           .textFieldStyle(.plain)
 #if os(iOS)
           .textInputAutocapitalization(.never)
@@ -156,7 +167,7 @@ struct GameListView: View {
           }
       }
       .buttonStyle(.plain)
-      .accessibilityLabel("New game")
+      .accessibilityLabel("UI.GameList.NewGame.Accessibility")
     }
     .padding(.horizontal, 16)
     .padding(.bottom, 12)
@@ -173,6 +184,11 @@ struct GameListView: View {
     } catch {
       // Ignore for now; the list will refresh on next load.
     }
+  }
+
+  private var currentLanguageCode: String? {
+    let selected = AppLanguage(rawValue: appLanguageRaw) ?? .system
+    return selected == .system ? nil : selected.rawValue
   }
 }
 

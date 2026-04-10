@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
   @AppStorage("app.colorScheme") private var colorSchemeRaw: String = AppColorScheme.system.rawValue
+  @AppStorage("app.language") private var appLanguageRaw: String = AppLanguage.system.rawValue
   @AppStorage("newGame.defaultPlayerCount") private var defaultPlayerCount: Int = 4
   @Environment(\.colorScheme) private var colorScheme
 
@@ -12,25 +13,52 @@ struct SettingsView: View {
     )
   }
 
+  private var languageSelection: Binding<AppLanguage> {
+    Binding(
+      get: { AppLanguage(rawValue: appLanguageRaw) ?? .system },
+      set: { appLanguageRaw = $0.rawValue }
+    )
+  }
+
   var body: some View {
     NavigationStack {
       Form {
         Section {
           VStack(alignment: .leading, spacing: 6) {
-            Text("Appearance")
+            Text("UI.Settings.Appearance.Title")
               .font(.headline)
 
-            Text("Choose how Wizard looks on your device.")
+            Text("UI.Settings.Appearance.Description")
               .font(.caption)
               .foregroundStyle(.secondary)
 
-            Picker("Appearance", selection: selection) {
+            Picker("UI.Settings.Appearance.Title", selection: selection) {
               ForEach(AppColorScheme.allCases, id: \.self) { scheme in
-                Text(scheme.title).tag(scheme)
+                Text(LocalizedStringKey(scheme.titleKey)).tag(scheme)
               }
             }
             .pickerStyle(.segmented)
-            .accessibilityLabel("Appearance")
+            .accessibilityLabel("UI.Settings.Appearance.Title")
+          }
+          .padding(.vertical, 4)
+        }
+
+        Section {
+          VStack(alignment: .leading, spacing: 6) {
+            Text("UI.Settings.Language.Title")
+              .font(.headline)
+
+            Text("UI.Settings.Language.Description")
+              .font(.caption)
+              .foregroundStyle(.secondary)
+
+            Picker("UI.Settings.Language.Title", selection: languageSelection) {
+              ForEach(AppLanguage.allCases, id: \.self) { language in
+                Text(LocalizedStringKey(language.titleKey)).tag(language)
+              }
+            }
+            .pickerStyle(.segmented)
+            .accessibilityLabel("UI.Settings.Language.Title")
           }
           .padding(.vertical, 4)
         }
@@ -39,7 +67,7 @@ struct SettingsView: View {
           VStack(alignment: .leading, spacing: 10) {
             VStack(alignment: .leading, spacing: 6) {
               HStack(spacing: 12) {
-                Text("Default players")
+                Text("UI.Settings.DefaultPlayers.Title")
                   .font(.subheadline.weight(.semibold))
 
                 Spacer(minLength: 0)
@@ -48,40 +76,45 @@ struct SettingsView: View {
                   Button {
                     defaultPlayerCount = max(2, defaultPlayerCount - 1)
                   } label: {
-                    pillText("–")
+                    pillText(String(localized: "UI.Common.Symbol.EnDash", defaultValue: "–"))
                   }
                   .buttonStyle(.plain)
-                  .accessibilityLabel("Decrease default player count")
+                  .accessibilityLabel("UI.Settings.DefaultPlayers.Decrease")
                   .disabled(defaultPlayerCount <= 2)
 
                   pillText("\(defaultPlayerCount)")
-                    .accessibilityLabel("Default players: \(defaultPlayerCount)")
+                    .accessibilityLabel(
+                      String(
+                        localized: "UI.Settings.DefaultPlayers.Current",
+                        defaultValue: "Default players: \(defaultPlayerCount)"
+                      )
+                    )
 
                   Button {
                     defaultPlayerCount = min(6, defaultPlayerCount + 1)
                   } label: {
-                    pillText("+")
+                    pillText(String(localized: "UI.Common.Symbol.Plus", defaultValue: "+"))
                   }
                   .buttonStyle(.plain)
-                  .accessibilityLabel("Increase default player count")
+                  .accessibilityLabel("UI.Settings.DefaultPlayers.Increase")
                   .disabled(defaultPlayerCount >= 6)
                 }
               }
 
-              Text("Pre-fills the player count in the Create Game screen.")
+              Text("UI.Settings.DefaultPlayers.Description")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             }
           }
           .padding(.vertical, 4)
         } header: {
-          Text("Default values for new Games")
+          Text("UI.Settings.DefaultValues.Header")
         }
       }
 #if os(iOS)
       .scrollContentBackground(.hidden)
 #endif
-      .navigationTitle("Settings")
+      .navigationTitle("UI.Settings.NavigationTitle")
     }
     .wizardBackground()
   }

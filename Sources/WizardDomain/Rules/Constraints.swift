@@ -48,17 +48,31 @@ extension Constraint {
 }
 
 extension Constraint.GameConstraint {
+  public var titleKey: String {
+    switch self {
+    case .betSumNotEqualHandSize:
+      return "Domain.Constraint.Game.BetSumNotEqualHandSize.Title"
+    }
+  }
+
+  public var showOnFailureKey: String {
+    switch self {
+    case .betSumNotEqualHandSize:
+      return "Domain.Constraint.Game.BetSumNotEqualHandSize.Failure"
+    }
+  }
+
   public var title: String {
     switch self {
     case .betSumNotEqualHandSize:
-      return "Sum of all Bets is not allowed to be equal to the hand size"
+      return String(localized: "Domain.Constraint.Game.BetSumNotEqualHandSize.Title", defaultValue: "Sum of all Bets is not allowed to be equal to the hand size")
     }
   }
 
   public var showOnFailure: String {
     switch self {
     case .betSumNotEqualHandSize:
-      return "Bets cannot add up to the hand size."
+      return String(localized: "Domain.Constraint.Game.BetSumNotEqualHandSize.Failure", defaultValue: "Bets cannot add up to the hand size.")
     }
   }
 
@@ -73,21 +87,39 @@ extension Constraint.GameConstraint {
 }
 
 extension Constraint.RoundConstraint {
+  public var titleKey: String {
+    switch self {
+    case .gotSumEqualsHandSize:
+      return "Domain.Constraint.Round.GotSumEqualsHandSize.Title"
+    case .gotSumEqualsHandSizeMinusOne:
+      return "Domain.Constraint.Round.GotSumEqualsHandSizeMinusOne.Title"
+    }
+  }
+
+  public var showOnFailureKey: String {
+    switch self {
+    case .gotSumEqualsHandSize:
+      return "Domain.Constraint.Round.GotSumEqualsHandSize.Failure"
+    case .gotSumEqualsHandSizeMinusOne:
+      return "Domain.Constraint.Round.GotSumEqualsHandSizeMinusOne.Failure"
+    }
+  }
+
   public var title: String {
     switch self {
     case .gotSumEqualsHandSize:
-      return "Sum of all Won tricks must be equal to the Hand Size"
+      return String(localized: "Domain.Constraint.Round.GotSumEqualsHandSize.Title", defaultValue: "Sum of all Won tricks must be equal to the Hand Size")
     case .gotSumEqualsHandSizeMinusOne:
-      return "\(Cards.Bomb.name) was played"
+      return String(localized: "Domain.Constraint.Round.GotSumEqualsHandSizeMinusOne.Title", defaultValue: "\(Cards.Bomb.name) was played")
     }
   }
 
   public var showOnFailure: String {
     switch self {
     case .gotSumEqualsHandSize:
-      return "Won tricks must add up to the hand size."
+      return String(localized: "Domain.Constraint.Round.GotSumEqualsHandSize.Failure", defaultValue: "Won tricks must add up to the hand size.")
     case .gotSumEqualsHandSizeMinusOne:
-      return "With \(Cards.Bomb.name), won tricks must add up to hand size - 1."
+      return String(localized: "Domain.Constraint.Round.GotSumEqualsHandSizeMinusOne.Failure", defaultValue: "With \(Cards.Bomb.name), won tricks must add up to hand size - 1.")
     }
   }
 

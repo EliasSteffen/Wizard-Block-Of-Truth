@@ -19,6 +19,8 @@
 		00000000000000000000010A /* WizardBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000020A /* WizardBackground.swift */; };
 		00000000000000000000010B /* AppColorScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000020B /* AppColorScheme.swift */; };
 		00000000000000000000010C /* CloudCardAdjustmentRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000020C /* CloudCardAdjustmentRules.swift */; };
+		00000000000000000000010D /* AppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000020D /* AppLanguage.swift */; };
+		00000000000000000000010E /* AppLocalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000020E /* AppLocalization.swift */; };
 		000000000000000000000111 /* Commands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000211 /* Commands.swift */; };
 		000000000000000000000112 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000212 /* Game.swift */; };
 		000000000000000000000113 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000213 /* Models.swift */; };
@@ -26,6 +28,7 @@
 		000000000000000000000115 /* Rules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000215 /* Rules.swift */; };
 		000000000000000000000116 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000216 /* Errors.swift */; };
 		000000000000000000000117 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000217 /* Assets.xcassets */; };
+		000000000000000000000118 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000218 /* Localizable.xcstrings */; };
 		000000000000000000000119 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000219 /* Card.swift */; };
 		00000000000000000000011A /* Cards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000021A /* Cards.swift */; };
 /* End PBXBuildFile section */
@@ -45,6 +48,8 @@
 		00000000000000000000020A /* WizardBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WizardBackground.swift; path = Sources/WizardApp/UI/WizardBackground.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000020B /* AppColorScheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppColorScheme.swift; path = Sources/WizardApp/App/AppColorScheme.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000020C /* CloudCardAdjustmentRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CloudCardAdjustmentRules.swift; path = Sources/WizardApp/UI/CloudCardAdjustmentRules.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000020D /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppLanguage.swift; path = Sources/WizardApp/App/AppLanguage.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000020E /* AppLocalization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppLocalization.swift; path = Sources/WizardApp/App/AppLocalization.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000211 /* Commands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Commands.swift; path = Sources/WizardDomain/Game/Commands.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000212 /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Game.swift; path = Sources/WizardDomain/Game/Game.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000213 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Models.swift; path = Sources/WizardDomain/Models/Models.swift; sourceTree = SOURCE_ROOT; };
@@ -52,6 +57,7 @@
 		000000000000000000000215 /* Rules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Rules.swift; path = Sources/WizardDomain/Rules/Rules.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000216 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Errors.swift; path = Sources/WizardDomain/Support/Errors.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000217 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		000000000000000000000218 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		000000000000000000000219 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Card.swift; path = Sources/WizardDomain/Models/Card.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000021A /* Cards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Cards.swift; path = Sources/WizardDomain/Models/Cards.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -80,6 +86,7 @@
 			isa = PBXGroup;
 			children = (
 				000000000000000000000217 /* Assets.xcassets */,
+				000000000000000000000218 /* Localizable.xcstrings */,
 				000000000000000000000010 /* Info.plist */,
 				000000000000000000000201 /* WizardApp.swift */,
 				000000000000000000000404 /* App */,
@@ -113,6 +120,8 @@
 			children = (
 				000000000000000000000202 /* GameCodec.swift */,
 				00000000000000000000020B /* AppColorScheme.swift */,
+				00000000000000000000020D /* AppLanguage.swift */,
+				00000000000000000000020E /* AppLocalization.swift */,
 				000000000000000000000203 /* GameStore.swift */,
 			);
 			name = App;
@@ -235,6 +244,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				000000000000000000000117 /* Assets.xcassets in Resources */,
+				000000000000000000000118 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -248,6 +258,8 @@
 				000000000000000000000101 /* WizardApp.swift in Sources */,
 				000000000000000000000102 /* GameCodec.swift in Sources */,
 				00000000000000000000010B /* AppColorScheme.swift in Sources */,
+				00000000000000000000010D /* AppLanguage.swift in Sources */,
+				00000000000000000000010E /* AppLocalization.swift in Sources */,
 				000000000000000000000103 /* GameStore.swift in Sources */,
 				000000000000000000000104 /* GameSnapshotEntity.swift in Sources */,
 				000000000000000000000105 /* GameListView.swift in Sources */,
@@ -282,7 +294,6 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = WizardMobileApp/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Wizard Block Of Truth";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.card-games";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -309,7 +320,6 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = WizardMobileApp/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Wizard Block Of Truth";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.card-games";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (

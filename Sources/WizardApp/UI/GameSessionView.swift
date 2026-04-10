@@ -35,12 +35,12 @@ struct GameSessionView: View {
         content(game: game)
       } else if storeHolder.store?.didAttemptLoad == true {
         ContentUnavailableView(
-          "Couldn’t open game",
+          "UI.GameSession.OpenError.Title",
           systemImage: "exclamationmark.triangle",
-          description: Text(storeHolder.store?.lastError?.localizedDescription ?? "Unknown error.")
+          description: Text(storeHolder.store?.lastError?.localizedDescription ?? String(localized: "UI.GameSession.OpenError.Unknown", defaultValue: "Unknown error."))
         )
         .overlay(alignment: .bottom) {
-          Button("Retry") { loadIfNeeded(force: true) }
+          Button("UI.Common.Retry") { loadIfNeeded(force: true) }
             .buttonStyle(.borderedProminent)
             .padding(.bottom, 16)
         }
@@ -49,16 +49,16 @@ struct GameSessionView: View {
           .task { loadIfNeeded() }
       }
     }
-    .navigationTitle(storeHolder.store?.currentGame?.name ?? "Game")
+    .navigationTitle(storeHolder.store?.currentGame?.name ?? String(localized: "UI.GameSession.NavigationFallback", defaultValue: "Game"))
 #if os(iOS)
     .navigationBarTitleDisplayMode(.inline)
 #endif
     .onAppear { loadIfNeeded() }
-    .alert("Error", isPresented: Binding(
+    .alert("UI.Common.Error", isPresented: Binding(
       get: { shouldPresentGlobalErrorAlert },
       set: { newValue in if !newValue { storeHolder.store?.lastError = nil } }
     )) {
-      Button("OK", role: .cancel) { storeHolder.store?.lastError = nil }
+      Button("UI.Common.OK", role: .cancel) { storeHolder.store?.lastError = nil }
     } message: {
       Text(storeHolder.store?.lastError?.localizedDescription ?? "")
     }
@@ -107,16 +107,16 @@ struct GameSessionView: View {
     .sheet(isPresented: $showingBets) {
       if let round = game.currentRound {
         EntrySheetView(
-          title: "Enter Bets",
+          title: "UI.Button.EnterBets",
           handSize: round.handSize,
           players: game.players,
           currentValues: game.rounds[game.currentRoundIndex].entries.mapValues { $0.bet },
-          valueLabel: "Bet",
+          valueLabel: String(localized: "UI.GameSession.Entry.Bet", defaultValue: "Bet"),
           accessory: nil,
           allowedRange: nil,
           isPlayerDisabled: nil,
           onSubmit: { values in
-            guard let store = storeHolder.store else { return NSError(domain: "WizardApp", code: 1, userInfo: [NSLocalizedDescriptionKey: "Store not ready."]) }
+            guard let store = storeHolder.store else { return NSError(domain: "WizardApp", code: 1, userInfo: [NSLocalizedDescriptionKey: String(localized: "Error.Store.NotReady", defaultValue: "Store not ready.")]) }
             let cmds: [GameCommand] = values.map { (pid, bet) in
               .submitBet(playerId: pid, roundIndex: game.currentRoundIndex, bet: bet)
             }
@@ -140,15 +140,15 @@ struct GameSessionView: View {
     .sheet(isPresented: $showingGot) {
       if let round = game.currentRound {
         EntrySheetView(
-          title: "Enter Won Tricks",
+          title: "UI.Button.EnterWonTricks",
           handSize: round.handSize,
           players: game.players,
           currentValues: game.rounds[game.currentRoundIndex].entries.mapValues { $0.got },
-          valueLabel: "Won",
+          valueLabel: String(localized: "UI.GameSession.Entry.Won", defaultValue: "Won"),
           accessory: AnyView(
             Toggle(isOn: $bombPlayedThisRound) {
               VStack(alignment: .leading, spacing: 2) {
-                Text(Constraint.RoundConstraint.gotSumEqualsHandSizeMinusOne.title)
+                Text(LocalizedStringKey(Constraint.RoundConstraint.gotSumEqualsHandSizeMinusOne.titleKey))
                   .font(.subheadline.weight(.semibold))
               }
             }
@@ -156,7 +156,7 @@ struct GameSessionView: View {
           allowedRange: nil,
           isPlayerDisabled: nil,
           onSubmit: { values in
-            guard let store = storeHolder.store else { return NSError(domain: "WizardApp", code: 1, userInfo: [NSLocalizedDescriptionKey: "Store not ready."]) }
+            guard let store = storeHolder.store else { return NSError(domain: "WizardApp", code: 1, userInfo: [NSLocalizedDescriptionKey: String(localized: "Error.Store.NotReady", defaultValue: "Store not ready.")]) }
             let constraints = constraintsForFinalize(game: game, bombPlayed: bombPlayedThisRound) ?? [.gotSumEqualsHandSize]
             var cmds: [GameCommand] = values.map { (pid, got) in
               .submitGot(playerId: pid, roundIndex: game.currentRoundIndex, got: got)
@@ -181,11 +181,11 @@ struct GameSessionView: View {
     .sheet(isPresented: $showingCloudCard) {
       if let round = game.currentRound {
         EntrySheetView(
-          title: "Enter Cloud Card",
+          title: "UI.Button.EnterCloudCard",
           handSize: round.handSize,
           players: game.players,
           currentValues: game.rounds[game.currentRoundIndex].entries.mapValues { $0.bet },
-          valueLabel: "Bet",
+          valueLabel: String(localized: "UI.GameSession.Entry.Bet", defaultValue: "Bet"),
           accessory: nil,
           allowedRange: { playerId, editedValues in
             cloudCardAllowedRange(game: game, playerId: playerId, editedBets: editedValues)
@@ -194,7 +194,7 @@ struct GameSessionView: View {
             isCloudCardPlayerLocked(game: game, playerId: playerId, editedBets: editedValues)
           },
           onSubmit: { values in
-            guard let store = storeHolder.store else { return NSError(domain: "WizardApp", code: 1, userInfo: [NSLocalizedDescriptionKey: "Store not ready."]) }
+            guard let store = storeHolder.store else { return NSError(domain: "WizardApp", code: 1, userInfo: [NSLocalizedDescriptionKey: String(localized: "Error.Store.NotReady", defaultValue: "Store not ready.")]) }
             if let validationError = validateCloudCardAdjustment(game: game, submittedBets: values) {
               return validationError
             }
@@ -219,25 +219,25 @@ struct GameSessionView: View {
   }
 
   private func header(round: Round?, players: [Player]) -> some View {
-    let roundText = round == nil ? "—" : "\(round?.handSize ?? 0)"
+    let roundText = round == nil ? String(localized: "UI.Common.EmptyValue", defaultValue: "—") : "\(round?.handSize ?? 0)"
     let dealerName: String = {
       guard let dealerId = round?.dealer,
-            let dealer = players.first(where: { $0.id == dealerId }) else { return "—" }
+            let dealer = players.first(where: { $0.id == dealerId }) else { return String(localized: "UI.Common.EmptyValue", defaultValue: "—") }
       return dealer.name
     }()
 
     return HStack(alignment: .center, spacing: 10) {
-      Text("Round")
+      Text("UI.GameSession.Header.Round")
         .font(.caption.weight(.semibold))
         .foregroundStyle(.secondary)
         .baselineOffset(0)
       Text(roundText)
         .font(.headline.weight(.semibold).monospacedDigit())
 
-      Text("·")
+      Text("UI.GameSession.Header.Separator")
         .foregroundStyle(.secondary.opacity(0.7))
 
-      Text("Dealer")
+      Text("UI.GameSession.Header.Dealer")
         .font(.caption.weight(.semibold))
         .foregroundStyle(.secondary)
         .baselineOffset(0)
@@ -273,7 +273,7 @@ struct GameSessionView: View {
 
         VStack(alignment: .leading, spacing: 10) {
           HStack(spacing: 10) {
-            Text("#\(idx + 1)")
+            Text(String(localized: "UI.GameSession.Score.RankPrefix", defaultValue: "#\(idx + 1)"))
               .font(.caption.weight(.semibold).monospacedDigit())
               .foregroundStyle(.secondary)
               .frame(width: 28, alignment: .leading)
@@ -293,8 +293,8 @@ struct GameSessionView: View {
           }
 
           HStack(alignment: .bottom, spacing: 10) {
-            entryChip(title: "Bet", value: currentEntry?.bet)
-            entryChip(title: "Won", value: currentEntry?.got)
+            entryChip(titleKey: "UI.GameSession.Entry.Bet", value: currentEntry?.bet)
+            entryChip(titleKey: "UI.GameSession.Entry.Won", value: currentEntry?.got)
 
             Spacer(minLength: 10)
 
@@ -306,7 +306,7 @@ struct GameSessionView: View {
                   .font(.caption)
                   .foregroundStyle(lastDelta >= 0 ? .green : .red)
               } else {
-                Text("—").font(.caption).foregroundStyle(.secondary)
+                Text("UI.Common.EmptyValue").font(.caption).foregroundStyle(.secondary)
               }
             }
           }
@@ -337,12 +337,12 @@ struct GameSessionView: View {
     }
   }
 
-  private func entryChip(title: String, value: Int?) -> some View {
-    let text = value.map(String.init) ?? "—"
+  private func entryChip(titleKey: String, value: Int?) -> some View {
+    let text = value.map(String.init) ?? String(localized: "UI.Common.EmptyValue", defaultValue: "—")
     let isMissing = value == nil
 
     return VStack(alignment: .leading, spacing: 2) {
-      Text(title.uppercased())
+      Text(LocalizedStringKey(titleKey))
         .font(.caption2.weight(.semibold))
         .foregroundStyle(.secondary)
       Text(text)
@@ -369,7 +369,7 @@ struct GameSessionView: View {
     if round == nil {
       return AnyView(
         Button(action: { startAndShowBetsIfNeeded(game: game) }) {
-          Text("Enter Bets")
+          Text("UI.Button.EnterBets")
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
             .font(.headline)
@@ -379,7 +379,7 @@ struct GameSessionView: View {
     } else if !allBetsPresent {
       return AnyView(
         Button(action: { showingBets = true }) {
-          Text("Enter Bets")
+          Text("UI.Button.EnterBets")
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
             .font(.headline)
@@ -390,7 +390,7 @@ struct GameSessionView: View {
       return AnyView(
         HStack(spacing: 10) {
           Button(action: { showingCloudCard = true }) {
-            Text("Enter Cloud Card")
+            Text("UI.Button.EnterCloudCard")
               .frame(maxWidth: .infinity)
               .padding(.vertical, 14)
               .font(.headline)
@@ -398,7 +398,7 @@ struct GameSessionView: View {
           .buttonStyle(.bordered)
 
           Button(action: { showingGot = true }) {
-            Text("Enter Won Tricks")
+            Text("UI.Button.EnterWonTricks")
               .frame(maxWidth: .infinity)
               .padding(.vertical, 14)
               .font(.headline)
@@ -416,7 +416,7 @@ struct GameSessionView: View {
             bombPlayedThisRound = false
           }
         }) {
-          Text("Finalize Round")
+          Text("UI.Button.FinalizeRound")
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
             .font(.headline)
@@ -444,7 +444,7 @@ struct GameSessionView: View {
         return NSError(
           domain: "WizardApp",
           code: 2,
-          userInfo: [NSLocalizedDescriptionKey: "Cloud Card can only be entered after all bets have been placed."]
+          userInfo: [NSLocalizedDescriptionKey: String(localized: "Error.CloudCard.BetsRequired", defaultValue: "Cloud Card can only be entered after all bets have been placed.")]
         )
       }
 
@@ -458,14 +458,14 @@ struct GameSessionView: View {
       return NSError(
         domain: "WizardApp",
         code: 3,
-        userInfo: [NSLocalizedDescriptionKey: "Exactly one player's bet must be changed for Cloud Card."]
+        userInfo: [NSLocalizedDescriptionKey: String(localized: "Error.CloudCard.ExactlyOneChanged", defaultValue: "Exactly one player's bet must be changed for Cloud Card.")]
       )
     }
     guard abs(changed[0].delta) == 1 else {
       return NSError(
         domain: "WizardApp",
         code: 4,
-        userInfo: [NSLocalizedDescriptionKey: "Cloud Card requires changing that bet by exactly 1."]
+        userInfo: [NSLocalizedDescriptionKey: String(localized: "Error.CloudCard.ChangeByOne", defaultValue: "Cloud Card requires changing that bet by exactly 1.")]
       )
     }
 

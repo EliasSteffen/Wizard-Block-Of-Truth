@@ -5,11 +5,11 @@ enum AppColorScheme: String, CaseIterable, Codable, Hashable {
   case light
   case dark
 
-  var title: String {
+  var titleKey: String {
     switch self {
-    case .system: return "System"
-    case .light: return "Light"
-    case .dark: return "Dark"
+    case .system: return "UI.Settings.Appearance.Option.System"
+    case .light: return "UI.Settings.Appearance.Option.Light"
+    case .dark: return "UI.Settings.Appearance.Option.Dark"
     }
   }
 
