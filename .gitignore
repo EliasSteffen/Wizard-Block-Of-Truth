@@ -1,4 +1,9 @@
 .build/
 .swiftpm/
 
-*/.DS_Store
+**/.DS_Store
+
+# Xcode user-specific files
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/

@@ -132,7 +132,7 @@ struct NewGameView: View {
       if name == "New Game" {
         name = Self.defaultGameName()
       }
-      focusedField = .gameName
+      focusedField = nil
     }
   }
 

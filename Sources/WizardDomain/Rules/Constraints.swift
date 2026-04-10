@@ -78,7 +78,7 @@ extension Constraint.RoundConstraint {
     case .gotSumEqualsHandSize:
       return "Sum of all Won tricks must be equal to the Hand Size"
     case .gotSumEqualsHandSizeMinusOne:
-      return "Bomb was played"
+      return "\(Cards.Bomb.name) was played"
     }
   }
 
@@ -87,7 +87,7 @@ extension Constraint.RoundConstraint {
     case .gotSumEqualsHandSize:
       return "Won tricks must add up to the hand size."
     case .gotSumEqualsHandSizeMinusOne:
-      return "With Bomb, won tricks must add up to hand size − 1."
+      return "With \(Cards.Bomb.name), won tricks must add up to hand size - 1."
     }
   }
 
