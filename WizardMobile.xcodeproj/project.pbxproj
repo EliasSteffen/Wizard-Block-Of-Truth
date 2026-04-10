@@ -18,6 +18,7 @@
 		000000000000000000000109 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000209 /* SettingsView.swift */; };
 		00000000000000000000010A /* WizardBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000020A /* WizardBackground.swift */; };
 		00000000000000000000010B /* AppColorScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000020B /* AppColorScheme.swift */; };
+		00000000000000000000010C /* CloudCardAdjustmentRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000020C /* CloudCardAdjustmentRules.swift */; };
 		000000000000000000000111 /* Commands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000211 /* Commands.swift */; };
 		000000000000000000000112 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000212 /* Game.swift */; };
 		000000000000000000000113 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000213 /* Models.swift */; };
@@ -43,6 +44,7 @@
 		000000000000000000000209 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SettingsView.swift; path = Sources/WizardApp/UI/SettingsView.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000020A /* WizardBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WizardBackground.swift; path = Sources/WizardApp/UI/WizardBackground.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000020B /* AppColorScheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppColorScheme.swift; path = Sources/WizardApp/App/AppColorScheme.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000020C /* CloudCardAdjustmentRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CloudCardAdjustmentRules.swift; path = Sources/WizardApp/UI/CloudCardAdjustmentRules.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000211 /* Commands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Commands.swift; path = Sources/WizardDomain/Game/Commands.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000212 /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Game.swift; path = Sources/WizardDomain/Game/Game.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000213 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Models.swift; path = Sources/WizardDomain/Models/Models.swift; sourceTree = SOURCE_ROOT; };
@@ -133,6 +135,7 @@
 				000000000000000000000208 /* EntrySheetView.swift */,
 				000000000000000000000209 /* SettingsView.swift */,
 				00000000000000000000020A /* WizardBackground.swift */,
+				00000000000000000000020C /* CloudCardAdjustmentRules.swift */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -253,6 +256,7 @@
 				000000000000000000000108 /* EntrySheetView.swift in Sources */,
 				000000000000000000000109 /* SettingsView.swift in Sources */,
 				00000000000000000000010A /* WizardBackground.swift in Sources */,
+				00000000000000000000010C /* CloudCardAdjustmentRules.swift in Sources */,
 				000000000000000000000111 /* Commands.swift in Sources */,
 				000000000000000000000112 /* Game.swift in Sources */,
 				000000000000000000000113 /* Models.swift in Sources */,

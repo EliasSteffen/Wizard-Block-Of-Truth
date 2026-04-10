@@ -15,6 +15,7 @@ struct GameSessionView: View {
 
   @State private var showingBets = false
   @State private var showingGot = false
+  @State private var showingCloudCard = false
   @State private var bombPlayedThisRound: Bool = false
 
   @State private var betsDetent: PresentationDetent = .medium
@@ -66,7 +67,7 @@ struct GameSessionView: View {
 
   private var shouldPresentGlobalErrorAlert: Bool {
     // Avoid presenting an alert on top of (or during dismissal of) a sheet.
-    if showingBets || showingGot { return false }
+    if showingBets || showingGot || showingCloudCard { return false }
     guard storeHolder.store?.currentGame != nil else { return false }
     guard let err = storeHolder.store?.lastError else { return false }
 
@@ -112,6 +113,8 @@ struct GameSessionView: View {
           currentValues: game.rounds[game.currentRoundIndex].entries.mapValues { $0.bet },
           valueLabel: "Bet",
           accessory: nil,
+          allowedRange: nil,
+          isPlayerDisabled: nil,
           onSubmit: { values in
             guard let store = storeHolder.store else { return NSError(domain: "WizardApp", code: 1, userInfo: [NSLocalizedDescriptionKey: "Store not ready."]) }
             let cmds: [GameCommand] = values.map { (pid, bet) in
@@ -150,6 +153,8 @@ struct GameSessionView: View {
               }
             }
           ),
+          allowedRange: nil,
+          isPlayerDisabled: nil,
           onSubmit: { values in
             guard let store = storeHolder.store else { return NSError(domain: "WizardApp", code: 1, userInfo: [NSLocalizedDescriptionKey: "Store not ready."]) }
             let constraints = constraintsForFinalize(game: game, bombPlayed: bombPlayedThisRound) ?? [.gotSumEqualsHandSize]
@@ -167,6 +172,39 @@ struct GameSessionView: View {
         )
 #if os(iOS)
         // Slightly taller than the standard `.medium`.
+        .presentationDetents([.fraction(0.75)], selection: $gotDetent)
+#else
+        .presentationDetents([.medium], selection: $gotDetent)
+#endif
+      }
+    }
+    .sheet(isPresented: $showingCloudCard) {
+      if let round = game.currentRound {
+        EntrySheetView(
+          title: "Enter Cloud Card",
+          handSize: round.handSize,
+          players: game.players,
+          currentValues: game.rounds[game.currentRoundIndex].entries.mapValues { $0.bet },
+          valueLabel: "Bet",
+          accessory: nil,
+          allowedRange: { playerId, editedValues in
+            cloudCardAllowedRange(game: game, playerId: playerId, editedBets: editedValues)
+          },
+          isPlayerDisabled: { playerId, editedValues in
+            isCloudCardPlayerLocked(game: game, playerId: playerId, editedBets: editedValues)
+          },
+          onSubmit: { values in
+            guard let store = storeHolder.store else { return NSError(domain: "WizardApp", code: 1, userInfo: [NSLocalizedDescriptionKey: "Store not ready."]) }
+            if let validationError = validateCloudCardAdjustment(game: game, submittedBets: values) {
+              return validationError
+            }
+            let cmds: [GameCommand] = values.map { (pid, bet) in
+              .submitBet(playerId: pid, roundIndex: game.currentRoundIndex, bet: bet)
+            }
+            return store.applyBatch(cmds)
+          }
+        )
+#if os(iOS)
         .presentationDetents([.fraction(0.75)], selection: $gotDetent)
 #else
         .presentationDetents([.medium], selection: $gotDetent)
@@ -328,43 +366,64 @@ struct GameSessionView: View {
     let allBetsPresent = entries.values.allSatisfy { $0.bet != nil }
     let allGotPresent = entries.values.allSatisfy { $0.got != nil }
 
-    let label: String
-    let action: () -> Void
-    let enabled: Bool
-
     if round == nil {
-      label = "Enter Bets"
-      action = { startAndShowBetsIfNeeded(game: game) }
-      enabled = true
-    } else if !allBetsPresent {
-      label = "Enter Bets"
-      action = { showingBets = true }
-      enabled = true
-    } else if !allGotPresent {
-      label = "Enter Won Tricks"
-      action = { showingGot = true }
-      enabled = true
-    } else {
-      label = "Finalize Round"
-      action = {
-        guard let store = storeHolder.store else { return }
-        let constraints = constraintsForFinalize(game: store.currentGame, bombPlayed: bombPlayedThisRound)
-        store.apply(.finalizeCurrentRound(roundConstraints: constraints))
-        if store.lastError == nil {
-          bombPlayedThisRound = false
+      return AnyView(
+        Button(action: { startAndShowBetsIfNeeded(game: game) }) {
+          Text("Enter Bets")
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .font(.headline)
         }
-      }
-      enabled = true
-    }
+        .buttonStyle(.borderedProminent)
+      )
+    } else if !allBetsPresent {
+      return AnyView(
+        Button(action: { showingBets = true }) {
+          Text("Enter Bets")
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .font(.headline)
+        }
+        .buttonStyle(.borderedProminent)
+      )
+    } else if !allGotPresent {
+      return AnyView(
+        HStack(spacing: 10) {
+          Button(action: { showingCloudCard = true }) {
+            Text("Enter Cloud Card")
+              .frame(maxWidth: .infinity)
+              .padding(.vertical, 14)
+              .font(.headline)
+          }
+          .buttonStyle(.bordered)
 
-    return Button(action: action) {
-      Text(label)
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 14)
-        .font(.headline)
+          Button(action: { showingGot = true }) {
+            Text("Enter Won Tricks")
+              .frame(maxWidth: .infinity)
+              .padding(.vertical, 14)
+              .font(.headline)
+          }
+          .buttonStyle(.borderedProminent)
+        }
+      )
+    } else {
+      return AnyView(
+        Button(action: {
+          guard let store = storeHolder.store else { return }
+          let constraints = constraintsForFinalize(game: store.currentGame, bombPlayed: bombPlayedThisRound)
+          store.apply(.finalizeCurrentRound(roundConstraints: constraints))
+          if store.lastError == nil {
+            bombPlayedThisRound = false
+          }
+        }) {
+          Text("Finalize Round")
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .font(.headline)
+        }
+        .buttonStyle(.borderedProminent)
+      )
     }
-    .buttonStyle(.borderedProminent)
-    .disabled(!enabled)
   }
 
   private func startAndShowBetsIfNeeded(game: Game) {
@@ -373,6 +432,73 @@ struct GameSessionView: View {
       if let dealerId { storeHolder.store?.apply(.startNewGame(startingDealer: dealerId)) }
     }
     showingBets = true
+  }
+
+  private func validateCloudCardAdjustment(game: Game, submittedBets: [UUID: Int]) -> Error? {
+    let round = game.rounds[game.currentRoundIndex]
+    var changed: [(playerId: UUID, delta: Int)] = []
+
+    for player in game.players {
+      guard let currentBet = round.entries[player.id]?.bet,
+            let submittedBet = submittedBets[player.id] else {
+        return NSError(
+          domain: "WizardApp",
+          code: 2,
+          userInfo: [NSLocalizedDescriptionKey: "Cloud Card can only be entered after all bets have been placed."]
+        )
+      }
+
+      let delta = submittedBet - currentBet
+      if delta != 0 {
+        changed.append((player.id, delta))
+      }
+    }
+
+    guard changed.count == 1 else {
+      return NSError(
+        domain: "WizardApp",
+        code: 3,
+        userInfo: [NSLocalizedDescriptionKey: "Exactly one player's bet must be changed for Cloud Card."]
+      )
+    }
+    guard abs(changed[0].delta) == 1 else {
+      return NSError(
+        domain: "WizardApp",
+        code: 4,
+        userInfo: [NSLocalizedDescriptionKey: "Cloud Card requires changing that bet by exactly 1."]
+      )
+    }
+
+    return nil
+  }
+
+  private func cloudCardAllowedRange(game: Game, playerId: UUID, editedBets: [UUID: Int]) -> ClosedRange<Int> {
+    let round = game.rounds[game.currentRoundIndex]
+    let playerIds = game.players.map(\.id)
+    let baseBets = Dictionary(uniqueKeysWithValues: game.players.map { player in
+      (player.id, round.entries[player.id]?.bet ?? 0)
+    })
+    return CloudCardAdjustmentRules.allowedRange(
+      playerId: playerId,
+      handSize: round.handSize,
+      playerIds: playerIds,
+      baseBets: baseBets,
+      editedBets: editedBets
+    )
+  }
+
+  private func isCloudCardPlayerLocked(game: Game, playerId: UUID, editedBets: [UUID: Int]) -> Bool {
+    let round = game.rounds[game.currentRoundIndex]
+    let playerIds = game.players.map(\.id)
+    let baseBets = Dictionary(uniqueKeysWithValues: game.players.map { player in
+      (player.id, round.entries[player.id]?.bet ?? 0)
+    })
+    return CloudCardAdjustmentRules.isPlayerLocked(
+      playerId: playerId,
+      playerIds: playerIds,
+      baseBets: baseBets,
+      editedBets: editedBets
+    )
   }
 
   private func deltaString(_ delta: Int) -> String {

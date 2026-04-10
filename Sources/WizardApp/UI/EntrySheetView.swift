@@ -10,6 +10,8 @@ struct EntrySheetView: View {
   let currentValues: [UUID: Int?]
   let valueLabel: String
   let accessory: AnyView?
+  let allowedRange: ((UUID, [UUID: Int]) -> ClosedRange<Int>)?
+  let isPlayerDisabled: ((UUID, [UUID: Int]) -> Bool)?
   let onSubmit: ([UUID: Int]) -> Error?
 
   @Environment(\.dismiss) private var dismiss
@@ -40,10 +42,13 @@ struct EntrySheetView: View {
                   get: { values[player.id, default: currentValue(for: player.id)] },
                   set: {
                     constraintFailureText = nil
-                    values[player.id] = $0
+                    let current = valuesWithFallbacks
+                    let allowed = allowedRange?(player.id, current) ?? (0...handSize)
+                    values[player.id] = min(allowed.upperBound, max(allowed.lowerBound, $0))
                   }
                 ),
-                range: 0...handSize
+                range: allowedRange?(player.id, valuesWithFallbacks) ?? (0...handSize),
+                isDisabled: isPlayerDisabled?(player.id, valuesWithFallbacks) ?? false
               )
             }
           }
@@ -165,6 +170,7 @@ struct EntrySheetView: View {
 private struct StepperPills: View {
   @Binding var value: Int
   let range: ClosedRange<Int>
+  let isDisabled: Bool
 
   @State private var text: String = ""
   @FocusState private var isFocused: Bool
@@ -178,10 +184,11 @@ private struct StepperPills: View {
         pill("-")
       }
       .buttonStyle(.plain)
-      .disabled(value <= range.lowerBound)
+      .disabled(isDisabled || value <= range.lowerBound)
 
       TextField("", text: $text)
         .focused($isFocused)
+        .disabled(isDisabled)
         .multilineTextAlignment(.center)
         .frame(width: 44)
         .font(.headline)
@@ -200,10 +207,21 @@ private struct StepperPills: View {
         pill("+")
       }
       .buttonStyle(.plain)
-      .disabled(value >= range.upperBound)
+      .disabled(isDisabled || value >= range.upperBound)
     }
     .onAppear {
       text = "\(value)"
+    }
+    .onChange(of: range) { _, newRange in
+      let clamped = min(newRange.upperBound, max(newRange.lowerBound, value))
+      if clamped != value {
+        value = clamped
+      }
+    }
+    .onChange(of: isDisabled) { _, disabled in
+      if disabled {
+        isFocused = false
+      }
     }
     .onChange(of: value) { _, newValue in
       guard !isFocused else { return }

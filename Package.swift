@@ -26,6 +26,11 @@ let package = Package(
       dependencies: ["WizardDomain"],
       path: "Tests/WizardDomainTests"
     ),
+    .testTarget(
+      name: "WizardAppTests",
+      dependencies: ["WizardApp"],
+      path: "Tests/WizardAppTests"
+    ),
   ]
 )
 
