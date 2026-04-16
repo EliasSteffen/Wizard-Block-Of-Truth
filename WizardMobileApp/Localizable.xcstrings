@@ -44,7 +44,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der Spieler, der den Stich mit der Wolkenkarte gewinnt, muss seine Ansage um 1 erhoehen oder verringern."
+            "value" : "Der Spieler, der den Stich mit der Wolkenkarte gewinnt, muss seine Ansage um 1 erhöhen oder verringern."
           }
         },
         "en" : {
@@ -78,7 +78,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Summe der Ansagen darf nicht der Handgroesse entsprechen."
+            "value" : "Die Summe der Ansagen darf nicht der Handgrösse entsprechen."
           }
         },
         "en" : {
@@ -95,7 +95,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Summe aller Ansagen darf nicht der Handgroesse entsprechen"
+            "value" : "Die Summe aller Ansagen darf nicht der Handgrösse entsprechen"
           }
         },
         "en" : {
@@ -112,7 +112,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die gewonnenen Stiche muessen in Summe der Handgroesse entsprechen."
+            "value" : "Die gewonnenen Stiche müssen in Summe der Handgrösse entsprechen."
           }
         },
         "en" : {
@@ -129,7 +129,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Summe aller gewonnenen Stiche muss der Handgroesse entsprechen"
+            "value" : "Die Summe aller gewonnenen Stiche muss der Handgrösse entsprechen"
           }
         },
         "en" : {
@@ -146,7 +146,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit Bombe muessen die gewonnenen Stiche in Summe Handgroesse - 1 entsprechen."
+            "value" : "Mit Bombe müssen die gewonnenen Stiche in Summe Handgrösse - 1 entsprechen."
           }
         },
         "en" : {
@@ -197,7 +197,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Wolkenkarte erfordert eine Aenderung dieser Ansage um genau 1."
+            "value" : "Die Wolkenkarte erfordert eine Änderung dieser Ansage um genau 1."
           }
         },
         "en" : {
@@ -214,7 +214,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fuer die Wolkenkarte muss genau eine Ansage geaendert werden."
+            "value" : "Für die Wolkenkarte muss genau eine Ansage geändert werden."
           }
         },
         "en" : {
@@ -231,7 +231,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bedingung nicht erfuellt: %@."
+            "value" : "Bedingung nicht erfüllt: %@."
           }
         },
         "en" : {
@@ -282,7 +282,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rundeneintraege passen nicht zu den Spielern."
+            "value" : "Rundeneinträge passen nicht zu den Spielern."
           }
         },
         "en" : {
@@ -316,7 +316,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ungueltige Ansage %lld fuer Spieler %@. Erlaubt: 0...%lld."
+            "value" : "Ungültige Ansage %lld für Spieler %@. Erlaubt: 0...%lld."
           }
         },
         "en" : {
@@ -333,7 +333,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ungueltige Summe der Ansagen: darf nicht %lld sein."
+            "value" : "Ungültige Summe der Ansagen: darf nicht %lld sein."
           }
         },
         "en" : {
@@ -350,7 +350,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ungueltiger Index der aktuellen Runde: %lld."
+            "value" : "Ungültiger Index der aktuellen Runde: %lld."
           }
         },
         "en" : {
@@ -367,7 +367,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ungueltige Stichzahl %lld fuer Spieler %@. Erlaubt: 0...%lld."
+            "value" : "Ungültige Stichzahl %lld für Spieler %@. Erlaubt: 0...%lld."
           }
         },
         "en" : {
@@ -384,7 +384,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ungueltige Summe der Stiche: erwartet %lld, erhalten %lld."
+            "value" : "Ungültige Summe der Stiche: erwartet %lld, erhalten %lld."
           }
         },
         "en" : {
@@ -401,7 +401,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ungueltige Handgroesse: %lld."
+            "value" : "Ungültige Handgrösse: %lld."
           }
         },
         "en" : {
@@ -418,7 +418,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ungueltige Spieleranzahl: %lld. (Erlaubt: 2-6)"
+            "value" : "Ungültige Spieleranzahl: %lld. (Erlaubt: 2-6)"
           }
         },
         "en" : {
@@ -435,7 +435,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ungueltiger Rundenindex: %lld."
+            "value" : "Ungültiger Rundenindex: %lld."
           }
         },
         "en" : {
@@ -452,7 +452,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fehlende Eingaben (Ansage/Stiche) fuer einen oder mehrere Spieler."
+            "value" : "Fehlende Eingaben (Ansage/Stiche) für einen oder mehrere Spieler."
           }
         },
         "en" : {
@@ -802,7 +802,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ungueltige Eingabe"
+            "value" : "Ungültige Eingabe"
           }
         },
         "en" : {
@@ -1034,7 +1034,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spiel konnte nicht geoeffnet werden"
+            "value" : "Spiel konnte nicht geöffnet werden"
           }
         },
         "en" : {
@@ -1219,7 +1219,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spieleranzahl erhoehen"
+            "value" : "Spieleranzahl erhöhen"
           }
         },
         "en" : {
@@ -1252,7 +1252,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Waehle, wie Wizard auf deinem Geraet aussieht."
+            "value" : "Wähle, wie Wizard auf deinem Gerät aussieht."
           }
         },
         "en" : {
@@ -1386,7 +1386,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Standardspieleranzahl erhoehen"
+            "value" : "Standardspieleranzahl erhöhen"
           }
         },
         "en" : {
@@ -1418,7 +1418,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Standardwerte fuer neue Spiele"
+            "value" : "Standardwerte für neue Spiele"
           }
         },
         "en" : {
@@ -1434,7 +1434,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aenderungen werden sofort uebernommen und erfordern keinen App-Neustart."
+            "value" : "Änderungen werden sofort übernommen und erfordern keinen App-Neustart."
           }
         },
         "en" : {

@@ -4,12 +4,25 @@ import WizardDomain
 #endif
 
 struct EntrySheetView: View {
+  struct SumValidation {
+    enum Rule {
+      case equals
+      case notEquals
+    }
+
+    let expectedSum: Int
+    let rule: Rule
+    let failureMessage: String
+  }
+
   let title: LocalizedStringKey
   let handSize: Int
   let players: [Player]
   let currentValues: [UUID: Int?]
   let valueLabel: String
   let accessory: AnyView?
+  let sumValidation: SumValidation?
+  let showPositiveSumState: Bool
   let allowedRange: ((UUID, [UUID: Int]) -> ClosedRange<Int>)?
   let isPlayerDisabled: ((UUID, [UUID: Int]) -> Bool)?
   let onSubmit: ([UUID: Int]) -> Error?
@@ -53,7 +66,6 @@ struct EntrySheetView: View {
             }
           }
         }
-        .scrollDisabled(true)
 #if os(iOS)
         .scrollContentBackground(.hidden)
 #endif
@@ -94,6 +106,7 @@ struct EntrySheetView: View {
               dismiss()
             }
           }
+          .disabled(isLiveSumValidationEnabled && !isSumValid)
         }
       }
     }
@@ -131,9 +144,46 @@ struct EntrySheetView: View {
     valuesWithFallbacks.values.reduce(0, +)
   }
 
+  private var isLiveSumValidationEnabled: Bool {
+    sumValidation != nil
+  }
+
+  private var shouldHighlightPositiveState: Bool {
+    isLiveSumValidationEnabled || showPositiveSumState
+  }
+
+  private var isSumValid: Bool {
+    guard let sumValidation else { return true }
+    switch sumValidation.rule {
+    case .equals:
+      return sum == sumValidation.expectedSum
+    case .notEquals:
+      return sum != sumValidation.expectedSum
+    }
+  }
+
+  private var liveValidationMessage: String? {
+    guard isLiveSumValidationEnabled, !isSumValid else { return nil }
+    return constraintFailureText ?? sumValidation?.failureMessage
+  }
+
+  private var sumValueText: String {
+    guard let sumValidation else { return "\(sum)" }
+    switch sumValidation.rule {
+    case .equals:
+      return "\(sum)/\(sumValidation.expectedSum)"
+    case .notEquals:
+      return "\(sum)"
+    }
+  }
+
   private var sumBar: some View {
     VStack(alignment: .leading, spacing: 6) {
-      if let constraintFailureText {
+      if let liveValidationMessage {
+        Text(liveValidationMessage)
+          .font(.footnote.weight(.semibold))
+          .foregroundStyle(.red)
+      } else if let constraintFailureText {
         Text(constraintFailureText)
           .font(.footnote.weight(.semibold))
           .foregroundStyle(.red)
@@ -142,22 +192,69 @@ struct EntrySheetView: View {
       HStack {
         Text("UI.EntrySheet.Sum.Label")
         Spacer()
-        Text("\(sum)")
-          .foregroundStyle(sum == handSize ? .primary : .secondary)
+        Text(sumValueText)
+          .foregroundStyle(sumValueForegroundStyle)
       }
     }
     .font(.subheadline.weight(.semibold))
     .padding(.horizontal, 14)
     .padding(.vertical, 12)
     .background(sumBarBackground, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+    .overlay {
+      RoundedRectangle(cornerRadius: 16, style: .continuous)
+        .strokeBorder(sumBarBorderColor, lineWidth: shouldHighlightPositiveState ? 1 : 0)
+    }
   }
 
   private var sumBarBackground: Color {
+    if isLiveSumValidationEnabled {
+#if os(iOS)
+      return Color(uiColor: isSumValid ? .systemGreen.withAlphaComponent(0.22) : .systemRed.withAlphaComponent(0.22))
+#else
+      return isSumValid ? Color.green.opacity(0.22) : Color.red.opacity(0.22)
+#endif
+    }
+
+    if showPositiveSumState {
+#if os(iOS)
+      return Color(uiColor: .systemGreen.withAlphaComponent(0.22))
+#else
+      return Color.green.opacity(0.22)
+#endif
+    }
+
 #if os(iOS)
     return Color(uiColor: .secondarySystemGroupedBackground)
 #else
     return Color.black.opacity(0.10)
 #endif
+  }
+
+  private var sumValueForegroundStyle: Color {
+    if isLiveSumValidationEnabled {
+      return isSumValid ? .green : .red
+    }
+
+    if showPositiveSumState {
+      return .green
+    }
+
+    guard isLiveSumValidationEnabled else {
+      return sum == handSize ? .primary : .secondary
+    }
+    return isSumValid ? .green : .red
+  }
+
+  private var sumBarBorderColor: Color {
+    if isLiveSumValidationEnabled {
+      return isSumValid ? .green.opacity(0.45) : .red.opacity(0.55)
+    }
+
+    if showPositiveSumState {
+      return .green.opacity(0.45)
+    }
+
+    return .clear
   }
 
   private func currentValue(for playerId: UUID) -> Int {

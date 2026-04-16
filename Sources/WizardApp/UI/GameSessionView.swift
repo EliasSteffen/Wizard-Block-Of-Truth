@@ -18,14 +18,22 @@ struct GameSessionView: View {
   @State private var showingCloudCard = false
   @State private var bombPlayedThisRound: Bool = false
 
-  @State private var betsDetent: PresentationDetent = .medium
-  @State private var gotDetent: PresentationDetent = Self.defaultGotDetent
+  @State private var betsDetent: PresentationDetent = Self.defaultEntrySheetDetent
+  @State private var gotDetent: PresentationDetent = Self.defaultEntrySheetDetent
 
-  private static var defaultGotDetent: PresentationDetent {
+  private static var defaultEntrySheetDetent: PresentationDetent {
 #if os(iOS)
     return .fraction(0.75)
 #else
     return .medium
+#endif
+  }
+
+  private static var entrySheetDetents: Set<PresentationDetent> {
+#if os(iOS)
+    return [.fraction(0.75), .large]
+#else
+    return [.medium, .large]
 #endif
   }
 
@@ -113,6 +121,12 @@ struct GameSessionView: View {
           currentValues: game.rounds[game.currentRoundIndex].entries.mapValues { $0.bet },
           valueLabel: String(localized: "UI.GameSession.Entry.Bet", defaultValue: "Bet"),
           accessory: nil,
+          sumValidation: game.gameConstraints.contains(.betSumNotEqualHandSize) ? .init(
+            expectedSum: round.handSize,
+            rule: .notEquals,
+            failureMessage: Constraint.GameConstraint.betSumNotEqualHandSize.showOnFailure
+          ) : nil,
+          showPositiveSumState: true,
           allowedRange: nil,
           isPlayerDisabled: nil,
           onSubmit: { values in
@@ -129,16 +143,12 @@ struct GameSessionView: View {
             }
           }
         )
-#if os(iOS)
-        // Slightly taller than the standard `.medium`.
-        .presentationDetents([.fraction(0.75)], selection: $gotDetent)
-#else
-        .presentationDetents([.medium], selection: $gotDetent)
-#endif
+        .presentationDetents(Self.entrySheetDetents, selection: $betsDetent)
       }
     }
     .sheet(isPresented: $showingGot) {
       if let round = game.currentRound {
+        let expectedSum = expectedWonTricksTotal(game: game, bombPlayed: bombPlayedThisRound)
         EntrySheetView(
           title: "UI.Button.EnterWonTricks",
           handSize: round.handSize,
@@ -153,6 +163,14 @@ struct GameSessionView: View {
               }
             }
           ) : nil,
+          sumValidation: .init(
+            expectedSum: expectedSum,
+            rule: .equals,
+            failureMessage: bombPlayedThisRound
+              ? Constraint.RoundConstraint.gotSumEqualsHandSizeMinusOne.showOnFailure
+              : Constraint.RoundConstraint.gotSumEqualsHandSize.showOnFailure
+          ),
+          showPositiveSumState: false,
           allowedRange: nil,
           isPlayerDisabled: nil,
           onSubmit: { values in
@@ -170,12 +188,7 @@ struct GameSessionView: View {
             return err
           }
         )
-#if os(iOS)
-        // Slightly taller than the standard `.medium`.
-        .presentationDetents([.fraction(0.75)], selection: $gotDetent)
-#else
-        .presentationDetents([.medium], selection: $gotDetent)
-#endif
+        .presentationDetents(Self.entrySheetDetents, selection: $gotDetent)
       }
     }
     .sheet(isPresented: $showingCloudCard) {
@@ -187,6 +200,8 @@ struct GameSessionView: View {
           currentValues: game.rounds[game.currentRoundIndex].entries.mapValues { $0.bet },
           valueLabel: String(localized: "UI.GameSession.Entry.Bet", defaultValue: "Bet"),
           accessory: nil,
+          sumValidation: nil,
+          showPositiveSumState: false,
           allowedRange: { playerId, editedValues in
             cloudCardAllowedRange(game: game, playerId: playerId, editedBets: editedValues)
           },
@@ -204,11 +219,7 @@ struct GameSessionView: View {
             return store.applyBatch(cmds)
           }
         )
-#if os(iOS)
-        .presentationDetents([.fraction(0.75)], selection: $gotDetent)
-#else
-        .presentationDetents([.medium], selection: $gotDetent)
-#endif
+        .presentationDetents(Self.entrySheetDetents, selection: $gotDetent)
       }
     }
   }
@@ -219,6 +230,14 @@ struct GameSessionView: View {
       return [.gotSumEqualsHandSize]
     }
     return [bombPlayed ? .gotSumEqualsHandSizeMinusOne : .gotSumEqualsHandSize]
+  }
+
+  private func expectedWonTricksTotal(game: Game, bombPlayed: Bool) -> Int {
+    let handSize = game.currentRound?.handSize ?? 0
+    if game.playWithSpecialCards && bombPlayed {
+      return max(0, handSize - 1)
+    }
+    return handSize
   }
 
   private func header(round: Round?, players: [Player]) -> some View {
