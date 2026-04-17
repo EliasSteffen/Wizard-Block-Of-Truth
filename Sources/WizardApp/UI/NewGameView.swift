@@ -115,7 +115,6 @@ struct NewGameView: View {
       }
 #if os(iOS)
       .scrollContentBackground(.hidden)
-      .scrollDisabled(true)
 #endif
       .toolbar {
         ToolbarItem(placement: .cancellationAction) {
