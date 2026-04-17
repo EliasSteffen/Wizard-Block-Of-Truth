@@ -12,7 +12,8 @@ struct EntrySheetView: View {
 
     let expectedSum: Int
     let rule: Rule
-    let failureMessage: String
+    let failureMessageKey: String
+    let failureMessageFallback: String
   }
 
   let title: LocalizedStringKey
@@ -27,6 +28,7 @@ struct EntrySheetView: View {
   let isPlayerDisabled: ((UUID, [UUID: Int]) -> Bool)?
   let onSubmit: ([UUID: Int]) -> Error?
 
+  @AppStorage("app.language") private var appLanguageRaw: String = AppLanguage.system.rawValue
   @Environment(\.dismiss) private var dismiss
 
   @State private var values: [UUID: Int] = [:]
@@ -96,7 +98,7 @@ struct EntrySheetView: View {
 #if canImport(WizardDomain)
               if let domainErr = err as? DomainError,
                  case .constraintNotSatisfied(let constraint) = domainErr {
-                constraintFailureText = constraint.showOnFailure
+                constraintFailureText = localizedConstraintFailure(constraint)
                 return
               }
 #endif
@@ -164,7 +166,8 @@ struct EntrySheetView: View {
 
   private var liveValidationMessage: String? {
     guard isLiveSumValidationEnabled, !isSumValid else { return nil }
-    return constraintFailureText ?? sumValidation?.failureMessage
+    guard let sumValidation else { return constraintFailureText }
+    return constraintFailureText ?? AppLocalization.string(sumValidation.failureMessageKey, languageCode: currentLanguageCode, fallback: sumValidation.failureMessageFallback)
   }
 
   private var sumValueText: String {
@@ -261,6 +264,29 @@ struct EntrySheetView: View {
     // currentValues[playerId] is Int?? because the dictionary value is optional (Int?).
     // Treat nil as 0 for editing convenience.
     return (currentValues[playerId] ?? nil) ?? 0
+  }
+
+#if canImport(WizardDomain)
+  private func localizedConstraintFailure(_ constraint: Constraint) -> String {
+    let key: String
+    let fallback: String
+
+    switch constraint {
+    case .game(let gameConstraint):
+      key = gameConstraint.showOnFailureKey
+      fallback = gameConstraint.showOnFailure
+    case .round(let roundConstraint):
+      key = roundConstraint.showOnFailureKey
+      fallback = roundConstraint.showOnFailure
+    }
+
+    return AppLocalization.string(key, languageCode: currentLanguageCode, fallback: fallback)
+  }
+#endif
+
+  private var currentLanguageCode: String? {
+    let selectedLanguage = AppLanguage(rawValue: appLanguageRaw) ?? .system
+    return selectedLanguage == .system ? nil : selectedLanguage.rawValue
   }
 }
 

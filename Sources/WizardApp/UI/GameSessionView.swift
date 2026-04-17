@@ -124,7 +124,8 @@ struct GameSessionView: View {
           sumValidation: game.gameConstraints.contains(.betSumNotEqualHandSize) ? .init(
             expectedSum: round.handSize,
             rule: .notEquals,
-            failureMessage: Constraint.GameConstraint.betSumNotEqualHandSize.showOnFailure
+            failureMessageKey: Constraint.GameConstraint.betSumNotEqualHandSize.showOnFailureKey,
+            failureMessageFallback: Constraint.GameConstraint.betSumNotEqualHandSize.showOnFailure
           ) : nil,
           showPositiveSumState: true,
           allowedRange: nil,
@@ -166,12 +167,22 @@ struct GameSessionView: View {
           sumValidation: .init(
             expectedSum: expectedSum,
             rule: .equals,
-            failureMessage: bombPlayedThisRound
+            failureMessageKey: bombPlayedThisRound
+              ? Constraint.RoundConstraint.gotSumEqualsHandSizeMinusOne.showOnFailureKey
+              : Constraint.RoundConstraint.gotSumEqualsHandSize.showOnFailureKey,
+            failureMessageFallback: bombPlayedThisRound
               ? Constraint.RoundConstraint.gotSumEqualsHandSizeMinusOne.showOnFailure
               : Constraint.RoundConstraint.gotSumEqualsHandSize.showOnFailure
           ),
           showPositiveSumState: false,
-          allowedRange: nil,
+          allowedRange: { playerId, editedValues in
+            wonTricksAllowedRange(
+              game: game,
+              playerId: playerId,
+              editedValues: editedValues,
+              bombPlayed: bombPlayedThisRound
+            )
+          },
           isPlayerDisabled: nil,
           onSubmit: { values in
             guard let store = storeHolder.store else { return NSError(domain: "WizardApp", code: 1, userInfo: [NSLocalizedDescriptionKey: String(localized: "Error.Store.NotReady", defaultValue: "Store not ready.")]) }
@@ -238,6 +249,22 @@ struct GameSessionView: View {
       return max(0, handSize - 1)
     }
     return handSize
+  }
+
+  private func wonTricksAllowedRange(
+    game: Game,
+    playerId: UUID,
+    editedValues: [UUID: Int],
+    bombPlayed: Bool
+  ) -> ClosedRange<Int> {
+    let handSize = game.currentRound?.handSize ?? 0
+    let expectedTotal = expectedWonTricksTotal(game: game, bombPlayed: bombPlayed)
+    let otherPlayersSum = editedValues.reduce(into: 0) { partialResult, entry in
+      guard entry.key != playerId else { return }
+      partialResult += entry.value
+    }
+    let maxAllowed = min(handSize, max(0, expectedTotal - otherPlayersSum))
+    return 0...maxAllowed
   }
 
   private func header(round: Round?, players: [Player]) -> some View {

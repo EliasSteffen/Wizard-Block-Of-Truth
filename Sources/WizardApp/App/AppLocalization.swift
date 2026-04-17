@@ -2,18 +2,25 @@ import Foundation
 
 enum AppLocalization {
   static func string(_ key: String, languageCode: String?) -> String {
+    string(key, languageCode: languageCode, fallback: key)
+  }
+
+  static func string(_ key: String, languageCode: String?, fallback: String) -> String {
     guard let languageCode, languageCode != AppLanguage.system.rawValue else {
-      return NSLocalizedString(key, comment: "")
+      let localized = NSLocalizedString(key, comment: "")
+      return localized == key ? fallback : localized
     }
 
     guard
       let path = Bundle.main.path(forResource: languageCode, ofType: "lproj"),
       let languageBundle = Bundle(path: path)
     else {
-      return NSLocalizedString(key, comment: "")
+      let localized = NSLocalizedString(key, comment: "")
+      return localized == key ? fallback : localized
     }
 
-    return NSLocalizedString(key, bundle: languageBundle, comment: "")
+    let localized = NSLocalizedString(key, bundle: languageBundle, comment: "")
+    return localized == key ? fallback : localized
   }
 }
 
