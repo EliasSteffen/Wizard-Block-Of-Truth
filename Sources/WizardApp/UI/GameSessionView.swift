@@ -90,27 +90,37 @@ struct GameSessionView: View {
 
   @ViewBuilder
   private func content(game: Game) -> some View {
-    let round = game.currentRound
     let totals = (try? game.totalPoints()) ?? [:]
+    let isFinished = isGameFinished(game)
 
     ScrollView {
       VStack(spacing: 16) {
-        header(round: round, players: game.players)
-          .padding(.horizontal)
-          .padding(.top, 8)
-
-        scoreboard(game: game, totals: totals)
-          .padding(.horizontal)
-          .padding(.bottom, 8)
+        Group {
+          if isFinished {
+            finalScoreboard(game: game, totals: totals)
+          } else {
+            scoreboard(game: game, totals: totals)
+          }
+        }
+        .padding(.horizontal)
+        .padding(.top, 8)
+        .padding(.bottom, 8)
       }
+    }
+    .safeAreaInset(edge: .top) {
+      header(game: game)
+        .padding(.horizontal)
+        .padding(.top, 8)
     }
     // Mirror `GameListView`: the bottom control overlays the content, so the list is "under" it.
     .safeAreaInset(edge: .bottom) {
-      primaryAction(game: game)
-        .padding(.horizontal)
-        .padding(.bottom, 12)
-        .padding(.top, 8)
-        .background(Color.clear)
+      if !isFinished {
+        primaryAction(game: game)
+          .padding(.horizontal)
+          .padding(.bottom, 12)
+          .padding(.top, 8)
+          .background(Color.clear)
+      }
     }
     .sheet(isPresented: $showingBets) {
       if let round = game.currentRound {
@@ -235,6 +245,103 @@ struct GameSessionView: View {
     }
   }
 
+  @ViewBuilder
+  private func finalScoreboard(game: Game, totals: [UUID: Int]) -> some View {
+    VStack(alignment: .leading, spacing: 12) {
+      Text(String(localized: "UI.GameSession.FinalScoreboard.Title", defaultValue: "Final Scoreboard"))
+        .font(.title3.weight(.bold))
+        .padding(.horizontal, 2)
+
+      scoreboard(game: game, totals: totals)
+    }
+  }
+
+  private func isGameFinished(_ game: Game) -> Bool {
+    guard !game.rounds.isEmpty else { return false }
+    guard game.rounds.count >= game.totalRoundsPlanned else { return false }
+    return game.rounds.last?.isFinalized == true
+  }
+
+  private var activeRoundNumber: Int {
+    guard let game = storeHolder.store?.currentGame, !game.rounds.isEmpty else { return 0 }
+    return min(game.currentRoundIndex + 1, game.totalRoundsPlanned)
+  }
+
+  private var activeRoundTarget: Int {
+    storeHolder.store?.currentGame?.totalRoundsPlanned ?? 0
+  }
+
+  private var activeRoundText: String {
+    let current = activeRoundNumber
+    let total = activeRoundTarget
+    guard current > 0, total > 0 else {
+      return String(localized: "UI.Common.EmptyValue", defaultValue: "—")
+    }
+    return "\(current)/\(total)"
+  }
+
+  private var activeBetsProgressText: String {
+    guard let game = storeHolder.store?.currentGame,
+          let round = game.currentRound else {
+      return "\(0)/\(0)"
+    }
+    let betsSum = round.entries.values.reduce(into: 0) { partialResult, entry in
+      partialResult += entry.bet ?? 0
+    }
+    return "\(betsSum)/\(activeRoundNumber)"
+  }
+
+  private func header(game: Game) -> some View {
+    let round = game.currentRound
+    let players = game.players
+    let roundText = activeRoundText
+    let betsText = activeBetsProgressText
+    let dealerName: String = {
+      guard let dealerId = round?.dealer,
+            let dealer = players.first(where: { $0.id == dealerId }) else { return String(localized: "UI.Common.EmptyValue", defaultValue: "—") }
+      return dealer.name
+    }()
+
+    return HStack(alignment: .center, spacing: 10) {
+      Text("UI.GameSession.Header.Round")
+        .font(.caption.weight(.semibold))
+        .foregroundStyle(.secondary)
+        .baselineOffset(0)
+      Text(verbatim: roundText)
+        .font(.headline.weight(.semibold).monospacedDigit())
+
+      Text("UI.GameSession.Header.Separator")
+        .foregroundStyle(.secondary.opacity(0.7))
+
+      Text("UI.GameSession.Header.Dealer")
+        .font(.caption.weight(.semibold))
+        .foregroundStyle(.secondary)
+        .baselineOffset(0)
+      Text(dealerName)
+        .font(.headline.weight(.semibold))
+        .lineLimit(1)
+        .truncationMode(.tail)
+
+      Text("UI.GameSession.Header.Separator")
+        .foregroundStyle(.secondary.opacity(0.7))
+
+      Text(String(localized: "UI.GameSession.Header.Bets", defaultValue: "Bets"))
+        .font(.caption.weight(.semibold))
+        .foregroundStyle(.secondary)
+        .baselineOffset(0)
+      Text(verbatim: betsText)
+        .font(.headline.weight(.semibold).monospacedDigit())
+
+      Spacer(minLength: 0)
+    }
+    .padding(.horizontal, 14)
+    .padding(.vertical, 12)
+    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+    .overlay {
+      RoundedRectangle(cornerRadius: 18, style: .continuous)
+        .strokeBorder(Color.white.opacity(0.18), lineWidth: 1)
+    }
+  }
   private func constraintsForFinalize(game: Game?, bombPlayed: Bool) -> [Constraint.RoundConstraint]? {
     guard let game else { return nil }
     if !game.playWithSpecialCards {
@@ -267,46 +374,9 @@ struct GameSessionView: View {
     return 0...maxAllowed
   }
 
-  private func header(round: Round?, players: [Player]) -> some View {
-    let roundText = round == nil ? String(localized: "UI.Common.EmptyValue", defaultValue: "—") : "\(round?.handSize ?? 0)"
-    let dealerName: String = {
-      guard let dealerId = round?.dealer,
-            let dealer = players.first(where: { $0.id == dealerId }) else { return String(localized: "UI.Common.EmptyValue", defaultValue: "—") }
-      return dealer.name
-    }()
-
-    return HStack(alignment: .center, spacing: 10) {
-      Text("UI.GameSession.Header.Round")
-        .font(.caption.weight(.semibold))
-        .foregroundStyle(.secondary)
-        .baselineOffset(0)
-      Text(roundText)
-        .font(.headline.weight(.semibold).monospacedDigit())
-
-      Text("UI.GameSession.Header.Separator")
-        .foregroundStyle(.secondary.opacity(0.7))
-
-      Text("UI.GameSession.Header.Dealer")
-        .font(.caption.weight(.semibold))
-        .foregroundStyle(.secondary)
-        .baselineOffset(0)
-      Text(dealerName)
-        .font(.headline.weight(.semibold))
-        .lineLimit(1)
-        .truncationMode(.tail)
-
-      Spacer(minLength: 0)
-    }
-    .padding(.horizontal, 14)
-    .padding(.vertical, 12)
-    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
-    .overlay {
-      RoundedRectangle(cornerRadius: 18, style: .continuous)
-        .strokeBorder(Color.white.opacity(0.18), lineWidth: 1)
-    }
-  }
 
   private func scoreboard(game: Game, totals: [UUID: Int]) -> some View {
+    let placeDeltas = placeDeltasComparedToPreviousRound(in: game)
     let sortedPlayers = game.players.sorted { a, b in
       let ta = totals[a.id, default: 0]
       let tb = totals[b.id, default: 0]
@@ -318,14 +388,21 @@ struct GameSessionView: View {
       ForEach(Array(sortedPlayers.enumerated()), id: \.element.id) { idx, p in
         let total = totals[p.id, default: 0]
         let currentEntry = game.currentRound.flatMap { $0.entries[p.id] }
-        let lastDelta = lastFinalizedDelta(for: p.id, in: game)
+        let placeDelta = placeDeltas?[p.id]
 
         VStack(alignment: .leading, spacing: 10) {
           HStack(spacing: 10) {
-            Text(String(localized: "UI.GameSession.Score.RankPrefix", defaultValue: "#\(idx + 1)"))
-              .font(.caption.weight(.semibold).monospacedDigit())
-              .foregroundStyle(.secondary)
-              .frame(width: 28, alignment: .leading)
+            VStack(alignment: .leading, spacing: 2) {
+              Text(String(localized: "UI.GameSession.Score.RankPrefix", defaultValue: "#\(idx + 1)"))
+                .font(.caption.weight(.semibold).monospacedDigit())
+                .foregroundStyle(.secondary)
+              if let placeDelta {
+                Text(placeDeltaString(placeDelta))
+                  .font(.caption2.weight(.semibold).monospacedDigit())
+                  .foregroundStyle(placeDeltaColor(placeDelta))
+              }
+            }
+            .frame(width: 36, alignment: .leading)
 
             Text(p.name)
               .font(.headline.weight(.semibold))
@@ -350,13 +427,6 @@ struct GameSessionView: View {
             VStack(alignment: .trailing, spacing: 2) {
               Text("\(total)")
                 .font(.title3.weight(.semibold).monospacedDigit())
-              if let lastDelta {
-                Text(deltaString(lastDelta))
-                  .font(.caption)
-                  .foregroundStyle(lastDelta >= 0 ? .green : .red)
-              } else {
-                Text("UI.Common.EmptyValue").font(.caption).foregroundStyle(.secondary)
-              }
             }
           }
         }
@@ -552,16 +622,63 @@ struct GameSessionView: View {
     )
   }
 
-  private func deltaString(_ delta: Int) -> String {
-    delta >= 0 ? "+\(delta)" : "\(delta)"
+  private func placeDeltaString(_ delta: Int) -> String {
+    if delta > 0 { return "▲\(delta)" }
+    if delta < 0 { return "▼\(abs(delta))" }
+    return "•"
   }
 
-  private func lastFinalizedDelta(for playerId: UUID, in game: Game) -> Int? {
-    for round in game.rounds.reversed() where round.isFinalized {
-      guard let entry = round.entries[playerId] else { continue }
-      if let d = try? entry.pointsDelta() { return d }
+  private func placeDeltaColor(_ delta: Int) -> Color {
+    if delta > 0 { return .green }
+    if delta < 0 { return .red }
+    return .secondary
+  }
+
+  private func placeDeltasComparedToPreviousRound(in game: Game) -> [UUID: Int]? {
+    let finalizedRounds = game.rounds.filter(\.isFinalized)
+    guard finalizedRounds.count >= 2 else { return nil }
+
+    var totalsBeforeMostRecent = Dictionary(uniqueKeysWithValues: game.players.map { ($0.id, 0) })
+
+    for round in finalizedRounds.dropLast() {
+      for player in game.players {
+        guard let entry = round.entries[player.id],
+              let delta = try? entry.pointsDelta() else { continue }
+        totalsBeforeMostRecent[player.id, default: 0] += delta
+      }
     }
-    return nil
+
+    var totalsAfterMostRecent = totalsBeforeMostRecent
+    if let mostRecentRound = finalizedRounds.last {
+      for player in game.players {
+        guard let entry = mostRecentRound.entries[player.id],
+              let delta = try? entry.pointsDelta() else { continue }
+        totalsAfterMostRecent[player.id, default: 0] += delta
+      }
+    }
+
+    let previousRanks = ranks(for: totalsBeforeMostRecent, players: game.players)
+    let currentRanks = ranks(for: totalsAfterMostRecent, players: game.players)
+
+    return Dictionary(uniqueKeysWithValues: game.players.map { player in
+      let previous = previousRanks[player.id, default: game.players.count]
+      let current = currentRanks[player.id, default: game.players.count]
+      return (player.id, previous - current)
+    })
+  }
+
+  private func ranks(for totals: [UUID: Int], players: [Player]) -> [UUID: Int] {
+    let sorted = players.sorted { a, b in
+      let ta = totals[a.id, default: 0]
+      let tb = totals[b.id, default: 0]
+      if ta != tb { return ta > tb }
+      return a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
+    }
+    var result: [UUID: Int] = [:]
+    for (index, player) in sorted.enumerated() {
+      result[player.id] = index + 1
+    }
+    return result
   }
 
   private func loadIfNeeded(force: Bool = false) {

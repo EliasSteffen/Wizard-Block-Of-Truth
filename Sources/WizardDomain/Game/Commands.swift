@@ -64,9 +64,9 @@ extension GameCommand {
 
       game.rounds[roundIndex].isFinalized = true
 
-      // Only-up progression: append next round until max reached.
+      // Only-up progression: append next round until planned total is reached.
       let handSize = game.rounds[roundIndex].handSize
-      if handSize >= game.maxHandSizeClassic {
+      if handSize >= game.totalRoundsPlanned {
         // Game ends; keep currentRoundIndex at last round.
         game.currentRoundIndex = roundIndex
         return

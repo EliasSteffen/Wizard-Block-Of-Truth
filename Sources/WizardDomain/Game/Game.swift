@@ -111,6 +111,21 @@ public struct Game: Hashable, Codable, Sendable {
     Rules.maxHandSize(deckSize: 60, playerCount: players.count)
   }
 
+  public var totalRoundsPlanned: Int {
+    switch players.count {
+    case 2, 3:
+      return 20
+    case 4:
+      return 15
+    case 5:
+      return 12
+    case 6:
+      return 10
+    default:
+      return maxHandSizeClassic
+    }
+  }
+
   public var currentRound: Round? {
     guard !rounds.isEmpty else { return nil }
     guard (0..<rounds.count).contains(currentRoundIndex) else { return nil }

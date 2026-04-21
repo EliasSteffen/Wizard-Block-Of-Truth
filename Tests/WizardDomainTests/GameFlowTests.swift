@@ -280,5 +280,37 @@ final class GameFlowTests: XCTestCase {
 
     XCTAssertTrue(decoded.playWithSpecialCards)
   }
+
+  func testTotalRoundsPlannedMatchesPlayerCountTable() throws {
+    XCTAssertEqual(try Game(id: UUID(), name: "P2", mode: .singlePhone, players: TestSupport.makePlayers(2)).totalRoundsPlanned, 20)
+    XCTAssertEqual(try Game(id: UUID(), name: "P3", mode: .singlePhone, players: TestSupport.makePlayers(3)).totalRoundsPlanned, 20)
+    XCTAssertEqual(try Game(id: UUID(), name: "P4", mode: .singlePhone, players: TestSupport.makePlayers(4)).totalRoundsPlanned, 15)
+    XCTAssertEqual(try Game(id: UUID(), name: "P5", mode: .singlePhone, players: TestSupport.makePlayers(5)).totalRoundsPlanned, 12)
+    XCTAssertEqual(try Game(id: UUID(), name: "P6", mode: .singlePhone, players: TestSupport.makePlayers(6)).totalRoundsPlanned, 10)
+  }
+
+  func testFinalizeStopsAfterPlannedNumberOfRounds() throws {
+    let players = TestSupport.makePlayers(6)
+    var game = try Game(id: UUID(), name: "Test", mode: .singlePhone, players: players)
+    try game.apply(.startNewGame(startingDealer: players[0].id))
+
+    for roundIndex in 0..<game.totalRoundsPlanned {
+      let handSize = game.rounds[roundIndex].handSize
+
+      for player in players {
+        try game.apply(.submitBet(playerId: player.id, roundIndex: roundIndex, bet: 0))
+      }
+      try game.apply(.submitGot(playerId: players[0].id, roundIndex: roundIndex, got: handSize))
+      for player in players.dropFirst() {
+        try game.apply(.submitGot(playerId: player.id, roundIndex: roundIndex, got: 0))
+      }
+
+      try game.apply(.finalizeCurrentRound())
+    }
+
+    XCTAssertEqual(game.rounds.count, game.totalRoundsPlanned)
+    XCTAssertEqual(game.currentRoundIndex, game.totalRoundsPlanned - 1)
+    XCTAssertTrue(game.rounds.last?.isFinalized == true)
+  }
 }
 

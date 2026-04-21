@@ -4,6 +4,23 @@
     "%@" : {
 
     },
+    "%@/%@" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@/%2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@/%2$@"
+          }
+        }
+      }
+    },
     "Domain.Card.Bomb.Description" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -681,6 +698,7 @@
       }
     },
     "UI.Common.EmptyValue" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -963,6 +981,40 @@
         }
       }
     },
+    "UI.GameSession.FinalScoreboard.Title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Endstand"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Final Scoreboard"
+          }
+        }
+      }
+    },
+    "UI.GameSession.Header.Bets" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wetten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bets"
+          }
+        }
+      }
+    },
     "UI.GameSession.Header.Dealer" : {
       "localizations" : {
         "de" : {
@@ -1146,22 +1198,6 @@
         }
       }
     },
-    "UI.NewGame.PlayWithSpecialCards.Toggle" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit Spezialkarten spielen"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Play with special cards"
-          }
-        }
-      }
-    },
     "UI.NewGame.PlayerCount.Accessibility" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1226,6 +1262,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Increase player count"
+          }
+        }
+      }
+    },
+    "UI.NewGame.PlayWithSpecialCards.Toggle" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit Spezialkarten spielen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Play with special cards"
           }
         }
       }
