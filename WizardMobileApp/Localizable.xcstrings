@@ -698,7 +698,6 @@
       }
     },
     "UI.Common.EmptyValue" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {

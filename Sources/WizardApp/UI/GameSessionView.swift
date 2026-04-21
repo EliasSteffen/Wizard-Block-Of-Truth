@@ -9,6 +9,7 @@ import WizardDomain
 
 struct GameSessionView: View {
   let gameId: UUID
+  private let sparklineMinWidth: CGFloat = 90
 
   @Environment(\.modelContext) private var modelContext
   @StateObject private var storeHolder = StoreHolder()
@@ -377,6 +378,7 @@ struct GameSessionView: View {
 
   private func scoreboard(game: Game, totals: [UUID: Int]) -> some View {
     let placeDeltas = placeDeltasComparedToPreviousRound(in: game)
+    let histories = scoreHistoryByPlayer(in: game)
     let sortedPlayers = game.players.sorted { a, b in
       let ta = totals[a.id, default: 0]
       let tb = totals[b.id, default: 0]
@@ -389,6 +391,8 @@ struct GameSessionView: View {
         let total = totals[p.id, default: 0]
         let currentEntry = game.currentRound.flatMap { $0.entries[p.id] }
         let placeDelta = placeDeltas?[p.id]
+        let history = histories[p.id, default: [0]]
+        let pointsDelta = lastFinalizedDelta(for: p.id, in: game)
 
         VStack(alignment: .leading, spacing: 10) {
           HStack(spacing: 10) {
@@ -422,11 +426,31 @@ struct GameSessionView: View {
             entryChip(titleKey: "UI.GameSession.Entry.Bet", value: currentEntry?.bet)
             entryChip(titleKey: "UI.GameSession.Entry.Won", value: currentEntry?.got)
 
-            Spacer(minLength: 10)
+            GeometryReader { geometry in
+              if geometry.size.width >= sparklineMinWidth {
+                SparklineView(
+                  values: history,
+                  color: sparklineColor(for: history)
+                )
+                .padding(6)
+                .frame(height: 30)
+                .frame(maxWidth: .infinity, alignment: .center)
+              }
+            }
+            .frame(maxWidth: .infinity, minHeight: 30, maxHeight: 30)
 
             VStack(alignment: .trailing, spacing: 2) {
               Text("\(total)")
                 .font(.title3.weight(.semibold).monospacedDigit())
+              if let pointsDelta {
+                Text(pointsDelta >= 0 ? "+\(pointsDelta)" : "\(pointsDelta)")
+                  .font(.caption)
+                  .foregroundStyle(pointsDelta >= 0 ? .green : .red)
+              } else {
+                Text("UI.Common.EmptyValue")
+                  .font(.caption)
+                  .foregroundStyle(.secondary)
+              }
             }
           }
         }
@@ -681,12 +705,75 @@ struct GameSessionView: View {
     return result
   }
 
+  private func scoreHistoryByPlayer(in game: Game) -> [UUID: [Int]] {
+    var histories = Dictionary(uniqueKeysWithValues: game.players.map { ($0.id, [0]) })
+    for round in game.rounds where round.isFinalized {
+      for player in game.players {
+        let previous = histories[player.id]?.last ?? 0
+        let delta = round.entries[player.id].flatMap { try? $0.pointsDelta() } ?? 0
+        histories[player.id, default: [0]].append(previous + delta)
+      }
+    }
+    return histories
+  }
+
+  private func sparklineColor(for values: [Int]) -> Color {
+    guard values.count >= 2 else { return .secondary }
+    let lastDelta = values[values.count - 1] - values[values.count - 2]
+    if lastDelta > 0 { return .green }
+    if lastDelta < 0 { return .red }
+    return .secondary
+  }
+
+  private func lastFinalizedDelta(for playerId: UUID, in game: Game) -> Int? {
+    for round in game.rounds.reversed() where round.isFinalized {
+      guard let entry = round.entries[playerId] else { continue }
+      if let delta = try? entry.pointsDelta() { return delta }
+    }
+    return nil
+  }
+
   private func loadIfNeeded(force: Bool = false) {
     if storeHolder.store == nil {
       storeHolder.store = GameStore(modelContext: modelContext)
       storeHolder.store?.loadGame(id: gameId)
     } else if force || storeHolder.store?.currentGame?.id != gameId {
       storeHolder.store?.loadGame(id: gameId)
+    }
+  }
+}
+
+private struct SparklineView: View {
+  let values: [Int]
+  let color: Color
+
+  var body: some View {
+    GeometryReader { geometry in
+      let points = normalizedPoints(in: geometry.size)
+      Path { path in
+        guard let first = points.first else { return }
+        path.move(to: first)
+        for point in points.dropFirst() {
+          path.addLine(to: point)
+        }
+      }
+      .stroke(color, style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
+    }
+  }
+
+  private func normalizedPoints(in size: CGSize) -> [CGPoint] {
+    let width = max(1, size.width)
+    let height = max(1, size.height)
+    let minValue = values.min() ?? 0
+    let maxValue = values.max() ?? 0
+    let span = max(maxValue - minValue, 1)
+    let count = max(values.count - 1, 1)
+
+    return values.enumerated().map { index, value in
+      let x = CGFloat(index) / CGFloat(count) * width
+      let yFactor = CGFloat(value - minValue) / CGFloat(span)
+      let y = height - (yFactor * height)
+      return CGPoint(x: x, y: y)
     }
   }
 }
