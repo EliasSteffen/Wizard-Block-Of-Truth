@@ -303,38 +303,40 @@ struct GameSessionView: View {
       return dealer.name
     }()
 
-    return HStack(alignment: .center, spacing: 10) {
-      Text("UI.GameSession.Header.Round")
-        .font(.caption.weight(.semibold))
-        .foregroundStyle(.secondary)
-        .baselineOffset(0)
-      Text(verbatim: roundText)
-        .font(.headline.weight(.semibold).monospacedDigit())
+    return VStack(alignment: .center, spacing: 8) {
+      HStack(spacing: 8) {
+        Spacer(minLength: 0)
+        Text("UI.GameSession.Header.Dealer")
+          .font(.caption.weight(.semibold))
+          .foregroundStyle(.secondary)
+        Text(dealerName)
+          .font(.headline.weight(.semibold))
+          .lineLimit(1)
+          .truncationMode(.tail)
+        Spacer(minLength: 0)
+      }
 
-      Text("UI.GameSession.Header.Separator")
-        .foregroundStyle(.secondary.opacity(0.7))
+      HStack(spacing: 10) {
+        Spacer(minLength: 0)
+        Text("UI.GameSession.Header.Round")
+          .font(.caption.weight(.semibold))
+          .foregroundStyle(.secondary)
+        Text(verbatim: roundText)
+          .font(.headline.weight(.semibold).monospacedDigit())
 
-      Text("UI.GameSession.Header.Dealer")
-        .font(.caption.weight(.semibold))
-        .foregroundStyle(.secondary)
-        .baselineOffset(0)
-      Text(dealerName)
-        .font(.headline.weight(.semibold))
-        .lineLimit(1)
-        .truncationMode(.tail)
+        Text("UI.GameSession.Header.Separator")
+          .foregroundStyle(.secondary.opacity(0.7))
 
-      Text("UI.GameSession.Header.Separator")
-        .foregroundStyle(.secondary.opacity(0.7))
+        Text(String(localized: "UI.GameSession.Header.Bets", defaultValue: "Bets"))
+          .font(.caption.weight(.semibold))
+          .foregroundStyle(.secondary)
+        Text(verbatim: betsText)
+          .font(.headline.weight(.semibold).monospacedDigit())
 
-      Text(String(localized: "UI.GameSession.Header.Bets", defaultValue: "Bets"))
-        .font(.caption.weight(.semibold))
-        .foregroundStyle(.secondary)
-        .baselineOffset(0)
-      Text(verbatim: betsText)
-        .font(.headline.weight(.semibold).monospacedDigit())
-
-      Spacer(minLength: 0)
+        Spacer(minLength: 0)
+      }
     }
+    .frame(maxWidth: .infinity, alignment: .center)
     .padding(.horizontal, 14)
     .padding(.vertical, 12)
     .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
