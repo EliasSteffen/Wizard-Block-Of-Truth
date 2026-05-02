@@ -11,6 +11,7 @@ struct GameListView: View {
   @State private var path: [UUID] = []
   @State private var searchText: String = ""
   @State private var showingSettings = false
+  @State private var showingInfo = false
 
 #if os(iOS)
   @State private var editMode: EditMode = .inactive
@@ -41,20 +42,40 @@ struct GameListView: View {
             }
           }
 
-          Button {
-            showingSettings = true
+          Menu {
+            Button {
+              showingSettings = true
+            } label: {
+              Label("UI.GameList.Menu.Settings", systemImage: "gearshape")
+            }
+            Button {
+              showingInfo = true
+            } label: {
+              Label("UI.GameList.Menu.Info", systemImage: "info.circle")
+            }
           } label: {
-            Image(systemName: "gearshape")
+            Image(systemName: "ellipsis")
           }
+          .accessibilityLabel("UI.GameList.OverflowMenu.Accessibility")
         }
 #else
         ToolbarItemGroup(placement: .automatic) {
           Button("UI.Common.Edit") { }
-          Button {
-            // Placeholder for settings screen.
+          Menu {
+            Button {
+              showingSettings = true
+            } label: {
+              Label("UI.GameList.Menu.Settings", systemImage: "gearshape")
+            }
+            Button {
+              showingInfo = true
+            } label: {
+              Label("UI.GameList.Menu.Info", systemImage: "info.circle")
+            }
           } label: {
-            Image(systemName: "gearshape")
+            Image(systemName: "ellipsis")
           }
+          .accessibilityLabel("UI.GameList.OverflowMenu.Accessibility")
         }
 #endif
 
@@ -75,6 +96,10 @@ struct GameListView: View {
       .sheet(isPresented: $showingSettings) {
         SettingsView()
           .presentationDetents([.medium, .large])
+      }
+      .sheet(isPresented: $showingInfo) {
+        AboutInfoView()
+          .presentationDetents([.medium])
       }
     }
     .background(Color.clear)

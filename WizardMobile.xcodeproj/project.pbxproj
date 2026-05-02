@@ -31,10 +31,11 @@
 		000000000000000000000118 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000218 /* Localizable.xcstrings */; };
 		000000000000000000000119 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000219 /* Card.swift */; };
 		00000000000000000000011A /* Cards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000021A /* Cards.swift */; };
+		00000000000000000000011B /* AboutInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000021B /* AboutInfoView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		000000000000000000000001 /* Wizard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wizard.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		000000000000000000000001 /* Wizard Block of Truth.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Wizard Block of Truth.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		000000000000000000000010 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		000000000000000000000201 /* WizardApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WizardApp.swift; path = Sources/WizardApp/WizardApp.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000202 /* GameCodec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameCodec.swift; path = Sources/WizardApp/App/GameCodec.swift; sourceTree = SOURCE_ROOT; };
@@ -60,6 +61,7 @@
 		000000000000000000000218 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		000000000000000000000219 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Card.swift; path = Sources/WizardDomain/Models/Card.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000021A /* Cards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Cards.swift; path = Sources/WizardDomain/Models/Cards.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000021B /* AboutInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AboutInfoView.swift; path = Sources/WizardApp/UI/AboutInfoView.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,7 +112,7 @@
 		000000000000000000000403 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				000000000000000000000001 /* Wizard.app */,
+				000000000000000000000001 /* Wizard Block of Truth.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -145,6 +147,7 @@
 				000000000000000000000209 /* SettingsView.swift */,
 				00000000000000000000020A /* WizardBackground.swift */,
 				00000000000000000000020C /* CloudCardAdjustmentRules.swift */,
+				00000000000000000000021B /* AboutInfoView.swift */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -188,9 +191,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		000000000000000000000500 /* Wizard Block Of Truth */ = {
+		000000000000000000000500 /* Wizard Block of Truth */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 000000000000000000000700 /* Build configuration list for PBXNativeTarget "Wizard Block Of Truth" */;
+			buildConfigurationList = 000000000000000000000700 /* Build configuration list for PBXNativeTarget "Wizard Block of Truth" */;
 			buildPhases = (
 				000000000000000000000600 /* Sources */,
 				000000000000000000000301 /* Frameworks */,
@@ -200,9 +203,9 @@
 			);
 			dependencies = (
 			);
-			name = "Wizard Block Of Truth";
+			name = "Wizard Block of Truth";
 			productName = WizardMobile;
-			productReference = 000000000000000000000001 /* Wizard.app */;
+			productReference = 000000000000000000000001 /* Wizard Block of Truth.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -233,7 +236,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				000000000000000000000500 /* Wizard Block Of Truth */,
+				000000000000000000000500 /* Wizard Block of Truth */,
 			);
 		};
 /* End PBXProject section */
@@ -269,6 +272,7 @@
 				000000000000000000000109 /* SettingsView.swift in Sources */,
 				00000000000000000000010A /* WizardBackground.swift in Sources */,
 				00000000000000000000010C /* CloudCardAdjustmentRules.swift in Sources */,
+				00000000000000000000011B /* AboutInfoView.swift in Sources */,
 				000000000000000000000111 /* Commands.swift in Sources */,
 				000000000000000000000112 /* Game.swift in Sources */,
 				000000000000000000000113 /* Models.swift in Sources */,
@@ -301,7 +305,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "de.elias-steffen.WizardBlockOfTruth";
-				PRODUCT_NAME = Wizard;
+				PRODUCT_NAME = "Wizard Block of Truth";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -327,7 +331,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "de.elias-steffen.WizardBlockOfTruth";
-				PRODUCT_NAME = Wizard;
+				PRODUCT_NAME = "Wizard Block of Truth";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -443,7 +447,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		000000000000000000000700 /* Build configuration list for PBXNativeTarget "Wizard Block Of Truth" */ = {
+		000000000000000000000700 /* Build configuration list for PBXNativeTarget "Wizard Block of Truth" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				000000000000000000000901 /* Debug */,

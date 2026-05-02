@@ -327,7 +327,7 @@ struct GameSessionView: View {
         Text("UI.GameSession.Header.Separator")
           .foregroundStyle(.secondary.opacity(0.7))
 
-        Text(String(localized: "UI.GameSession.Header.Bets", defaultValue: "Bets"))
+        Text("UI.GameSession.Header.Bets")
           .font(.caption.weight(.semibold))
           .foregroundStyle(.secondary)
         Text(verbatim: betsText)

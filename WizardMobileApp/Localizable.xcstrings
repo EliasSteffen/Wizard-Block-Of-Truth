@@ -879,18 +879,52 @@
         }
       }
     },
-    "UI.GameList.NavigationTitle" : {
+    "UI.GameList.Menu.Info" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wizard"
+            "value" : "Info"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wizard"
+            "value" : "Info"
+          }
+        }
+      }
+    },
+    "UI.GameList.Menu.Settings" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einstellungen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
+          }
+        }
+      }
+    },
+    "UI.GameList.NavigationTitle" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wizard Block of Truth"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wizard Block of Truth"
           }
         }
       }
@@ -908,6 +942,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "New game"
+          }
+        }
+      }
+    },
+    "UI.GameList.OverflowMenu.Accessibility" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weitere Optionen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More options"
           }
         }
       }
@@ -998,7 +1049,6 @@
       }
     },
     "UI.GameSession.Header.Bets" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1126,6 +1176,71 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "#%lld"
+          }
+        }
+      }
+    },
+    "UI.Info.Attribution" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entwickelt von Elias Steffen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Developed by Elias Steffen."
+          }
+        }
+      }
+    },
+    "UI.Info.Body" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese App digitalisiert den Papier-Wertungsblock („Block of Truth“), mit dem beim Kartenspiel Wizard Wetten und Stiche festgehalten werden. Wizard ist ein veröffentlichtes Kartenspiel; diese App ist ein unabhängiges Hilfsmittel und steht in keiner Verbindung zum Verlag oder den Rechteinhabern."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This app digitizes the paper score sheet — the “block of truth” — used to record bids and tricks when playing the card game Wizard. Wizard is a published card game; this app is an independent helper and is not affiliated with the publisher or rights holders."
+          }
+        }
+      }
+    },
+    "UI.Info.LinkTitle" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wizard in der Wikipedia"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wizard on Wikipedia"
+          }
+        }
+      }
+    },
+    "UI.Info.Title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Über diese App"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About"
           }
         }
       }
