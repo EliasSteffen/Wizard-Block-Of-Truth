@@ -20,6 +20,11 @@ struct SettingsView: View {
     )
   }
 
+  private var currentLanguageCode: String? {
+    let selected = AppLanguage(rawValue: appLanguageRaw) ?? .system
+    return selected == .system ? nil : selected.rawValue
+  }
+
   var body: some View {
     NavigationStack {
       Form {
@@ -114,9 +119,16 @@ struct SettingsView: View {
 #if os(iOS)
       .scrollContentBackground(.hidden)
 #endif
-      .navigationTitle("UI.Settings.NavigationTitle")
+      .navigationTitle(
+        AppLocalization.string(
+          "UI.Settings.NavigationTitle",
+          languageCode: currentLanguageCode,
+          fallback: "Settings"
+        )
+      )
     }
     .wizardBackground()
+    .preferredColorScheme(AppColorScheme(rawValue: colorSchemeRaw)?.colorScheme)
   }
 
   private func pillText(_ text: String) -> some View {
