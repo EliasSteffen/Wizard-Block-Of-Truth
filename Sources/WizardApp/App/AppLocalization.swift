@@ -22,5 +22,11 @@ enum AppLocalization {
     let localized = NSLocalizedString(key, bundle: languageBundle, comment: "")
     return localized == key ? fallback : localized
   }
+
+  static func format(_ key: String, languageCode: String?, fallback: String, _ arguments: CVarArg...) -> String {
+    let template = string(key, languageCode: languageCode, fallback: fallback)
+    let locale = languageCode.map { Locale(identifier: $0) } ?? .current
+    return String(format: template, locale: locale, arguments)
+  }
 }
 

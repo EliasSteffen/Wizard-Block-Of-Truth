@@ -5,6 +5,7 @@ public enum GameCommand: Hashable, Codable, Sendable {
   case submitBet(playerId: UUID, roundIndex: Int, bet: Int)
   case submitGot(playerId: UUID, roundIndex: Int, got: Int)
   case finalizeCurrentRound(roundConstraints: [Constraint.RoundConstraint]? = nil)
+  case markCloudCardResolved(roundIndex: Int)
 }
 
 extension GameCommand {
@@ -21,7 +22,8 @@ extension GameCommand {
         handSize: firstHandSize,
         dealer: startingDealer,
         entries: entries,
-        isFinalized: false
+        isFinalized: false,
+        cloudCardResolved: false
       )
       game.rounds = [round]
       game.currentRoundIndex = 0
@@ -38,6 +40,15 @@ extension GameCommand {
       }
       try validateImmediateInputs(game: game, roundIndex: roundIndex)
 
+    case .markCloudCardResolved(let roundIndex):
+      guard (0..<game.rounds.count).contains(roundIndex) else {
+        throw DomainError.invalidRoundIndex(roundIndex)
+      }
+      if game.rounds[roundIndex].isFinalized {
+        throw DomainError.roundAlreadyFinalized
+      }
+      game.rounds[roundIndex].cloudCardResolved = true
+
     case .finalizeCurrentRound(let roundConstraints):
       guard !game.rounds.isEmpty else {
         throw DomainError.invalidRoundIndex(game.currentRoundIndex)
@@ -49,11 +60,12 @@ extension GameCommand {
       if game.rounds[roundIndex].isFinalized {
         throw DomainError.roundAlreadyFinalized
       }
-      // Validate constraints before finalizing.
+      // Validate constraints before finalizing. Game constraints (e.g. bet sum ≠ hand size)
+      // apply only during bidding; after cloud adjustment the bet sum may equal hand size.
       let roundConstraintsToUse = roundConstraints ?? [.gotSumEqualsHandSize]
       try game.rounds[roundIndex].validateConstraints(
         players: game.players,
-        gameConstraints: game.gameConstraints,
+        gameConstraints: [],
         roundConstraints: roundConstraintsToUse
       )
       // Ensure all inputs present.
@@ -82,7 +94,8 @@ extension GameCommand {
         handSize: nextHandSize,
         dealer: nextDealer,
         entries: nextEntries,
-        isFinalized: false
+        isFinalized: false,
+        cloudCardResolved: false
       )
       game.rounds.append(nextRound)
       game.currentRoundIndex = game.rounds.count - 1

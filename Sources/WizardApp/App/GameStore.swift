@@ -25,10 +25,18 @@ final class GameStore: ObservableObject {
       )
       guard let entity = try modelContext.fetch(descriptor).first else {
         currentGame = nil
+        let lang = AppLanguage.catalogLookupLanguageCode
         lastError = NSError(
           domain: "WizardApp",
           code: 404,
-          userInfo: [NSLocalizedDescriptionKey: String(localized: "Error.GameStore.NotFound", defaultValue: "Game not found (id: \(id.uuidString)).")]
+          userInfo: [
+            NSLocalizedDescriptionKey: AppLocalization.format(
+              "Error.GameStore.NotFound",
+              languageCode: lang,
+              fallback: "Game not found (id: %@).",
+              id.uuidString
+            ),
+          ]
         )
         return
       }
@@ -79,7 +87,18 @@ final class GameStore: ObservableObject {
   @discardableResult
   func applyBatch(_ commands: [GameCommand], validate: ((Game) throws -> Void)? = nil) -> Error? {
     guard var game = currentGame else {
-      let err = NSError(domain: "WizardApp", code: 1, userInfo: [NSLocalizedDescriptionKey: String(localized: "Error.GameStore.NoGameLoaded", defaultValue: "No game loaded.")])
+      let lang = AppLanguage.catalogLookupLanguageCode
+      let err = NSError(
+        domain: "WizardApp",
+        code: 1,
+        userInfo: [
+          NSLocalizedDescriptionKey: AppLocalization.string(
+            "Error.GameStore.NoGameLoaded",
+            languageCode: lang,
+            fallback: "No game loaded."
+          ),
+        ]
+      )
       lastError = err
       return err
     }

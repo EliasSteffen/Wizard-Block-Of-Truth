@@ -191,6 +191,23 @@
         }
       }
     },
+    "Error.CloudCard.AlreadyResolved" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Wolkenkarte wurde in dieser Runde bereits eingetragen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Cloud Card has already been recorded for this round."
+          }
+        }
+      }
+    },
     "Error.CloudCard.BetsRequired" : {
       "extractionState" : "stale",
       "localizations" : {

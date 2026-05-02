@@ -26,5 +26,12 @@ enum AppLanguage: String, CaseIterable, Codable, Hashable {
       return Locale(identifier: rawValue)
     }
   }
+
+  /// Matches Settings → Language for explicit `en`/`de` string catalog lookups (`nil` = follow system bundles).
+  static var catalogLookupLanguageCode: String? {
+    let raw = UserDefaults.standard.string(forKey: "app.language") ?? AppLanguage.system.rawValue
+    let selected = AppLanguage(rawValue: raw) ?? .system
+    return selected == .system ? nil : selected.rawValue
+  }
 }
 

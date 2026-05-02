@@ -35,23 +35,58 @@ public struct RoundEntry: Hashable, Codable, Sendable {
   }
 }
 
-public struct Round: Hashable, Codable, Sendable {
+public struct Round: Hashable, Sendable {
   public var handSize: Int
   public var dealer: UUID
   public var entries: [UUID: RoundEntry]
   public var isFinalized: Bool
+  /// True after the cloud-card adjustment was committed for this round (only one cloud card per round).
+  public var cloudCardResolved: Bool
 
   public init(
     handSize: Int,
     dealer: UUID,
     entries: [UUID: RoundEntry],
-    isFinalized: Bool = false
+    isFinalized: Bool = false,
+    cloudCardResolved: Bool = false
   ) {
     self.handSize = handSize
     self.dealer = dealer
     self.entries = entries
     self.isFinalized = isFinalized
+    self.cloudCardResolved = cloudCardResolved
   }
+}
+
+extension Round: Codable {
+  private enum CodingKeys: String, CodingKey {
+    case handSize
+    case dealer
+    case entries
+    case isFinalized
+    case cloudCardResolved
+  }
+
+  public init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    handSize = try container.decode(Int.self, forKey: .handSize)
+    dealer = try container.decode(UUID.self, forKey: .dealer)
+    entries = try container.decode([UUID: RoundEntry].self, forKey: .entries)
+    isFinalized = try container.decode(Bool.self, forKey: .isFinalized)
+    cloudCardResolved = try container.decodeIfPresent(Bool.self, forKey: .cloudCardResolved) ?? false
+  }
+
+  public func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(handSize, forKey: .handSize)
+    try container.encode(dealer, forKey: .dealer)
+    try container.encode(entries, forKey: .entries)
+    try container.encode(isFinalized, forKey: .isFinalized)
+    try container.encode(cloudCardResolved, forKey: .cloudCardResolved)
+  }
+}
+
+extension Round {
 
   public func validateConstraints(
     players: [Player],

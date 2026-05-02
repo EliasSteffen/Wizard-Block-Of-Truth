@@ -119,7 +119,7 @@ struct EntrySheetView: View {
     )) {
       Button("UI.Common.OK", role: .cancel) { submitError = nil }
     } message: {
-      Text(submitError?.localizedDescription ?? "")
+      Text(AppErrorMessage.presentableMessage(for: submitError, languageCode: currentLanguageCode))
     }
     .onAppear {
       // Seed values so the sheet is always fully specified.

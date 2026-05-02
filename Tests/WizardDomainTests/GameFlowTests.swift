@@ -39,6 +39,27 @@ final class GameFlowTests: XCTestCase {
     }
   }
 
+  func testMarkCloudCardResolvedSetsFlag() throws {
+    let players = TestSupport.makePlayers(3)
+    var game = try Game(id: UUID(), name: "Test", mode: .singlePhone, players: players)
+    try game.apply(.startNewGame(startingDealer: players[0].id))
+    XCTAssertFalse(game.rounds[0].cloudCardResolved)
+    try game.apply(.markCloudCardResolved(roundIndex: 0))
+    XCTAssertTrue(game.rounds[0].cloudCardResolved)
+  }
+
+  func testRoundDecodesLegacyJSONWithoutCloudCardResolved() throws {
+    let players = TestSupport.makePlayers(1)
+    let pid = players[0].id
+    let round = Round(handSize: 1, dealer: pid, entries: [pid: RoundEntry()], isFinalized: false, cloudCardResolved: true)
+    let data = try JSONEncoder().encode(round)
+    var jsonObject = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
+    jsonObject.removeValue(forKey: "cloudCardResolved")
+    let legacyData = try JSONSerialization.data(withJSONObject: jsonObject, options: [])
+    let decoded = try JSONDecoder().decode(Round.self, from: legacyData)
+    XCTAssertFalse(decoded.cloudCardResolved)
+  }
+
   func testFinalizeCurrentRoundRequiresAllInputs() throws {
     let players = TestSupport.makePlayers(3)
     var game = try Game(id: UUID(), name: "Test", mode: .singlePhone, players: players)
@@ -54,24 +75,42 @@ final class GameFlowTests: XCTestCase {
     }
   }
 
-  func testFinalizeCurrentRoundValidatesClassicBetSumDisallowed() throws {
+  func testFinalizeCurrentRoundAllowsBetSumEqualHandSizeWhenGotSumValid() throws {
     let players = TestSupport.makePlayers(3)
     var game = try Game(id: UUID(), name: "Test", mode: .singlePhone, players: players)
     try game.apply(.startNewGame(startingDealer: players[0].id))
 
-    // Bets sum equals handSize (1) -> disallowed at finalize.
+    // Bet sum equals handSize (1), e.g. after cloud adjustment — finalize must not reject on bet-sum rule.
     try game.apply(.submitBet(playerId: players[0].id, roundIndex: 0, bet: 1))
     try game.apply(.submitBet(playerId: players[1].id, roundIndex: 0, bet: 0))
     try game.apply(.submitBet(playerId: players[2].id, roundIndex: 0, bet: 0))
 
-    // Provide got values that sum correctly.
     try game.apply(.submitGot(playerId: players[0].id, roundIndex: 0, got: 1))
     try game.apply(.submitGot(playerId: players[1].id, roundIndex: 0, got: 0))
     try game.apply(.submitGot(playerId: players[2].id, roundIndex: 0, got: 0))
 
-    XCTAssertThrowsError(try game.apply(.finalizeCurrentRound())) { err in
-      XCTAssertEqual(err as? DomainError, .constraintNotSatisfied(.game(.betSumNotEqualHandSize)))
-    }
+    XCTAssertNoThrow(try game.apply(.finalizeCurrentRound()))
+    XCTAssertTrue(game.rounds[0].isFinalized)
+  }
+
+  func testFinalizeAfterSimulatedCloudBetAdjustmentSucceeds() throws {
+    let players = TestSupport.makePlayers(3)
+    var game = try Game(id: UUID(), name: "Test", mode: .singlePhone, players: players)
+    try game.apply(.startNewGame(startingDealer: players[0].id))
+
+    // Legal bidding: sum 0 ≠ handSize 1.
+    try game.apply(.submitBet(playerId: players[0].id, roundIndex: 0, bet: 0))
+    try game.apply(.submitBet(playerId: players[1].id, roundIndex: 0, bet: 0))
+    try game.apply(.submitBet(playerId: players[2].id, roundIndex: 0, bet: 0))
+    // Cloud: one player +1 → sum equals hand size.
+    try game.apply(.submitBet(playerId: players[0].id, roundIndex: 0, bet: 1))
+
+    try game.apply(.submitGot(playerId: players[0].id, roundIndex: 0, got: 1))
+    try game.apply(.submitGot(playerId: players[1].id, roundIndex: 0, got: 0))
+    try game.apply(.submitGot(playerId: players[2].id, roundIndex: 0, got: 0))
+
+    XCTAssertNoThrow(try game.apply(.finalizeCurrentRound()))
+    XCTAssertTrue(game.rounds[0].isFinalized)
   }
 
   func testFinalizeCurrentRoundAdvancesDealerAndAppendsNextRound() throws {

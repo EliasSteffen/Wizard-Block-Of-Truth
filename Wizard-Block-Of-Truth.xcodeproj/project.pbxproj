@@ -21,6 +21,7 @@
 		00000000000000000000010C /* CloudCardAdjustmentRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000020C /* CloudCardAdjustmentRules.swift */; };
 		00000000000000000000010D /* AppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000020D /* AppLanguage.swift */; };
 		00000000000000000000010E /* AppLocalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000020E /* AppLocalization.swift */; };
+		00000000000000000000010F /* AppErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000020F /* AppErrorMessage.swift */; };
 		000000000000000000000111 /* Commands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000211 /* Commands.swift */; };
 		000000000000000000000112 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000212 /* Game.swift */; };
 		000000000000000000000113 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000213 /* Models.swift */; };
@@ -51,6 +52,7 @@
 		00000000000000000000020C /* CloudCardAdjustmentRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CloudCardAdjustmentRules.swift; path = Sources/WizardApp/UI/CloudCardAdjustmentRules.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000020D /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppLanguage.swift; path = Sources/WizardApp/App/AppLanguage.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000020E /* AppLocalization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppLocalization.swift; path = Sources/WizardApp/App/AppLocalization.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000020F /* AppErrorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppErrorMessage.swift; path = Sources/WizardApp/App/AppErrorMessage.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000211 /* Commands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Commands.swift; path = Sources/WizardDomain/Game/Commands.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000212 /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Game.swift; path = Sources/WizardDomain/Game/Game.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000213 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Models.swift; path = Sources/WizardDomain/Models/Models.swift; sourceTree = SOURCE_ROOT; };
@@ -124,6 +126,7 @@
 				00000000000000000000020B /* AppColorScheme.swift */,
 				00000000000000000000020D /* AppLanguage.swift */,
 				00000000000000000000020E /* AppLocalization.swift */,
+				00000000000000000000020F /* AppErrorMessage.swift */,
 				000000000000000000000203 /* GameStore.swift */,
 			);
 			name = App;
@@ -263,6 +266,7 @@
 				00000000000000000000010B /* AppColorScheme.swift in Sources */,
 				00000000000000000000010D /* AppLanguage.swift in Sources */,
 				00000000000000000000010E /* AppLocalization.swift in Sources */,
+				00000000000000000000010F /* AppErrorMessage.swift in Sources */,
 				000000000000000000000103 /* GameStore.swift in Sources */,
 				000000000000000000000104 /* GameSnapshotEntity.swift in Sources */,
 				000000000000000000000105 /* GameListView.swift in Sources */,
@@ -309,6 +313,7 @@
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -335,6 +340,7 @@
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

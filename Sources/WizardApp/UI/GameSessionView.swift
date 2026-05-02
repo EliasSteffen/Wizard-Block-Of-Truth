@@ -46,7 +46,7 @@ struct GameSessionView: View {
         ContentUnavailableView(
           "UI.GameSession.OpenError.Title",
           systemImage: "exclamationmark.triangle",
-          description: Text(storeHolder.store?.lastError?.localizedDescription ?? String(localized: "UI.GameSession.OpenError.Unknown", defaultValue: "Unknown error."))
+          description: Text(gameSessionOpenErrorDescription())
         )
         .overlay(alignment: .bottom) {
           Button("UI.Common.Retry") { loadIfNeeded(force: true) }
@@ -69,7 +69,12 @@ struct GameSessionView: View {
     )) {
       Button("UI.Common.OK", role: .cancel) { storeHolder.store?.lastError = nil }
     } message: {
-      Text(storeHolder.store?.lastError?.localizedDescription ?? "")
+      Text(
+        AppErrorMessage.presentableMessage(
+          for: storeHolder.store?.lastError,
+          languageCode: AppLanguage.catalogLookupLanguageCode
+        )
+      )
     }
     .wizardBackground()
   }
@@ -87,6 +92,29 @@ struct GameSessionView: View {
     }
 #endif
     return true
+  }
+
+  private func gameSessionOpenErrorDescription() -> String {
+    let lang = AppLanguage.catalogLookupLanguageCode
+    if let err = storeHolder.store?.lastError {
+      return AppErrorMessage.presentableMessage(for: err, languageCode: lang)
+    }
+    return AppLocalization.string("UI.GameSession.OpenError.Unknown", languageCode: lang, fallback: "Unknown error.")
+  }
+
+  private func storeNotReadyNSError() -> NSError {
+    let lang = AppLanguage.catalogLookupLanguageCode
+    return NSError(
+      domain: "WizardApp",
+      code: 1,
+      userInfo: [
+        NSLocalizedDescriptionKey: AppLocalization.string(
+          "Error.Store.NotReady",
+          languageCode: lang,
+          fallback: "Store not ready."
+        ),
+      ]
+    )
   }
 
   @ViewBuilder
@@ -142,7 +170,7 @@ struct GameSessionView: View {
           allowedRange: nil,
           isPlayerDisabled: nil,
           onSubmit: { values in
-            guard let store = storeHolder.store else { return NSError(domain: "WizardApp", code: 1, userInfo: [NSLocalizedDescriptionKey: String(localized: "Error.Store.NotReady", defaultValue: "Store not ready.")]) }
+            guard let store = storeHolder.store else { return storeNotReadyNSError() }
             let cmds: [GameCommand] = values.map { (pid, bet) in
               .submitBet(playerId: pid, roundIndex: game.currentRoundIndex, bet: bet)
             }
@@ -196,7 +224,7 @@ struct GameSessionView: View {
           },
           isPlayerDisabled: nil,
           onSubmit: { values in
-            guard let store = storeHolder.store else { return NSError(domain: "WizardApp", code: 1, userInfo: [NSLocalizedDescriptionKey: String(localized: "Error.Store.NotReady", defaultValue: "Store not ready.")]) }
+            guard let store = storeHolder.store else { return storeNotReadyNSError() }
             let constraints = constraintsForFinalize(game: game, bombPlayed: bombPlayedThisRound) ?? [.gotSumEqualsHandSize]
             var cmds: [GameCommand] = values.map { (pid, got) in
               .submitGot(playerId: pid, roundIndex: game.currentRoundIndex, got: got)
@@ -231,13 +259,14 @@ struct GameSessionView: View {
             isCloudCardPlayerLocked(game: game, playerId: playerId, editedBets: editedValues)
           },
           onSubmit: { values in
-            guard let store = storeHolder.store else { return NSError(domain: "WizardApp", code: 1, userInfo: [NSLocalizedDescriptionKey: String(localized: "Error.Store.NotReady", defaultValue: "Store not ready.")]) }
+            guard let store = storeHolder.store else { return storeNotReadyNSError() }
             if let validationError = validateCloudCardAdjustment(game: game, submittedBets: values) {
               return validationError
             }
-            let cmds: [GameCommand] = values.map { (pid, bet) in
+            var cmds: [GameCommand] = values.map { (pid, bet) in
               .submitBet(playerId: pid, roundIndex: game.currentRoundIndex, bet: bet)
             }
+            cmds.append(.markCloudCardResolved(roundIndex: game.currentRoundIndex))
             return store.applyBatch(cmds)
           }
         )
@@ -425,7 +454,11 @@ struct GameSessionView: View {
           }
 
           HStack(alignment: .bottom, spacing: 10) {
-            entryChip(titleKey: "UI.GameSession.Entry.Bet", value: currentEntry?.bet)
+            betEntryChip(
+              titleKey: "UI.GameSession.Entry.Bet",
+              value: currentEntry?.bet,
+              onTap: nil
+            )
             entryChip(titleKey: "UI.GameSession.Entry.Won", value: currentEntry?.got)
 
             GeometryReader { geometry in
@@ -483,6 +516,22 @@ struct GameSessionView: View {
   }
 
   private func entryChip(titleKey: String, value: Int?) -> some View {
+    entryChipChrome(titleKey: titleKey, value: value)
+  }
+
+  @ViewBuilder
+  private func betEntryChip(titleKey: String, value: Int?, onTap: (() -> Void)?) -> some View {
+    if let onTap {
+      Button(action: onTap) {
+        entryChipChrome(titleKey: titleKey, value: value)
+      }
+      .buttonStyle(.plain)
+    } else {
+      entryChipChrome(titleKey: titleKey, value: value)
+    }
+  }
+
+  private func entryChipChrome(titleKey: String, value: Int?) -> some View {
     let text = value.map(String.init) ?? String(localized: "UI.Common.EmptyValue", defaultValue: "—")
     let isMissing = value == nil
 
@@ -534,7 +583,7 @@ struct GameSessionView: View {
     } else if !allGotPresent {
       return AnyView(
         HStack(spacing: 10) {
-          if game.playWithSpecialCards {
+          if game.playWithSpecialCards, let r = round, !r.cloudCardResolved {
             Button(action: { showingCloudCard = true }) {
               Text("UI.Button.EnterCloudCard")
                 .frame(maxWidth: .infinity)
@@ -582,7 +631,21 @@ struct GameSessionView: View {
   }
 
   private func validateCloudCardAdjustment(game: Game, submittedBets: [UUID: Int]) -> Error? {
+    let lang = AppLanguage.catalogLookupLanguageCode
     let round = game.rounds[game.currentRoundIndex]
+    if round.cloudCardResolved {
+      return NSError(
+        domain: "WizardApp",
+        code: 5,
+        userInfo: [
+          NSLocalizedDescriptionKey: AppLocalization.string(
+            "Error.CloudCard.AlreadyResolved",
+            languageCode: lang,
+            fallback: "The Cloud Card has already been recorded for this round."
+          ),
+        ]
+      )
+    }
     var changed: [(playerId: UUID, delta: Int)] = []
 
     for player in game.players {
@@ -591,7 +654,13 @@ struct GameSessionView: View {
         return NSError(
           domain: "WizardApp",
           code: 2,
-          userInfo: [NSLocalizedDescriptionKey: String(localized: "Error.CloudCard.BetsRequired", defaultValue: "Cloud Card can only be entered after all bets have been placed.")]
+          userInfo: [
+            NSLocalizedDescriptionKey: AppLocalization.string(
+              "Error.CloudCard.BetsRequired",
+              languageCode: lang,
+              fallback: "Cloud Card can only be entered after all bets have been placed."
+            ),
+          ]
         )
       }
 
@@ -605,14 +674,26 @@ struct GameSessionView: View {
       return NSError(
         domain: "WizardApp",
         code: 3,
-        userInfo: [NSLocalizedDescriptionKey: String(localized: "Error.CloudCard.ExactlyOneChanged", defaultValue: "Exactly one player's bet must be changed for Cloud Card.")]
+        userInfo: [
+          NSLocalizedDescriptionKey: AppLocalization.string(
+            "Error.CloudCard.ExactlyOneChanged",
+            languageCode: lang,
+            fallback: "Exactly one player's bet must be changed for Cloud Card."
+          ),
+        ]
       )
     }
     guard abs(changed[0].delta) == 1 else {
       return NSError(
         domain: "WizardApp",
         code: 4,
-        userInfo: [NSLocalizedDescriptionKey: String(localized: "Error.CloudCard.ChangeByOne", defaultValue: "Cloud Card requires changing that bet by exactly 1.")]
+        userInfo: [
+          NSLocalizedDescriptionKey: AppLocalization.string(
+            "Error.CloudCard.ChangeByOne",
+            languageCode: lang,
+            fallback: "Cloud Card requires changing that bet by exactly 1."
+          ),
+        ]
       )
     }
 
