@@ -17,6 +17,7 @@ struct GameSessionView: View {
   @State private var showingBets = false
   @State private var showingGot = false
   @State private var showingCloudCard = false
+  @State private var playerHistorySheetItem: PlayerHistorySheetItem?
   @State private var bombPlayedThisRound: Bool = false
 
   @State private var betsDetent: PresentationDetent = Self.defaultEntrySheetDetent
@@ -81,7 +82,7 @@ struct GameSessionView: View {
 
   private var shouldPresentGlobalErrorAlert: Bool {
     // Avoid presenting an alert on top of (or during dismissal of) a sheet.
-    if showingBets || showingGot || showingCloudCard { return false }
+    if showingBets || showingGot || showingCloudCard || playerHistorySheetItem != nil { return false }
     guard storeHolder.store?.currentGame != nil else { return false }
     guard let err = storeHolder.store?.lastError else { return false }
 
@@ -273,6 +274,9 @@ struct GameSessionView: View {
         .presentationDetents(Self.entrySheetDetents, selection: $gotDetent)
       }
     }
+    .sheet(item: $playerHistorySheetItem) { item in
+      PlayerRoundHistorySheet(game: game, playerId: item.id)
+    }
   }
 
   @ViewBuilder
@@ -425,92 +429,99 @@ struct GameSessionView: View {
         let history = histories[p.id, default: [0]]
         let pointsDelta = lastFinalizedDelta(for: p.id, in: game)
 
-        VStack(alignment: .leading, spacing: 10) {
-          HStack(spacing: 10) {
-            VStack(alignment: .leading, spacing: 2) {
-              Text(String(localized: "UI.GameSession.Score.RankPrefix", defaultValue: "#\(idx + 1)"))
-                .font(.caption.weight(.semibold).monospacedDigit())
-                .foregroundStyle(.secondary)
-              if let placeDelta {
-                Text(placeDeltaString(placeDelta))
-                  .font(.caption2.weight(.semibold).monospacedDigit())
-                  .foregroundStyle(placeDeltaColor(placeDelta))
-              }
-            }
-            .frame(width: 36, alignment: .leading)
-
-            Text(p.name)
-              .font(.headline.weight(.semibold))
-              .lineLimit(1)
-              .truncationMode(.tail)
-
-            Spacer(minLength: 0)
-
-            if idx == 0 {
-              Image(systemName: "crown.fill")
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.yellow.opacity(0.9))
-            }
-          }
-
-          HStack(alignment: .bottom, spacing: 10) {
-            betEntryChip(
-              titleKey: "UI.GameSession.Entry.Bet",
-              value: currentEntry?.bet,
-              onTap: nil
-            )
-            entryChip(titleKey: "UI.GameSession.Entry.Won", value: currentEntry?.got)
-
-            GeometryReader { geometry in
-              if geometry.size.width >= sparklineMinWidth {
-                SparklineView(
-                  values: history,
-                  color: sparklineColor(for: history)
-                )
-                .padding(6)
-                .frame(height: 30)
-                .frame(maxWidth: .infinity, alignment: .center)
-              }
-            }
-            .frame(maxWidth: .infinity, minHeight: 30, maxHeight: 30)
-
-            VStack(alignment: .trailing, spacing: 2) {
-              Text("\(total)")
-                .font(.title3.weight(.semibold).monospacedDigit())
-              if let pointsDelta {
-                Text(pointsDelta >= 0 ? "+\(pointsDelta)" : "\(pointsDelta)")
-                  .font(.caption)
-                  .foregroundStyle(pointsDelta >= 0 ? .green : .red)
-              } else {
-                Text("UI.Common.EmptyValue")
-                  .font(.caption)
+        Button {
+          playerHistorySheetItem = PlayerHistorySheetItem(id: p.id)
+        } label: {
+          VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 10) {
+              VStack(alignment: .leading, spacing: 2) {
+                Text(String(localized: "UI.GameSession.Score.RankPrefix", defaultValue: "#\(idx + 1)"))
+                  .font(.caption.weight(.semibold).monospacedDigit())
                   .foregroundStyle(.secondary)
+                if let placeDelta {
+                  Text(placeDeltaString(placeDelta))
+                    .font(.caption2.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(placeDeltaColor(placeDelta))
+                }
+              }
+              .frame(width: 36, alignment: .leading)
+
+              Text(p.name)
+                .font(.headline.weight(.semibold))
+                .lineLimit(1)
+                .truncationMode(.tail)
+
+              Spacer(minLength: 0)
+
+              if idx == 0 {
+                Image(systemName: "crown.fill")
+                  .font(.caption.weight(.semibold))
+                  .foregroundStyle(.yellow.opacity(0.9))
+              }
+            }
+
+            HStack(alignment: .bottom, spacing: 10) {
+              betEntryChip(
+                titleKey: "UI.GameSession.Entry.Bet",
+                value: currentEntry?.bet,
+                onTap: nil
+              )
+              entryChip(titleKey: "UI.GameSession.Entry.Won", value: currentEntry?.got)
+
+              GeometryReader { geometry in
+                if geometry.size.width >= sparklineMinWidth {
+                  SparklineView(
+                    values: history,
+                    color: sparklineColor(for: history)
+                  )
+                  .padding(6)
+                  .frame(height: 30)
+                  .frame(maxWidth: .infinity, alignment: .center)
+                }
+              }
+              .frame(maxWidth: .infinity, minHeight: 30, maxHeight: 30)
+
+              VStack(alignment: .trailing, spacing: 2) {
+                Text("\(total)")
+                  .font(.title3.weight(.semibold).monospacedDigit())
+                if let pointsDelta {
+                  Text(pointsDelta >= 0 ? "+\(pointsDelta)" : "\(pointsDelta)")
+                    .font(.caption)
+                    .foregroundStyle(pointsDelta >= 0 ? .green : .red)
+                } else {
+                  Text("UI.Common.EmptyValue")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                }
               }
             }
           }
+          .padding(14)
+          .background {
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+              .fill(.ultraThinMaterial)
+              .overlay {
+                LinearGradient(
+                  colors: [
+                    Color.white.opacity(0.20),
+                    Color.white.opacity(0.06),
+                    Color.white.opacity(0.02),
+                  ],
+                  startPoint: .topLeading,
+                  endPoint: .bottomTrailing
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+              }
+              .overlay {
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                  .strokeBorder(Color.white.opacity(0.16), lineWidth: 1)
+              }
+          }
+          .shadow(color: Color.black.opacity(0.10), radius: 10, x: 0, y: 6)
         }
-        .padding(14)
-        .background {
-          RoundedRectangle(cornerRadius: 18, style: .continuous)
-            .fill(.ultraThinMaterial)
-            .overlay {
-              LinearGradient(
-                colors: [
-                  Color.white.opacity(0.20),
-                  Color.white.opacity(0.06),
-                  Color.white.opacity(0.02),
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-              )
-              .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-            }
-            .overlay {
-              RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .strokeBorder(Color.white.opacity(0.16), lineWidth: 1)
-            }
-        }
-        .shadow(color: Color.black.opacity(0.10), radius: 10, x: 0, y: 6)
+        .buttonStyle(.plain)
+        .accessibilityLabel(p.name)
+        .accessibilityHint("UI.GameSession.PlayerHistory.AccessibilityHint")
       }
     }
   }

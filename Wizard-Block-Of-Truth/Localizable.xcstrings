@@ -1015,7 +1015,6 @@
       }
     },
     "UI.GameSession.Entry.Bet" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1032,7 +1031,6 @@
       }
     },
     "UI.GameSession.Entry.Won" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1176,6 +1174,152 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Unknown error."
+          }
+        }
+      }
+    },
+    "UI.GameSession.PlayerHistory.AccessibilityHint" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeigt Wetten, gewonnene Stiche und Punkte je Runde."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shows bets, won tricks, and points per round."
+          }
+        }
+      }
+    },
+    "UI.GameSession.PlayerHistory.Column.Points" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pkt."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pts"
+          }
+        }
+      }
+    },
+    "UI.GameSession.PlayerHistory.Banner.RankCaption" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Platzierung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standing"
+          }
+        }
+      }
+    },
+    "UI.GameSession.PlayerHistory.Banner.TotalCaption" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gesamtpunkte"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total points"
+          }
+        }
+      }
+    },
+    "UI.GameSession.PlayerHistory.Column.CumulativeTotal" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ges."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tot."
+          }
+        }
+      }
+    },
+    "UI.GameSession.PlayerHistory.Column.Rank" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "#"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "#"
+          }
+        }
+      }
+    },
+    "UI.GameSession.PlayerHistory.Column.Round" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runde"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Round"
+          }
+        }
+      }
+    },
+    "UI.GameSession.PlayerHistory.Empty.Description" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobald eine Runde gestartet ist, erscheinen die Einträge hier."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Once a round has started, entries will appear here."
+          }
+        }
+      }
+    },
+    "UI.GameSession.PlayerHistory.Empty.Title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch keine Runden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No rounds yet"
           }
         }
       }
