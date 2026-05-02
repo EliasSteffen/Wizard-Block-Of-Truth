@@ -11,7 +11,7 @@ This project uses Xcode String Catalogs for app localization.
 
 ## Resource strategy
 
-- Primary catalog: `WizardMobileApp/Localizable.xcstrings`
+- Primary catalog: `Wizard-Block-Of-Truth/Localizable.xcstrings`
 - Development language: English (`en`)
 - Additional languages are added later by inserting language variants in the catalog.
 

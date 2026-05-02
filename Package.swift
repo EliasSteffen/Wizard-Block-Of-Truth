@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-  name: "WizardMobile",
+  name: "Wizard-Block-Of-Truth",
   platforms: [
     .iOS(.v18),
     .macOS(.v15),

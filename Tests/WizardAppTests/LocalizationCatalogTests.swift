@@ -1,7 +1,7 @@
 import Foundation
 import XCTest
 
-/// Validates `WizardMobileApp/Localizable.xcstrings`: every real entry has English and German,
+/// Validates `Wizard-Block-Of-Truth/Localizable.xcstrings`: every real entry has English and German,
 /// format placeholders stay consistent across locales, and keys referenced in source exist in the catalog.
 final class LocalizationCatalogTests: XCTestCase {
   private static let requiredLocales = ["en", "de"]
@@ -14,7 +14,7 @@ final class LocalizationCatalogTests: XCTestCase {
   }
 
   private static var catalogURL: URL {
-    repoRootURL.appendingPathComponent("WizardMobileApp/Localizable.xcstrings")
+    repoRootURL.appendingPathComponent("Wizard-Block-Of-Truth/Localizable.xcstrings")
   }
 
   func testCatalogFileExists() {

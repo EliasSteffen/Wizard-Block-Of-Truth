@@ -78,13 +78,13 @@
 		000000000000000000000400 = {
 			isa = PBXGroup;
 			children = (
-				000000000000000000000401 /* WizardMobileApp */,
+				000000000000000000000401 /* Wizard-Block-Of-Truth */,
 				000000000000000000000402 /* WizardDomain */,
 				000000000000000000000403 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		000000000000000000000401 /* WizardMobileApp */ = {
+		000000000000000000000401 /* Wizard-Block-Of-Truth */ = {
 			isa = PBXGroup;
 			children = (
 				000000000000000000000217 /* Assets.xcassets */,
@@ -95,7 +95,7 @@
 				000000000000000000000405 /* Persistence */,
 				000000000000000000000406 /* UI */,
 			);
-			path = WizardMobileApp;
+			path = "Wizard-Block-Of-Truth";
 			sourceTree = "<group>";
 		};
 		000000000000000000000402 /* WizardDomain */ = {
@@ -204,7 +204,7 @@
 			dependencies = (
 			);
 			name = "Wizard Block of Truth";
-			productName = WizardMobile;
+			productName = "Wizard-Block-Of-Truth";
 			productReference = 000000000000000000000001 /* Wizard Block of Truth.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -223,7 +223,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 000000000000000000000900 /* Build configuration list for PBXProject "WizardMobile" */;
+			buildConfigurationList = 000000000000000000000900 /* Build configuration list for PBXProject "Wizard-Block-Of-Truth" */;
 			compatibilityVersion = "Xcode 16.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -297,7 +297,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = WizardMobileApp/Info.plist;
+				INFOPLIST_FILE = "Wizard-Block-Of-Truth/Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.card-games";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -323,7 +323,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = WizardMobileApp/Info.plist;
+				INFOPLIST_FILE = "Wizard-Block-Of-Truth/Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.card-games";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -456,7 +456,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		000000000000000000000900 /* Build configuration list for PBXProject "WizardMobile" */ = {
+		000000000000000000000900 /* Build configuration list for PBXProject "Wizard-Block-Of-Truth" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				000000000000000000000903 /* Debug */,
