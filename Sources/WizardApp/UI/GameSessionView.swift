@@ -7,6 +7,11 @@ import Combine
 import WizardDomain
 #endif
 
+private struct BetEditorPlayerItem: Identifiable {
+  let playerId: UUID
+  var id: UUID { playerId }
+}
+
 struct GameSessionView: View {
   let gameId: UUID
   private let sparklineMinWidth: CGFloat = 90
@@ -15,6 +20,7 @@ struct GameSessionView: View {
   @StateObject private var storeHolder = StoreHolder()
 
   @State private var showingBets = false
+  @State private var betEditorPlayerItem: BetEditorPlayerItem?
   @State private var showingGot = false
   @State private var showingCloudCard = false
   @State private var playerHistorySheetItem: PlayerHistorySheetItem?
@@ -82,7 +88,9 @@ struct GameSessionView: View {
 
   private var shouldPresentGlobalErrorAlert: Bool {
     // Avoid presenting an alert on top of (or during dismissal of) a sheet.
-    if showingBets || showingGot || showingCloudCard || playerHistorySheetItem != nil { return false }
+    if showingBets || betEditorPlayerItem != nil || showingGot || showingCloudCard || playerHistorySheetItem != nil {
+      return false
+    }
     guard storeHolder.store?.currentGame != nil else { return false }
     guard let err = storeHolder.store?.lastError else { return false }
 
@@ -120,8 +128,10 @@ struct GameSessionView: View {
 
   @ViewBuilder
   private func content(game: Game) -> some View {
-    let totals = (try? game.totalPoints()) ?? [:]
     let isFinished = isGameFinished(game)
+    let totals = isFinished
+      ? ((try? game.totalPoints()) ?? [:])
+      : scoreboardTotalsIncludingOpenRound(game: game)
 
     ScrollView {
       VStack(spacing: 16) {
@@ -161,21 +171,78 @@ struct GameSessionView: View {
           currentValues: game.rounds[game.currentRoundIndex].entries.mapValues { $0.bet },
           valueLabel: String(localized: "UI.GameSession.Entry.Bet", defaultValue: "Bet"),
           accessory: nil,
-          sumValidation: game.gameConstraints.contains(.betSumNotEqualHandSize) ? .init(
-            expectedSum: round.handSize,
-            rule: .notEquals,
-            failureMessageKey: Constraint.GameConstraint.betSumNotEqualHandSize.showOnFailureKey,
-            failureMessageFallback: Constraint.GameConstraint.betSumNotEqualHandSize.showOnFailure
-          ) : nil,
+          sumValidation: betSumNotEqualHandSizeSheetValidation(game: game, round: round),
           showPositiveSumState: true,
-          allowedRange: nil,
+          allowedRange: { playerId, edited in
+            betAllowedRange(game: game, playerId: playerId, editedBets: edited)
+          },
           isPlayerDisabled: nil,
+          additionalSumForValidation: nil,
           onSubmit: { values in
             guard let store = storeHolder.store else { return storeNotReadyNSError() }
             let cmds: [GameCommand] = values.map { (pid, bet) in
               .submitBet(playerId: pid, roundIndex: game.currentRoundIndex, bet: bet)
             }
             return store.applyBatch(cmds) { updated in
+              try updated.rounds[updated.currentRoundIndex].validateConstraints(
+                players: updated.players,
+                gameConstraints: updated.gameConstraints,
+                roundConstraints: [.gotSumEqualsHandSize]
+              )
+            }
+          }
+        )
+        .presentationDetents(Self.entrySheetDetents, selection: $betsDetent)
+      }
+    }
+    .sheet(item: $betEditorPlayerItem) { item in
+      if let round = game.currentRound,
+         let player = game.players.first(where: { $0.id == item.playerId }) {
+        let othersBetSum = sumOfOtherPlayersBets(round: round, excludingPlayerId: item.playerId)
+        EntrySheetView(
+          title: "UI.GameSession.EditSingleBet.Title",
+          handSize: round.handSize,
+          players: [player],
+          currentValues: [item.playerId: round.entries[item.playerId]?.bet],
+          valueLabel: String(localized: "UI.GameSession.Entry.Bet", defaultValue: "Bet"),
+          accessory: nil,
+          sumValidation: betSumNotEqualHandSizeSheetValidation(game: game, round: round),
+          showPositiveSumState: true,
+          allowedRange: { playerId, edited in
+            var fullBets: [UUID: Int] = [:]
+            for pl in game.players {
+              if pl.id == item.playerId {
+                fullBets[pl.id] = edited[pl.id] ?? round.entries[pl.id]?.bet ?? 0
+              } else {
+                fullBets[pl.id] = round.entries[pl.id]?.bet ?? 0
+              }
+            }
+            return betAllowedRange(game: game, playerId: playerId, editedBets: fullBets)
+          },
+          isPlayerDisabled: nil,
+          additionalSumForValidation: othersBetSum,
+          onSubmit: { values in
+            guard let store = storeHolder.store else { return storeNotReadyNSError() }
+            guard let newBet = values[item.playerId] else {
+              let lang = AppLanguage.catalogLookupLanguageCode
+              return NSError(
+                domain: "WizardApp",
+                code: 4,
+                userInfo: [
+                  NSLocalizedDescriptionKey: AppLocalization.string(
+                    "Error.BetEditor.MissingValue",
+                    languageCode: lang,
+                    fallback: "Missing bet value."
+                  ),
+                ]
+              )
+            }
+            let cmd = GameCommand.submitBet(
+              playerId: item.playerId,
+              roundIndex: game.currentRoundIndex,
+              bet: newBet
+            )
+            return store.applyBatch([cmd]) { updated in
               try updated.rounds[updated.currentRoundIndex].validateConstraints(
                 players: updated.players,
                 gameConstraints: updated.gameConstraints,
@@ -224,19 +291,21 @@ struct GameSessionView: View {
             )
           },
           isPlayerDisabled: nil,
+          additionalSumForValidation: nil,
           onSubmit: { values in
             guard let store = storeHolder.store else { return storeNotReadyNSError() }
-            let constraints = constraintsForFinalize(game: game, bombPlayed: bombPlayedThisRound) ?? [.gotSumEqualsHandSize]
-            var cmds: [GameCommand] = values.map { (pid, got) in
+            let roundConstraints =
+              constraintsForFinalize(game: game, bombPlayed: bombPlayedThisRound) ?? [.gotSumEqualsHandSize]
+            let cmds: [GameCommand] = values.map { (pid, got) in
               .submitGot(playerId: pid, roundIndex: game.currentRoundIndex, got: got)
             }
-            cmds.append(.finalizeCurrentRound(roundConstraints: constraints))
-
-            let err = store.applyBatch(cmds)
-            if err == nil {
-              bombPlayedThisRound = false
+            return store.applyBatch(cmds) { updated in
+              try updated.rounds[updated.currentRoundIndex].validateConstraints(
+                players: updated.players,
+                gameConstraints: updated.gameConstraints,
+                roundConstraints: roundConstraints
+              )
             }
-            return err
           }
         )
         .presentationDetents(Self.entrySheetDetents, selection: $gotDetent)
@@ -259,6 +328,7 @@ struct GameSessionView: View {
           isPlayerDisabled: { playerId, editedValues in
             isCloudCardPlayerLocked(game: game, playerId: playerId, editedBets: editedValues)
           },
+          additionalSumForValidation: nil,
           onSubmit: { values in
             guard let store = storeHolder.store else { return storeNotReadyNSError() }
             if let validationError = validateCloudCardAdjustment(game: game, submittedBets: values) {
@@ -394,6 +464,31 @@ struct GameSessionView: View {
     return handSize
   }
 
+  /// Live sum check for "bets may not add up to hand size" only **before** the cloud step; after Wolke, any total is allowed in the UI.
+  private func betSumNotEqualHandSizeSheetValidation(
+    game: Game,
+    round: Round
+  ) -> EntrySheetView.SumValidation? {
+    guard game.gameConstraints.contains(.betSumNotEqualHandSize),
+          !round.cloudCardResolved else { return nil }
+    return .init(
+      expectedSum: round.handSize,
+      rule: .notEquals,
+      failureMessageKey: Constraint.GameConstraint.betSumNotEqualHandSize.showOnFailureKey,
+      failureMessageFallback: Constraint.GameConstraint.betSumNotEqualHandSize.showOnFailure
+    )
+  }
+
+  /// Full `0...handSize` so every bid can be entered; invalid totals (e.g. sum = hand size when disallowed) surface via the sum bar and Done in `EntrySheetView`.
+  private func betAllowedRange(
+    game: Game,
+    playerId _: UUID,
+    editedBets _: [UUID: Int]
+  ) -> ClosedRange<Int> {
+    let handSize = game.currentRound?.handSize ?? 0
+    return 0...max(0, handSize)
+  }
+
   private func wonTricksAllowedRange(
     game: Game,
     playerId: UUID,
@@ -411,6 +506,49 @@ struct GameSessionView: View {
   }
 
 
+  /// Scoreboard bet chip: one-player bet editor, or full bets sheet when the round does not exist yet.
+  private func openBetChipTapped(game: Game, playerId: UUID) {
+    guard !isGameFinished(game) else { return }
+    if game.currentRound == nil {
+      startAndShowBetsIfNeeded(game: game)
+      return
+    }
+    if let round = game.currentRound, !round.isFinalized {
+      betEditorPlayerItem = BetEditorPlayerItem(playerId: playerId)
+    }
+  }
+
+  private func sumOfOtherPlayersBets(round: Round, excludingPlayerId: UUID) -> Int {
+    round.entries.reduce(into: 0) { partial, entry in
+      guard entry.key != excludingPlayerId else { return }
+      partial += entry.value.bet ?? 0
+    }
+  }
+
+  private func canOpenBetsFromScoreboard(game: Game) -> Bool {
+    if isGameFinished(game) { return false }
+    if game.currentRound == nil { return true }
+    if let round = game.currentRound, !round.isFinalized { return true }
+    return false
+  }
+
+  /// Opens the won-tricks sheet, or the full bets sheet if bidding is not complete. Does not route to the cloud sheet (use the bottom bar for Wolke).
+  private func openWonTricksSheetFromScoreboard(game: Game) {
+    guard !isGameFinished(game) else { return }
+    if game.currentRound == nil {
+      startAndShowBetsIfNeeded(game: game)
+      return
+    }
+    guard let round = game.currentRound, !round.isFinalized else { return }
+
+    let allBetsPresent = round.entries.values.allSatisfy { $0.bet != nil }
+    if !allBetsPresent {
+      showingBets = true
+      return
+    }
+    showingGot = true
+  }
+
   private func scoreboard(game: Game, totals: [UUID: Int]) -> some View {
     let placeDeltas = placeDeltasComparedToPreviousRound(in: game)
     let histories = scoreHistoryByPlayer(in: game)
@@ -424,15 +562,22 @@ struct GameSessionView: View {
     return VStack(spacing: 10) {
       ForEach(Array(sortedPlayers.enumerated()), id: \.element.id) { idx, p in
         let total = totals[p.id, default: 0]
-        let currentEntry = game.currentRound.flatMap { $0.entries[p.id] }
+        let display = game.scoreboardDisplayValues(for: p.id)
         let placeDelta = placeDeltas?[p.id]
         let history = histories[p.id, default: [0]]
-        let pointsDelta = lastFinalizedDelta(for: p.id, in: game)
+        let pointsDelta = scoreboardPointsDeltaCaption(for: p.id, in: game)
+        let betTap: (() -> Void)? = canOpenBetsFromScoreboard(game: game)
+          ? { openBetChipTapped(game: game, playerId: p.id) }
+          : nil
+        let wonTap: (() -> Void)? = canOpenBetsFromScoreboard(game: game)
+          ? { openWonTricksSheetFromScoreboard(game: game) }
+          : nil
 
-        Button {
-          playerHistorySheetItem = PlayerHistorySheetItem(id: p.id)
-        } label: {
-          VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 10) {
+          // Name row: history. Bet chip: one-player bets. Won chip: tricks sheet (after all bets; Wolke only via bottom bar).
+          Button {
+            playerHistorySheetItem = PlayerHistorySheetItem(id: p.id)
+          } label: {
             HStack(spacing: 10) {
               VStack(alignment: .leading, spacing: 2) {
                 Text(String(localized: "UI.GameSession.Score.RankPrefix", defaultValue: "#\(idx + 1)"))
@@ -459,84 +604,101 @@ struct GameSessionView: View {
                   .foregroundStyle(.yellow.opacity(0.9))
               }
             }
+          }
+          .buttonStyle(.plain)
+          .accessibilityLabel(p.name)
+          .accessibilityHint("UI.GameSession.PlayerHistory.AccessibilityHint")
 
-            HStack(alignment: .bottom, spacing: 10) {
-              betEntryChip(
-                titleKey: "UI.GameSession.Entry.Bet",
-                value: currentEntry?.bet,
-                onTap: nil
-              )
-              entryChip(titleKey: "UI.GameSession.Entry.Won", value: currentEntry?.got)
+          HStack(alignment: .bottom, spacing: 10) {
+            scoreboardEntryChip(
+              titleKey: "UI.GameSession.Entry.Bet",
+              value: display.bet,
+              onTap: betTap,
+              accessibilityHintKey: "UI.GameSession.Score.Chip.EditBets.AccessibilityHint"
+            )
+            scoreboardEntryChip(
+              titleKey: "UI.GameSession.Entry.Won",
+              value: display.got,
+              onTap: wonTap,
+              accessibilityHintKey: "UI.GameSession.Score.Chip.EditWonTricks.AccessibilityHint"
+            )
 
-              GeometryReader { geometry in
-                if geometry.size.width >= sparklineMinWidth {
-                  SparklineView(
-                    values: history,
-                    color: sparklineColor(for: history)
-                  )
-                  .padding(6)
-                  .frame(height: 30)
-                  .frame(maxWidth: .infinity, alignment: .center)
+            Button {
+              playerHistorySheetItem = PlayerHistorySheetItem(id: p.id)
+            } label: {
+              HStack(alignment: .bottom, spacing: 10) {
+                GeometryReader { geometry in
+                  if geometry.size.width >= sparklineMinWidth {
+                    SparklineView(
+                      values: history,
+                      color: sparklineColor(for: history)
+                    )
+                    .padding(6)
+                    .frame(height: 30)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                  }
                 }
-              }
-              .frame(maxWidth: .infinity, minHeight: 30, maxHeight: 30)
+                .frame(maxWidth: .infinity, minHeight: 30, maxHeight: 30)
 
-              VStack(alignment: .trailing, spacing: 2) {
-                Text("\(total)")
-                  .font(.title3.weight(.semibold).monospacedDigit())
-                if let pointsDelta {
-                  Text(pointsDelta >= 0 ? "+\(pointsDelta)" : "\(pointsDelta)")
-                    .font(.caption)
-                    .foregroundStyle(pointsDelta >= 0 ? .green : .red)
-                } else {
-                  Text("UI.Common.EmptyValue")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                VStack(alignment: .trailing, spacing: 2) {
+                  Text("\(total)")
+                    .font(.title3.weight(.semibold).monospacedDigit())
+                  if let pointsDelta {
+                    Text(pointsDelta >= 0 ? "+\(pointsDelta)" : "\(pointsDelta)")
+                      .font(.caption)
+                      .foregroundStyle(pointsDelta >= 0 ? .green : .red)
+                  } else {
+                    Text("UI.Common.EmptyValue")
+                      .font(.caption)
+                      .foregroundStyle(.secondary)
+                  }
                 }
               }
             }
+            .buttonStyle(.plain)
+            .accessibilityLabel(p.name)
+            .accessibilityHint("UI.GameSession.PlayerHistory.AccessibilityHint")
           }
-          .padding(14)
-          .background {
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-              .fill(.ultraThinMaterial)
-              .overlay {
-                LinearGradient(
-                  colors: [
-                    Color.white.opacity(0.20),
-                    Color.white.opacity(0.06),
-                    Color.white.opacity(0.02),
-                  ],
-                  startPoint: .topLeading,
-                  endPoint: .bottomTrailing
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-              }
-              .overlay {
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                  .strokeBorder(Color.white.opacity(0.16), lineWidth: 1)
-              }
-          }
-          .shadow(color: Color.black.opacity(0.10), radius: 10, x: 0, y: 6)
         }
-        .buttonStyle(.plain)
-        .accessibilityLabel(p.name)
-        .accessibilityHint("UI.GameSession.PlayerHistory.AccessibilityHint")
+        .padding(14)
+        .background {
+          RoundedRectangle(cornerRadius: 18, style: .continuous)
+            .fill(.ultraThinMaterial)
+            .overlay {
+              LinearGradient(
+                colors: [
+                  Color.white.opacity(0.20),
+                  Color.white.opacity(0.06),
+                  Color.white.opacity(0.02),
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+              )
+              .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            }
+            .overlay {
+              RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .strokeBorder(Color.white.opacity(0.16), lineWidth: 1)
+            }
+        }
+        .shadow(color: Color.black.opacity(0.10), radius: 10, x: 0, y: 6)
       }
     }
   }
 
-  private func entryChip(titleKey: String, value: Int?) -> some View {
-    entryChipChrome(titleKey: titleKey, value: value)
-  }
-
   @ViewBuilder
-  private func betEntryChip(titleKey: String, value: Int?, onTap: (() -> Void)?) -> some View {
+  private func scoreboardEntryChip(
+    titleKey: String,
+    value: Int?,
+    onTap: (() -> Void)?,
+    accessibilityHintKey: String
+  ) -> some View {
     if let onTap {
       Button(action: onTap) {
         entryChipChrome(titleKey: titleKey, value: value)
       }
       .buttonStyle(.plain)
+      .accessibilityHint(LocalizedStringKey(accessibilityHintKey))
     } else {
       entryChipChrome(titleKey: titleKey, value: value)
     }
@@ -614,22 +776,30 @@ struct GameSessionView: View {
         }
       )
     } else {
+      let isLastRound = (round?.handSize ?? 0) >= game.totalRoundsPlanned
       return AnyView(
-        Button(action: {
-          guard let store = storeHolder.store else { return }
-          let constraints = constraintsForFinalize(game: store.currentGame, bombPlayed: bombPlayedThisRound)
-          store.apply(.finalizeCurrentRound(roundConstraints: constraints))
-          if store.lastError == nil {
-            bombPlayedThisRound = false
-          }
-        }) {
-          Text("UI.Button.FinalizeRound")
+        Button(action: { finalizeCompletedRoundThenOpenNextBets(game: game) }) {
+          Text(isLastRound ? "UI.Button.FinishGame" : "UI.Button.EnterBets")
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
             .font(.headline)
         }
         .buttonStyle(.borderedProminent)
       )
+    }
+  }
+
+  /// Closes the current round, then opens the bet sheet for the next hand. On the last hand, only finalizes the game.
+  private func finalizeCompletedRoundThenOpenNextBets(game: Game) {
+    guard let store = storeHolder.store else { return }
+    guard let round = game.currentRound, !round.isFinalized else { return }
+    let isLastRound = round.handSize >= game.totalRoundsPlanned
+    let constraints = constraintsForFinalize(game: game, bombPlayed: bombPlayedThisRound)
+    store.apply(.finalizeCurrentRound(roundConstraints: constraints))
+    guard store.lastError == nil else { return }
+    bombPlayedThisRound = false
+    if !isLastRound {
+      showingBets = true
     }
   }
 
@@ -808,6 +978,13 @@ struct GameSessionView: View {
         histories[player.id, default: [0]].append(previous + delta)
       }
     }
+    if let round = game.currentRound, !round.isFinalized {
+      for player in game.players {
+        guard let delta = round.entries[player.id].flatMap({ try? $0.pointsDelta() }) else { continue }
+        let previous = histories[player.id]?.last ?? 0
+        histories[player.id, default: [0]].append(previous + delta)
+      }
+    }
     return histories
   }
 
@@ -825,6 +1002,27 @@ struct GameSessionView: View {
       if let delta = try? entry.pointsDelta() { return delta }
     }
     return nil
+  }
+
+  /// Totals from finalized rounds plus a preview of the current open round when bet and tricks are set for a player.
+  private func scoreboardTotalsIncludingOpenRound(game: Game) -> [UUID: Int] {
+    var totals = (try? game.totalPoints()) ?? Dictionary(uniqueKeysWithValues: game.players.map { ($0.id, 0) })
+    guard let round = game.currentRound, !round.isFinalized else { return totals }
+    for player in game.players {
+      guard let delta = round.entries[player.id].flatMap({ try? $0.pointsDelta() }) else { continue }
+      totals[player.id, default: 0] += delta
+    }
+    return totals
+  }
+
+  /// Prefer the current open round's points delta when bet and tricks allow scoring; otherwise the last finalized round delta.
+  private func scoreboardPointsDeltaCaption(for playerId: UUID, in game: Game) -> Int? {
+    if let round = game.currentRound, !round.isFinalized,
+       let entry = round.entries[playerId],
+       let delta = try? entry.pointsDelta() {
+      return delta
+    }
+    return lastFinalizedDelta(for: playerId, in: game)
   }
 
   private func loadIfNeeded(force: Bool = false) {

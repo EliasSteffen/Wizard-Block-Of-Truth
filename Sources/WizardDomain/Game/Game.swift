@@ -143,6 +143,29 @@ public struct Game: Hashable, Codable, Sendable {
     return totals
   }
 
+  /// Bet and tricks taken (`got`) as shown on the live scoreboard until every player has entered a bet for the current round.
+  ///
+  /// Between finalized rounds, the current round has empty entries; this keeps showing the last finalized round's numbers until bidding completes for the new round.
+  public func scoreboardDisplayValues(for playerId: UUID) -> (bet: Int?, got: Int?) {
+    guard let round = currentRound else {
+      return (nil, nil)
+    }
+
+    let allBetsPresent = round.entries.values.allSatisfy { $0.bet != nil }
+
+    if !allBetsPresent {
+      if let priorFinalized = rounds[..<currentRoundIndex].last(where: \.isFinalized),
+         let entry = priorFinalized.entries[playerId] {
+        return (entry.bet, entry.got)
+      }
+      let entry = round.entries[playerId]
+      return (entry?.bet, entry?.got)
+    }
+
+    let entry = round.entries[playerId]
+    return (entry?.bet, entry?.got)
+  }
+
   public mutating func apply(_ command: GameCommand) throws {
     try command.apply(to: &self)
   }

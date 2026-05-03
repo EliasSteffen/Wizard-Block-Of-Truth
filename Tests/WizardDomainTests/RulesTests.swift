@@ -21,5 +21,34 @@ final class RulesTests: XCTestCase {
       XCTAssertEqual(err as? DomainError, .unknownPlayerId(unknown))
     }
   }
+
+  func testBetSumNotEqualHandSizeAllowsSumAfterCloudResolved() throws {
+    let players = TestSupport.makePlayers(3)
+    let id0 = players[0].id
+    let id1 = players[1].id
+    let id2 = players[2].id
+    let entriesAfterCloud = [
+      id0: RoundEntry(bet: 1, got: nil),
+      id1: RoundEntry(bet: 1, got: nil),
+      id2: RoundEntry(bet: 1, got: nil),
+    ]
+    let beforeCloud = Round(
+      handSize: 3,
+      dealer: id0,
+      entries: entriesAfterCloud,
+      isFinalized: false,
+      cloudCardResolved: false
+    )
+    XCTAssertFalse(Constraint.GameConstraint.betSumNotEqualHandSize.isSatisfied(round: beforeCloud, players: players))
+
+    let afterCloud = Round(
+      handSize: 3,
+      dealer: id0,
+      entries: entriesAfterCloud,
+      isFinalized: false,
+      cloudCardResolved: true
+    )
+    XCTAssertTrue(Constraint.GameConstraint.betSumNotEqualHandSize.isSatisfied(round: afterCloud, players: players))
+  }
 }
 

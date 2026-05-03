@@ -191,6 +191,23 @@
         }
       }
     },
+    "Error.BetEditor.MissingValue" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kein Wettenwert."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Missing bet value."
+          }
+        }
+      }
+    },
     "Error.CloudCard.AlreadyResolved" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -631,6 +648,7 @@
       }
     },
     "UI.Button.FinalizeRound" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -642,6 +660,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Finalize Round"
+          }
+        }
+      }
+    },
+    "UI.Button.FinishGame" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spiel beenden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finish game"
           }
         }
       }
@@ -1014,6 +1049,23 @@
         }
       }
     },
+    "UI.GameSession.EditSingleBet.Title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wette anpassen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adjust bet"
+          }
+        }
+      }
+    },
     "UI.GameSession.Entry.Bet" : {
       "localizations" : {
         "de" : {
@@ -1195,22 +1247,6 @@
         }
       }
     },
-    "UI.GameSession.PlayerHistory.Column.Points" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pkt."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pts"
-          }
-        }
-      }
-    },
     "UI.GameSession.PlayerHistory.Banner.RankCaption" : {
       "localizations" : {
         "de" : {
@@ -1255,6 +1291,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tot."
+          }
+        }
+      }
+    },
+    "UI.GameSession.PlayerHistory.Column.Points" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pkt."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pts"
           }
         }
       }
@@ -1320,6 +1372,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No rounds yet"
+          }
+        }
+      }
+    },
+    "UI.GameSession.Score.Chip.EditBets.AccessibilityHint" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffnet die Eingabe für die Wette dieses Spielers."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens bidding for this player."
+          }
+        }
+      }
+    },
+    "UI.GameSession.Score.Chip.EditWonTricks.AccessibilityHint" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffnet die Eingabe für die gewonnenen Stiche aller Spieler dieser Runde."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens entry for won tricks for every player in this round."
           }
         }
       }

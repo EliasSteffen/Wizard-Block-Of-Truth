@@ -79,6 +79,8 @@ extension Constraint.GameConstraint {
   public func isSatisfied(round: Round, players: [Player]) -> Bool {
     switch self {
     case .betSumNotEqualHandSize:
+      // Initial bids must not sum to hand size; after cloud-card adjustment the sum may equal hand size.
+      if round.cloudCardResolved { return true }
       guard round.entries.values.allSatisfy({ $0.bet != nil }) else { return true }
       let betSum = round.entries.values.reduce(0) { $0 + ($1.bet ?? 0) }
       return betSum != round.handSize
