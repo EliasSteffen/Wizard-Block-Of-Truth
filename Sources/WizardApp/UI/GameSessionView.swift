@@ -574,38 +574,33 @@ struct GameSessionView: View {
           : nil
 
         VStack(alignment: .leading, spacing: 10) {
-          // Name row: history. Bet chip: one-player bets. Won chip: tricks sheet (after all bets; Wolke only via bottom bar).
-          Button {
-            playerHistorySheetItem = PlayerHistorySheetItem(id: p.id)
-          } label: {
-            HStack(spacing: 10) {
-              VStack(alignment: .leading, spacing: 2) {
-                Text(String(localized: "UI.GameSession.Score.RankPrefix", defaultValue: "#\(idx + 1)"))
-                  .font(.caption.weight(.semibold).monospacedDigit())
-                  .foregroundStyle(.secondary)
-                if let placeDelta {
-                  Text(placeDeltaString(placeDelta))
-                    .font(.caption2.weight(.semibold).monospacedDigit())
-                    .foregroundStyle(placeDeltaColor(placeDelta))
-                }
-              }
-              .frame(width: 36, alignment: .leading)
-
-              Text(p.name)
-                .font(.headline.weight(.semibold))
-                .lineLimit(1)
-                .truncationMode(.tail)
-
-              Spacer(minLength: 0)
-
-              if idx == 0 {
-                Image(systemName: "crown.fill")
-                  .font(.caption.weight(.semibold))
-                  .foregroundStyle(.yellow.opacity(0.9))
+          // Card tap opens history; Bet/Won chips are separate Buttons.
+          HStack(spacing: 10) {
+            VStack(alignment: .leading, spacing: 2) {
+              Text(String(localized: "UI.GameSession.Score.RankPrefix", defaultValue: "#\(idx + 1)"))
+                .font(.caption.weight(.semibold).monospacedDigit())
+                .foregroundStyle(.secondary)
+              if let placeDelta {
+                Text(placeDeltaString(placeDelta))
+                  .font(.caption2.weight(.semibold).monospacedDigit())
+                  .foregroundStyle(placeDeltaColor(placeDelta))
               }
             }
+            .frame(width: 36, alignment: .leading)
+
+            Text(p.name)
+              .font(.headline.weight(.semibold))
+              .lineLimit(1)
+              .truncationMode(.tail)
+
+            Spacer(minLength: 0)
+
+            if idx == 0 {
+              Image(systemName: "crown.fill")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.yellow.opacity(0.9))
+            }
           }
-          .buttonStyle(.plain)
           .accessibilityLabel(p.name)
           .accessibilityHint("UI.GameSession.PlayerHistory.AccessibilityHint")
 
@@ -623,39 +618,34 @@ struct GameSessionView: View {
               accessibilityHintKey: "UI.GameSession.Score.Chip.EditWonTricks.AccessibilityHint"
             )
 
-            Button {
-              playerHistorySheetItem = PlayerHistorySheetItem(id: p.id)
-            } label: {
-              HStack(alignment: .bottom, spacing: 10) {
-                GeometryReader { geometry in
-                  if geometry.size.width >= sparklineMinWidth {
-                    SparklineView(
-                      values: history,
-                      color: sparklineColor(for: history)
-                    )
-                    .padding(6)
-                    .frame(height: 30)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                  }
+            HStack(alignment: .bottom, spacing: 10) {
+              GeometryReader { geometry in
+                if geometry.size.width >= sparklineMinWidth {
+                  SparklineView(
+                    values: history,
+                    color: sparklineColor(for: history)
+                  )
+                  .padding(6)
+                  .frame(height: 30)
+                  .frame(maxWidth: .infinity, alignment: .center)
                 }
-                .frame(maxWidth: .infinity, minHeight: 30, maxHeight: 30)
+              }
+              .frame(maxWidth: .infinity, minHeight: 30, maxHeight: 30)
 
-                VStack(alignment: .trailing, spacing: 2) {
-                  Text("\(total)")
-                    .font(.title3.weight(.semibold).monospacedDigit())
-                  if let pointsDelta {
-                    Text(pointsDelta >= 0 ? "+\(pointsDelta)" : "\(pointsDelta)")
-                      .font(.caption)
-                      .foregroundStyle(pointsDelta >= 0 ? .green : .red)
-                  } else {
-                    Text("UI.Common.EmptyValue")
-                      .font(.caption)
-                      .foregroundStyle(.secondary)
-                  }
+              VStack(alignment: .trailing, spacing: 2) {
+                Text("\(total)")
+                  .font(.title3.weight(.semibold).monospacedDigit())
+                if let pointsDelta {
+                  Text(pointsDelta >= 0 ? "+\(pointsDelta)" : "\(pointsDelta)")
+                    .font(.caption)
+                    .foregroundStyle(pointsDelta >= 0 ? .green : .red)
+                } else {
+                  Text("UI.Common.EmptyValue")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
                 }
               }
             }
-            .buttonStyle(.plain)
             .accessibilityLabel(p.name)
             .accessibilityHint("UI.GameSession.PlayerHistory.AccessibilityHint")
           }
@@ -682,6 +672,11 @@ struct GameSessionView: View {
             }
         }
         .shadow(color: Color.black.opacity(0.10), radius: 10, x: 0, y: 6)
+        .contentShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .onTapGesture {
+          playerHistorySheetItem = PlayerHistorySheetItem(id: p.id)
+        }
+        .accessibilityElement(children: .contain)
       }
     }
   }
