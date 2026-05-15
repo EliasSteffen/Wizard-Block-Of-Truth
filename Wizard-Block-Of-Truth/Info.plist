@@ -26,6 +26,12 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_wizardbot._tcp</string>
+	</array>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Wizard Block of Truth uses your local network to host and join multiplayer games on nearby devices.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

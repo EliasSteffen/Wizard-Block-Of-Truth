@@ -21,6 +21,15 @@
         }
       }
     },
+    "All player slots are taken. Try another session." : {
+
+    },
+    "Bet: %@" : {
+
+    },
+    "Code: %@" : {
+
+    },
     "Domain.Card.Bomb.Description" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -599,6 +608,18 @@
         }
       }
     },
+    "Multi Phone" : {
+
+    },
+    "No sessions found on local network." : {
+
+    },
+    "Pts: %@" : {
+
+    },
+    "Single Phone" : {
+
+    },
     "UI.Button.EnterBets" : {
       "localizations" : {
         "de" : {
@@ -677,6 +698,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Finish game"
+          }
+        }
+      }
+    },
+    "UI.Common.Back" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zurück"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
           }
         }
       }
@@ -1427,6 +1465,55 @@
         }
       }
     },
+    "UI.GuestWaiting.Message" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warte, bis der Host das Spiel startet…"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for the host to start the game…"
+          }
+        }
+      }
+    },
+    "UI.GuestWaiting.Players.Header" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spieler"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Players"
+          }
+        }
+      }
+    },
+    "UI.GuestWaiting.You" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You"
+          }
+        }
+      }
+    },
     "UI.Info.Attribution" : {
       "localizations" : {
         "de" : {
@@ -1492,6 +1579,354 @@
         }
       }
     },
+    "UI.JoinGame.ChoosePlayer.Title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spieler wählen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose Player"
+          }
+        }
+      }
+    },
+    "UI.JoinGame.Title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spiel beitreten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Join Game"
+          }
+        }
+      }
+    },
+    "UI.JoinGame.Waiting.Claimed" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du bist als %@ dabei."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You joined as %@."
+          }
+        }
+      }
+    },
+    "UI.JoinGame.Waiting.Message" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warte, bis der Host das Spiel startet."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for the host to start the game."
+          }
+        }
+      }
+    },
+    "UI.JoinGame.Waiting.Title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warte auf Host"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for Host"
+          }
+        }
+      }
+    },
+    "UI.MultiplayerLobby.HostDefaultName" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Host"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Host"
+          }
+        }
+      }
+    },
+    "UI.MultiplayerLobby.HostName.Placeholder" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Name"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your name"
+          }
+        }
+      }
+    },
+    "UI.MultiplayerLobby.HostSection.Header" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Host"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Host"
+          }
+        }
+      }
+    },
+    "UI.MultiplayerLobby.HostSlot.Title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Platz"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your seat"
+          }
+        }
+      }
+    },
+    "UI.MultiplayerLobby.JoinCode.Footer" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gäste geben diesen Code beim Beitreten ein."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guests enter this code when joining."
+          }
+        }
+      }
+    },
+    "UI.MultiplayerLobby.JoinCode.Header" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beitrittscode"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Join Code"
+          }
+        }
+      }
+    },
+    "UI.MultiplayerLobby.Players.Header" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spieler"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Players"
+          }
+        }
+      }
+    },
+    "UI.MultiplayerLobby.SlotTaken" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "belegt"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "taken"
+          }
+        }
+      }
+    },
+    "UI.MultiplayerLobby.StartGame" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spiel starten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start Game"
+          }
+        }
+      }
+    },
+    "UI.MultiplayerLobby.Status.Connected" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verbunden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connected"
+          }
+        }
+      }
+    },
+    "UI.MultiplayerLobby.Status.ConnectedAs" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verbunden als %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connected as %@"
+          }
+        }
+      }
+    },
+    "UI.MultiplayerLobby.Status.Host" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Host"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Host"
+          }
+        }
+      }
+    },
+    "UI.MultiplayerLobby.Status.Waiting" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wartet"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting"
+          }
+        }
+      }
+    },
+    "UI.MultiplayerLobby.Title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lobby"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Host Lobby"
+          }
+        }
+      }
+    },
+    "UI.MultiplayerLobby.WaitingForPlayers.Footer" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Plätze müssen belegt sein, bevor du starten kannst."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All seats must be claimed before you can start."
+          }
+        }
+      }
+    },
+    "UI.NewGame.CreateLobby" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lobby erstellen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create Lobby"
+          }
+        }
+      }
+    },
     "UI.NewGame.DefaultName" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1521,6 +1956,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "House Rules"
+          }
+        }
+      }
+    },
+    "UI.NewGame.MultiPhone.PlayersHint" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gäste wählen beim Beitreten ihren Namen und Platz. Du legst Startdealer und Regeln in der Lobby fest."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guests pick their name and seat when joining. You set the starting dealer and rules in the lobby."
           }
         }
       }
@@ -1941,6 +2392,9 @@
           }
         }
       }
+    },
+    "Won: %@" : {
+
     }
   },
   "version" : "1.0"

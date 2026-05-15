@@ -126,6 +126,8 @@ public struct Game: Hashable, Codable, Sendable {
     }
   }
 
+  public var hasStarted: Bool { !rounds.isEmpty }
+
   public var currentRound: Round? {
     guard !rounds.isEmpty else { return nil }
     guard (0..<rounds.count).contains(currentRoundIndex) else { return nil }

@@ -9,6 +9,7 @@ let package = Package(
   ],
   products: [
     .library(name: "WizardDomain", targets: ["WizardDomain"]),
+    .library(name: "WizardNet", targets: ["WizardNet"]),
     .executable(name: "WizardApp", targets: ["WizardApp"]),
   ],
   targets: [
@@ -16,9 +17,14 @@ let package = Package(
       name: "WizardDomain",
       path: "Sources/WizardDomain"
     ),
+    .target(
+      name: "WizardNet",
+      dependencies: ["WizardDomain"],
+      path: "Sources/WizardNet"
+    ),
     .executableTarget(
       name: "WizardApp",
-      dependencies: ["WizardDomain"],
+      dependencies: ["WizardDomain", "WizardNet"],
       path: "Sources/WizardApp"
     ),
     .testTarget(
@@ -30,6 +36,11 @@ let package = Package(
       name: "WizardAppTests",
       dependencies: ["WizardApp"],
       path: "Tests/WizardAppTests"
+    ),
+    .testTarget(
+      name: "WizardNetTests",
+      dependencies: ["WizardNet", "WizardDomain"],
+      path: "Tests/WizardNetTests"
     ),
   ]
 )

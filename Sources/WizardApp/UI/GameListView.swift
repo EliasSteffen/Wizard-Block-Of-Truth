@@ -4,10 +4,12 @@ import SwiftData
 struct GameListView: View {
   @Environment(\.modelContext) private var modelContext
   @Environment(\.locale) private var locale
+  @EnvironmentObject private var multiplayerCoordinator: MultiplayerCoordinator
   @AppStorage("app.language") private var appLanguageRaw: String = AppLanguage.system.rawValue
   @Query(sort: \GameSnapshotEntity.updatedAt, order: .reverse) private var games: [GameSnapshotEntity]
 
   @State private var showingNewGame = false
+  @State private var showingJoinGame = false
   @State private var path: [UUID] = []
   @State private var searchText: String = ""
   @State private var showingSettings = false
@@ -27,7 +29,7 @@ struct GameListView: View {
       }
       .navigationTitle("UI.GameList.NavigationTitle")
       .navigationDestination(for: UUID.self) { id in
-        GameSessionView(gameId: id)
+        GameSessionContainerView(gameId: id)
       }
 #if os(iOS)
       .navigationBarTitleDisplayMode(.inline)
@@ -88,8 +90,15 @@ struct GameListView: View {
         bottomBar
       }
       .sheet(isPresented: $showingNewGame) {
-        NewGameView { newId in
-          path = [newId]
+        NewGameView(
+          onCreated: { newId in path = [newId] },
+          onMultiplayerGameStarted: { newId in path = [newId] }
+        )
+        .presentationDetents([.large])
+      }
+      .sheet(isPresented: $showingJoinGame) {
+        JoinGameView { joinedSessionID in
+          path = [joinedSessionID]
         }
         .presentationDetents([.large])
       }
@@ -132,7 +141,7 @@ struct GameListView: View {
     } else {
       ForEach(filteredGames) { game in
         NavigationLink {
-          GameSessionView(gameId: game.id)
+          GameSessionContainerView(gameId: game.id)
         } label: {
           VStack(alignment: .leading, spacing: 4) {
             Text(game.name)
@@ -193,6 +202,20 @@ struct GameListView: View {
       }
       .buttonStyle(.plain)
       .accessibilityLabel("UI.GameList.NewGame.Accessibility")
+
+      Button {
+        showingJoinGame = true
+      } label: {
+        Image(systemName: "person.2.wave.2")
+          .font(.headline)
+          .frame(width: 44, height: 44)
+          .background(.ultraThinMaterial, in: Capsule())
+          .overlay {
+            Capsule().strokeBorder(Color.white.opacity(0.25), lineWidth: 1)
+          }
+      }
+      .buttonStyle(.plain)
+      .accessibilityLabel("Join multiplayer game")
     }
     .padding(.horizontal, 16)
     .padding(.bottom, 12)

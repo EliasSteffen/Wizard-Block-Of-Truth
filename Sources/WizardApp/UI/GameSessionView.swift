@@ -17,6 +17,7 @@ struct GameSessionView: View {
   private let sparklineMinWidth: CGFloat = 90
 
   @Environment(\.modelContext) private var modelContext
+  @EnvironmentObject private var multiplayerCoordinator: MultiplayerCoordinator
   @StateObject private var storeHolder = StoreHolder()
 
   @State private var showingBets = false
@@ -1022,7 +1023,11 @@ struct GameSessionView: View {
 
   private func loadIfNeeded(force: Bool = false) {
     if storeHolder.store == nil {
-      storeHolder.store = GameStore(modelContext: modelContext)
+      if let multiplayerStore = multiplayerCoordinator.store(for: gameId) {
+        storeHolder.store = multiplayerStore
+      } else {
+        storeHolder.store = GameStore(modelContext: modelContext)
+      }
       storeHolder.store?.loadGame(id: gameId)
     } else if force || storeHolder.store?.currentGame?.id != gameId {
       storeHolder.store?.loadGame(id: gameId)
@@ -1067,7 +1072,7 @@ private struct SparklineView: View {
 
 @MainActor
 private final class StoreHolder: ObservableObject {
-  @Published var store: GameStore? {
+  @Published var store: (any GameStoring)? {
     didSet { bindStoreChanges() }
   }
 
