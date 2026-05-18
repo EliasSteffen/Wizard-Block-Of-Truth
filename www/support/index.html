@@ -3,37 +3,67 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Support — Wizard Block of Truth</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
+    <title>Support - Wizard Block of Truth</title>
+    <meta
+      name="description"
+      content="Support page for Wizard Block of Truth with issue reporting and repository links."
     />
     <link rel="stylesheet" href="../style.css" />
   </head>
   <body>
-    <div class="container">
-      <div class="card">
-        <h1>Support</h1>
-        <p>Need help with Wizard Block of Truth? Here is how to reach the project.</p>
-
-        <div class="contact-section">
-          <div class="label">GitHub</div>
-          <div class="value">
-            <a href="https://github.com/EliasSteffen/Wizard-Block-Of-Truth/issues">Report an issue or ask a question</a>
-          </div>
-
-          <div class="label">Repository</div>
-          <div class="value">
-            <a href="https://github.com/EliasSteffen/Wizard-Block-Of-Truth">github.com/EliasSteffen/Wizard-Block-Of-Truth</a>
-          </div>
-        </div>
-
-        <p style="margin-top: 1.5rem; margin-bottom: 0">
-          <a href="../">← Back</a>
-        </p>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <a class="brand" href="../">Wizard Block of Truth</a>
+        <nav class="top-nav" aria-label="Secondary navigation">
+          <a href="../#features">Features</a>
+          <a href="../privacy/">Privacy</a>
+          <a href="./">Support</a>
+        </nav>
       </div>
-    </div>
+    </header>
+
+    <main class="site-shell subpage-main">
+      <article class="subpage-card">
+        <h1>Support</h1>
+        <p>
+          Need help with Wizard Block of Truth? Use the links below for bug reports, feature ideas,
+          and project questions.
+        </p>
+        <p>
+          Brauchst du Hilfe mit Wizard Block of Truth? Nutze die folgenden Links fuer Bug-Reports,
+          Feature-Ideen und allgemeine Fragen.
+        </p>
+        <p>
+          <strong>GitHub Issues:</strong>
+          <a href="https://github.com/EliasSteffen/Wizard-Block-Of-Truth/issues"
+            >Report an issue or ask a question</a
+          >
+        </p>
+        <p>
+          <strong>Repository:</strong>
+          <a href="https://github.com/EliasSteffen/Wizard-Block-Of-Truth"
+            >github.com/EliasSteffen/Wizard-Block-Of-Truth</a
+          >
+        </p>
+        <a class="back-link" href="../">Back to landing page</a>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-shell footer-row">
+        <small>&copy; <span id="year"></span> Wizard Block of Truth</small>
+        <nav class="footer-links" aria-label="Footer links">
+          <a href="../privacy/">Privacy</a>
+          <a href="./">Support</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      (function () {
+        var year = document.getElementById("year");
+        if (year) year.textContent = String(new Date().getFullYear());
+      })();
+    </script>
   </body>
 </html>
