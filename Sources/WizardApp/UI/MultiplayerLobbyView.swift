@@ -109,6 +109,10 @@ struct MultiplayerLobbyView: View {
                 }
               }
               .pickerStyle(.menu)
+
+              Toggle(isOn: $playWithSpecialCards) {
+                Text("UI.NewGame.PlayWithSpecialCards.Toggle")
+              }
             }
 
             Section {
@@ -128,12 +132,6 @@ struct MultiplayerLobbyView: View {
               }
             } header: {
               Text("UI.NewGame.HouseRules.Header")
-            }
-
-            Section {
-              Toggle(isOn: $playWithSpecialCards) {
-                Text("UI.NewGame.PlayWithSpecialCards.Toggle")
-              }
             }
           }
 

@@ -29,6 +29,10 @@ struct EntrySheetView: View {
   /// When non-nil, added to the sum of row values for the sum bar and sum validation (bets of players not in `players`).
   let additionalSumForValidation: Int?
   let onSubmit: ([UUID: Int]) -> Error?
+  /// Extra rows below the sum (e.g. round progress). Bets progress uses `liveBetsProgressRoundNumber`.
+  let sumContextLines: [(label: LocalizedStringKey, value: String)]
+  /// When set, shows a live `effectiveTotal/roundNumber` row labeled like the session header bets metric.
+  let liveBetsProgressRoundNumber: Int?
 
   @AppStorage("app.language") private var appLanguageRaw: String = AppLanguage.system.rawValue
   @Environment(\.dismiss) private var dismiss
@@ -36,6 +40,38 @@ struct EntrySheetView: View {
   @State private var values: [UUID: Int] = [:]
   @State private var submitError: Error?
   @State private var constraintFailureText: String?
+
+  init(
+    title: LocalizedStringKey,
+    handSize: Int,
+    players: [Player],
+    currentValues: [UUID: Int?],
+    valueLabel: String,
+    accessory: AnyView?,
+    sumValidation: SumValidation?,
+    showPositiveSumState: Bool,
+    allowedRange: ((UUID, [UUID: Int]) -> ClosedRange<Int>)?,
+    isPlayerDisabled: ((UUID, [UUID: Int]) -> Bool)?,
+    additionalSumForValidation: Int?,
+    onSubmit: @escaping ([UUID: Int]) -> Error?,
+    sumContextLines: [(label: LocalizedStringKey, value: String)] = [],
+    liveBetsProgressRoundNumber: Int? = nil
+  ) {
+    self.title = title
+    self.handSize = handSize
+    self.players = players
+    self.currentValues = currentValues
+    self.valueLabel = valueLabel
+    self.accessory = accessory
+    self.sumValidation = sumValidation
+    self.showPositiveSumState = showPositiveSumState
+    self.allowedRange = allowedRange
+    self.isPlayerDisabled = isPlayerDisabled
+    self.additionalSumForValidation = additionalSumForValidation
+    self.onSubmit = onSubmit
+    self.sumContextLines = sumContextLines
+    self.liveBetsProgressRoundNumber = liveBetsProgressRoundNumber
+  }
 
   var body: some View {
     NavigationStack {
@@ -183,7 +219,7 @@ struct EntrySheetView: View {
     case .equals:
       return "\(effectiveTotal)/\(sumValidation.expectedSum)"
     case .notEquals:
-      return "\(effectiveTotal)"
+      return "\(effectiveTotal)/\(sumValidation.expectedSum)"
     }
   }
 
@@ -204,6 +240,24 @@ struct EntrySheetView: View {
         Spacer()
         Text(sumValueText)
           .foregroundStyle(sumValueForegroundStyle)
+      }
+
+      if let liveBetsProgressRoundNumber {
+        HStack {
+          Text("UI.GameSession.Header.Bets")
+          Spacer()
+          Text("\(effectiveTotal)/\(liveBetsProgressRoundNumber)")
+            .monospacedDigit()
+        }
+      }
+
+      ForEach(Array(sumContextLines.enumerated()), id: \.offset) { _, line in
+        HStack {
+          Text(line.label)
+          Spacer()
+          Text(verbatim: line.value)
+            .monospacedDigit()
+        }
       }
     }
     .font(.subheadline.weight(.semibold))

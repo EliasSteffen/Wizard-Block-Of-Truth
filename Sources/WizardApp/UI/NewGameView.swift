@@ -68,6 +68,14 @@ struct NewGameView: View {
           .onTapGesture { focusedField = .gameName }
         }
 
+        Section {
+          Picker("Mode", selection: $gameMode) {
+            Text("Single Phone").tag(GameMode.singlePhone)
+            Text("Multi Phone").tag(GameMode.multiPhone)
+          }
+          .pickerStyle(.segmented)
+        }
+
         if isMultiPhone {
           Section {
             Text("UI.NewGame.MultiPhone.PlayersHint")
@@ -102,6 +110,10 @@ struct NewGameView: View {
               }
             }
             .pickerStyle(.menu)
+
+            Toggle(isOn: $playWithSpecialCards) {
+              Text("UI.NewGame.PlayWithSpecialCards.Toggle")
+            }
           }
 
           Section {
@@ -122,21 +134,8 @@ struct NewGameView: View {
           } header: {
             Text("UI.NewGame.HouseRules.Header")
           }
-
-          Section {
-            Toggle(isOn: $playWithSpecialCards) {
-              Text("UI.NewGame.PlayWithSpecialCards.Toggle")
-            }
-          }
         }
 
-        Section {
-          Picker("Mode", selection: $gameMode) {
-            Text("Single Phone").tag(GameMode.singlePhone)
-            Text("Multi Phone").tag(GameMode.multiPhone)
-          }
-          .pickerStyle(.segmented)
-        }
       }
 #if os(iOS)
       .scrollContentBackground(.hidden)

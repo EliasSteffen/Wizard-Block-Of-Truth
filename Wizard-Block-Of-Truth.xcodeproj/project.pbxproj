@@ -37,12 +37,10 @@
 		00000000000000000000011D /* GameStoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000021D /* GameStoring.swift */; };
 		00000000000000000000011E /* MultiplayerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000021E /* MultiplayerCoordinator.swift */; };
 		00000000000000000000011F /* MultiplayerGameStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000021F /* MultiplayerGameStore.swift */; };
-		00000000000000000000012C /* GuestJoinPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000022C /* GuestJoinPreferences.swift */; };
 		000000000000000000000120 /* GameSessionContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000220 /* GameSessionContainerView.swift */; };
 		000000000000000000000121 /* MultiplayerLobbyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000221 /* MultiplayerLobbyView.swift */; };
 		000000000000000000000122 /* JoinGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000222 /* JoinGameView.swift */; };
 		000000000000000000000123 /* GuestGameSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000223 /* GuestGameSessionView.swift */; };
-		00000000000000000000012D /* GuestWaitingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000022D /* GuestWaitingView.swift */; };
 		000000000000000000000124 /* MockTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000224 /* MockTransport.swift */; };
 		000000000000000000000125 /* HostSessionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000225 /* HostSessionService.swift */; };
 		000000000000000000000126 /* FrameCodec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000226 /* FrameCodec.swift */; };
@@ -51,6 +49,8 @@
 		000000000000000000000129 /* WireProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000229 /* WireProtocol.swift */; };
 		00000000000000000000012A /* TCPNetworkTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000022A /* TCPNetworkTransport.swift */; };
 		00000000000000000000012B /* CommandAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000022B /* CommandAuthorizer.swift */; };
+		00000000000000000000012C /* GuestJoinPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000022C /* GuestJoinPreferences.swift */; };
+		00000000000000000000012D /* GuestWaitingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000022D /* GuestWaitingView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -86,12 +86,10 @@
 		00000000000000000000021D /* GameStoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameStoring.swift; path = Sources/WizardApp/App/GameStoring.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000021E /* MultiplayerCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MultiplayerCoordinator.swift; path = Sources/WizardApp/Multiplayer/MultiplayerCoordinator.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000021F /* MultiplayerGameStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MultiplayerGameStore.swift; path = Sources/WizardApp/Multiplayer/MultiplayerGameStore.swift; sourceTree = SOURCE_ROOT; };
-		00000000000000000000022C /* GuestJoinPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GuestJoinPreferences.swift; path = Sources/WizardApp/Multiplayer/GuestJoinPreferences.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000220 /* GameSessionContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameSessionContainerView.swift; path = Sources/WizardApp/UI/GameSessionContainerView.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000221 /* MultiplayerLobbyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MultiplayerLobbyView.swift; path = Sources/WizardApp/UI/MultiplayerLobbyView.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000222 /* JoinGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JoinGameView.swift; path = Sources/WizardApp/UI/JoinGameView.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000223 /* GuestGameSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GuestGameSessionView.swift; path = Sources/WizardApp/UI/GuestGameSessionView.swift; sourceTree = SOURCE_ROOT; };
-		00000000000000000000022D /* GuestWaitingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GuestWaitingView.swift; path = Sources/WizardApp/UI/GuestWaitingView.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000224 /* MockTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MockTransport.swift; path = Sources/WizardNet/MockTransport.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000225 /* HostSessionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HostSessionService.swift; path = Sources/WizardNet/HostSessionService.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000226 /* FrameCodec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FrameCodec.swift; path = Sources/WizardNet/FrameCodec.swift; sourceTree = SOURCE_ROOT; };
@@ -100,6 +98,8 @@
 		000000000000000000000229 /* WireProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WireProtocol.swift; path = Sources/WizardNet/WireProtocol.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000022A /* TCPNetworkTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TCPNetworkTransport.swift; path = Sources/WizardNet/TCPNetworkTransport.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000022B /* CommandAuthorizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CommandAuthorizer.swift; path = Sources/WizardNet/CommandAuthorizer.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000022C /* GuestJoinPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GuestJoinPreferences.swift; path = Sources/WizardApp/Multiplayer/GuestJoinPreferences.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000022D /* GuestWaitingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GuestWaitingView.swift; path = Sources/WizardApp/UI/GuestWaitingView.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -396,6 +396,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "de.elias-steffen.WizardBlockOfTruth";
 				PRODUCT_NAME = "Wizard Block of Truth";
 				SDKROOT = iphoneos;
@@ -423,6 +424,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "de.elias-steffen.WizardBlockOfTruth";
 				PRODUCT_NAME = "Wizard Block of Truth";
 				SDKROOT = iphoneos;
