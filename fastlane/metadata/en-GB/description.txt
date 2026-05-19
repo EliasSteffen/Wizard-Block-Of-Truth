@@ -1,0 +1,10 @@
+**WizardBlock – the digital "Block of Truth" for your Wizard rounds**
+
+No more crumpled score sheets: this app replaces the classic paper score pad for the card game Wizard. Enter bids and tricks won—the app calculates the points and clearly shows the current score, hand size, dealer, and last point change.
+
+- Play your way at the table: Keep score on one iPhone for 2–6 players (the dealer changes each round as usual), or connect several iPhones on the same local Wi‑Fi so each player enters their own bid and tricks. The host device keeps the authoritative score; players without a phone can still be scored by the host.
+- Fewer entry errors: Entries are limited to valid values; the app checks sums (e.g. bids and tricks per round) so you spot mistakes early.
+- History: Review rounds with bids, tricks, and point changes; when corrections are made, totals are recalculated consistently.
+- Save & Continue: Games stay saved on your device—you can pick up where you left off.
+
+Wizard is a published card game. This app is an **independent scoring tool** and is **not affiliated with the publisher or rights holders** of the game.

@@ -5,6 +5,9 @@ struct AboutInfoView: View {
   @AppStorage("app.language") private var appLanguageRaw: String = AppLanguage.system.rawValue
 
   private static let wizardWikipediaURL = URL(string: "https://en.wikipedia.org/wiki/Wizard_(card_game)")!
+  private static let releaseNotesURL = URL(
+    string: "https://eliassteffen.github.io/Wizard-Block-Of-Truth/release-notes/"
+  )!
 
   private var currentLanguageCode: String? {
     let selected = AppLanguage(rawValue: appLanguageRaw) ?? .system
@@ -21,6 +24,11 @@ struct AboutInfoView: View {
 
           Link(destination: Self.wizardWikipediaURL) {
             Text("UI.Info.LinkTitle")
+          }
+          .font(.body.weight(.medium))
+
+          Link(destination: Self.releaseNotesURL) {
+            Text("UI.Info.ReleaseNotes.LinkTitle")
           }
           .font(.body.weight(.medium))
 

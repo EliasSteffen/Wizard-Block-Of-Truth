@@ -1,0 +1,1 @@
+Replace paper score pads for Wizard: clear scoring, round history, validation—and optional local-network play so each player can use their own iPhone.

@@ -1,0 +1,3 @@
+We continue improving and adapting Wizard Block of Truth to better suit how you score rounds at the table.
+
+For what's new in this version, see our release notes: https://eliassteffen.github.io/Wizard-Block-Of-Truth/release-notes/

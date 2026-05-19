@@ -1787,6 +1787,22 @@
         }
       }
     },
+    "UI.Info.ReleaseNotes.LinkTitle" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Versionshinweise"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Release notes"
+          }
+        }
+      }
+    },
     "UI.Info.Title" : {
       "extractionState" : "stale",
       "localizations" : {
