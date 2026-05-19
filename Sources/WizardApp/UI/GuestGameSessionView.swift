@@ -66,18 +66,23 @@ struct GuestGameSessionView: View {
         .padding(.horizontal)
         .padding(.top, 8)
     }
-    .safeAreaInset(edge: .bottom) {
+    .safeAreaInset(edge: .bottom, spacing: 10) {
       VStack(spacing: 10) {
-        Text(titleKey)
-          .font(.title3.weight(.bold))
-          .multilineTextAlignment(.center)
-          .padding(.horizontal, 24)
+        GuestEntryBottomGlassPanel {
+          VStack(spacing: 12) {
+            Text(titleKey)
+              .font(.title2.weight(.bold))
+              .multilineTextAlignment(.center)
+              .padding(.horizontal, 8)
 
-        ValueStepperControl(
-          value: $draftValue,
-          range: range,
-          style: .compact
-        )
+            ValueStepperControl(
+              value: $draftValue,
+              range: range,
+              style: .compact
+            )
+          }
+        }
+        .padding(.horizontal, 12)
 
         if let submitError {
           Text(submitError)
@@ -90,10 +95,9 @@ struct GuestGameSessionView: View {
         WizardPrimaryActionButton(title: "UI.GuestSession.Submit") {
           submitEntry(game: game, guestPlayerID: guestPlayerID, phase: phase)
         }
+        .padding(.horizontal, 12)
       }
-      .padding(.horizontal)
-      .padding(.top, 8)
-      .padding(.bottom, 12)
+      .padding(.bottom, 8)
     }
   }
 
@@ -185,5 +189,50 @@ struct GuestGameSessionView: View {
         languageCode: AppLanguage.catalogLookupLanguageCode
       )
     }
+  }
+}
+
+// MARK: - Entry bottom glass chrome
+
+private struct GuestEntryBottomGlassPanel<Content: View>: View {
+  @ViewBuilder var content: () -> Content
+
+  var body: some View {
+    content()
+      .padding(.horizontal, 16)
+      .padding(.vertical, 16)
+      .frame(maxWidth: .infinity)
+      .background {
+        GuestEntryBottomGlassBackground()
+      }
+  }
+}
+
+private struct GuestEntryBottomGlassBackground: View {
+  private let cornerRadius: CGFloat = 22
+
+  var body: some View {
+    let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+
+    ZStack {
+      shape.fill(Color.black.opacity(0.05))
+      shape.fill(.ultraThinMaterial)
+      shape.fill(
+        LinearGradient(
+          colors: [
+            Color.white.opacity(0.10),
+            Color.white.opacity(0.02),
+            Color.clear,
+          ],
+          startPoint: .top,
+          endPoint: .bottom
+        )
+      )
+    }
+    .overlay {
+      shape.strokeBorder(Color.white.opacity(0.14), lineWidth: 1)
+    }
+    .shadow(color: Color.black.opacity(0.14), radius: 20, x: 0, y: 10)
+    .shadow(color: Color.black.opacity(0.06), radius: 6, x: 0, y: 3)
   }
 }
