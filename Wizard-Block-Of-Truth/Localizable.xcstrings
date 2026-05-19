@@ -1613,7 +1613,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gebot eingeben"
+            "value" : "Wette eingeben"
           }
         },
         "en" : {
@@ -2356,7 +2356,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nicht jeder braucht ein Handy. Verbundene Spieler joinen mit dem Code; fehlende Gebote und Stiche trägst du als Host ein."
+            "value" : "Nicht jeder braucht ein Handy. Verbundene Spieler joinen mit dem Code; fehlende Wetten und Stiche trägst du als Host ein."
           }
         },
         "en" : {
