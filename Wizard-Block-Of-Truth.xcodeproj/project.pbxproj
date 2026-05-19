@@ -29,6 +29,7 @@
 		000000000000000000000115 /* Rules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000215 /* Rules.swift */; };
 		000000000000000000000116 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000216 /* Errors.swift */; };
 		000000000000000000000134 /* PlayerNaming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000234 /* PlayerNaming.swift */; };
+		000000000000000000000135 /* GameSessionScoreboardViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000235 /* GameSessionScoreboardViews.swift */; };
 		000000000000000000000117 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000217 /* Assets.xcassets */; };
 		000000000000000000000118 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000218 /* Localizable.xcstrings */; };
 		000000000000000000000119 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000219 /* Card.swift */; };
@@ -114,6 +115,7 @@
 		000000000000000000000231 /* WizardPrimaryActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WizardPrimaryActionButton.swift; path = Sources/WizardApp/UI/WizardPrimaryActionButton.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000232 /* HostMultiplayerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HostMultiplayerSheet.swift; path = Sources/WizardApp/UI/HostMultiplayerSheet.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000233 /* GameSessionMultiplayerToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameSessionMultiplayerToolbar.swift; path = Sources/WizardApp/UI/GameSessionMultiplayerToolbar.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000235 /* GameSessionScoreboardViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameSessionScoreboardViews.swift; path = Sources/WizardApp/UI/GameSessionScoreboardViews.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -216,6 +218,7 @@
 				000000000000000000000231 /* WizardPrimaryActionButton.swift */,
 				000000000000000000000232 /* HostMultiplayerSheet.swift */,
 				000000000000000000000233 /* GameSessionMultiplayerToolbar.swift */,
+				000000000000000000000235 /* GameSessionScoreboardViews.swift */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -384,6 +387,7 @@
 				000000000000000000000131 /* WizardPrimaryActionButton.swift in Sources */,
 				000000000000000000000132 /* HostMultiplayerSheet.swift in Sources */,
 				000000000000000000000133 /* GameSessionMultiplayerToolbar.swift in Sources */,
+				000000000000000000000135 /* GameSessionScoreboardViews.swift in Sources */,
 				000000000000000000000124 /* MockTransport.swift in Sources */,
 				000000000000000000000125 /* HostSessionService.swift in Sources */,
 				000000000000000000000126 /* FrameCodec.swift in Sources */,
