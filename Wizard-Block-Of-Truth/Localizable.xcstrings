@@ -5,6 +5,7 @@
 
     },
     "%@/%@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -19,12 +20,6 @@
           }
         }
       }
-    },
-    "All player slots are taken. Try another session." : {
-
-    },
-    "Bet: %@" : {
-
     },
     "Code: %@" : {
 
@@ -616,9 +611,6 @@
     "Optional. Select a session below — Connect uses that session’s full code, not this filter." : {
 
     },
-    "Pts: %@" : {
-
-    },
     "Single Phone" : {
 
     },
@@ -1106,6 +1098,89 @@
         }
       }
     },
+    "UI.GameSession.EnableMultiplayer.Accessibility" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Multi-Phone-Sitzung starten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start multi-phone session"
+          }
+        }
+      }
+    },
+    "UI.GameSession.EnableMultiplayer.Create" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sitzung erstellen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create session"
+          }
+        }
+      }
+    },
+    "UI.GameSession.EnableMultiplayer.Message" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Andere Handys können per Code beitreten und einen der bestehenden Spieler übernehmen. Neue Spieler können nicht hinzugefügt werden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other phones can join with the code and take one of the existing players. You cannot add new players here."
+          }
+        }
+      }
+    },
+    "UI.GameSession.EnableMultiplayer.Title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Multi-Phone"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Multi-Phone"
+          }
+        }
+      }
+    },
+    "UI.GameSession.EnableMultiplayer.Toolbar" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Multi-Phone"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Multi-Phone"
+          }
+        }
+      }
+    },
     "UI.GameSession.Entry.Bet" : {
       "localizations" : {
         "de" : {
@@ -1139,7 +1214,6 @@
       }
     },
     "UI.GameSession.FinalScoreboard.Title" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1467,6 +1541,155 @@
         }
       }
     },
+    "UI.GameSession.ShareSession.Accessibility" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sitzung und Beitrittscode anzeigen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show session and join code"
+          }
+        }
+      }
+    },
+    "UI.GameSession.ShareSession.Footer" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gäste wählen beim Beitreten einen freien Spieler-Slot. Du trägst weiterhin für Spieler ohne Handy ein."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guests pick an open player slot when joining. You can still enter values for players without a phone."
+          }
+        }
+      }
+    },
+    "UI.GameSession.ShareSession.Title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sitzung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Session"
+          }
+        }
+      }
+    },
+    "UI.GameSession.ShareSession.Toolbar" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sitzung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Session"
+          }
+        }
+      }
+    },
+    "UI.GuestSession.EnterBet" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gebot eingeben"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter Your Bet"
+          }
+        }
+      }
+    },
+    "UI.GuestSession.EnterWonTricks" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiche eingeben"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter Your Won Tricks"
+          }
+        }
+      }
+    },
+    "UI.GuestSession.Points" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pkt"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pts"
+          }
+        }
+      }
+    },
+    "UI.GuestSession.Submit" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speichern"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Submit"
+          }
+        }
+      }
+    },
+    "UI.GuestSession.Waiting" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du bist fertig. Warte auf die anderen Spieler."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're done. Waiting for other players."
+          }
+        }
+      }
+    },
     "UI.GuestWaiting.Message" : {
       "localizations" : {
         "de" : {
@@ -1598,6 +1821,122 @@
         }
       }
     },
+    "UI.JoinGame.InProgress.Footer" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Spiel läuft bereits. Wähle einen freien Spieler-Slot."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This game is already in progress. Pick an open player slot."
+          }
+        }
+      }
+    },
+    "UI.JoinGame.NoOpenSlots" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Plätze sind belegt. Versuche es mit einer anderen Sitzung oder bitte den Host."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All player slots are taken. Try another session or ask the host."
+          }
+        }
+      }
+    },
+    "UI.JoinGame.Rejoin.Button" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erneut beitreten als %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rejoin as %@"
+          }
+        }
+      }
+    },
+    "UI.JoinGame.Rejoin.Code" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Code: %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Code: %@"
+          }
+        }
+      }
+    },
+    "UI.JoinGame.Rejoin.Forget" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gespeicherte Sitzung vergessen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forget saved session"
+          }
+        }
+      }
+    },
+    "UI.JoinGame.Rejoin.Header" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Letzte Sitzung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last session"
+          }
+        }
+      }
+    },
+    "UI.JoinGame.Rejoin.HostNotFound" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Host im Netzwerk nicht gefunden. Öffne Beitreten in der Nähe des Host-Geräts."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Host not found on the network. Open Join near the host device."
+          }
+        }
+      }
+    },
     "UI.JoinGame.Title" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1661,6 +2000,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Waiting for Host"
+          }
+        }
+      }
+    },
+    "UI.MultiplayerLobby.DevicesConnected.Footer" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld von %lld Geräten verbunden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld of %lld devices connected"
           }
         }
       }
@@ -1863,7 +2219,24 @@
         }
       }
     },
+    "UI.MultiplayerLobby.Status.HostEnters" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Host trägt ein"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Host enters"
+          }
+        }
+      }
+    },
     "UI.MultiplayerLobby.Status.Waiting" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1901,13 +2274,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alle Plätze müssen belegt sein, bevor du starten kannst."
+            "value" : "Nicht jeder braucht ein Handy. Verbundene Spieler joinen mit dem Code; fehlende Gebote und Stiche trägst du als Host ein."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "All seats must be claimed before you can start."
+            "value" : "Not everyone needs a phone. Connected players join with the code; you enter missing bets and tricks as host."
           }
         }
       }
@@ -2394,9 +2767,6 @@
           }
         }
       }
-    },
-    "Won: %@" : {
-
     }
   },
   "version" : "1.0"

@@ -62,6 +62,8 @@ Run `swift test --filter LocalizationCatalogTests` after string changes.
 
 Host lobby / join flows: `MultiplayerLobbyView`, `JoinGameView`, `GuestWaitingView`, `GuestGameSessionView`. Respect host vs guest capabilities from `wizard-multiplayer`—disable or hide controls guests must not use.
 
+Guest in-game UI (`GuestGameSessionView`): full-screen bet or won-tricks entry via `ValueStepperControl(style: .prominent)`; after submit, compact read-only scoreboard. Rejoin: `SavedGuestSession` + `JoinGameView` rejoin section.
+
 ## Persistence
 
 Game JSON stored on `GameSnapshotEntity` via `GameCodec`. UI should call store methods (`createGame`, `apply`, `replaceCurrentGame`) rather than writing entities directly.

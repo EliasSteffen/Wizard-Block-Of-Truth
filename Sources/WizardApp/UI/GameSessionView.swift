@@ -85,6 +85,14 @@ struct GameSessionView: View {
       )
     }
     .wizardBackground()
+    .onChange(of: multiplayerCoordinator.hostLobbyState?.gameID) { _, _ in
+      attachMultiplayerStoreIfNeeded()
+    }
+  }
+
+  private func attachMultiplayerStoreIfNeeded() {
+    guard let multiplayerStore = multiplayerCoordinator.store(for: gameId) else { return }
+    storeHolder.store = multiplayerStore
   }
 
   private var shouldPresentGlobalErrorAlert: Bool {

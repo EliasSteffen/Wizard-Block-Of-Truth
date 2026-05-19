@@ -17,29 +17,28 @@ struct MultiplayerLobbyView: View {
   @State private var enabledGameConstraints: Set<Constraint.GameConstraint> = [.betSumNotEqualHandSize]
   @State private var playWithSpecialCards: Bool = true
   @State private var startError: String?
+  @State private var showsSessionSheet = false
 
   private var lobby: HostLobbyState? {
     guard multiplayerCoordinator.hostLobbyState?.gameID == gameID else { return nil }
     return multiplayerCoordinator.hostLobbyState
   }
 
-  private var claimedSlotCount: Int {
+  private var connectedDeviceCount: Int {
     guard let lobby else { return 0 }
-    var claimed = lobby.connectedGuestPlayerIDs
-    if let hostPlayerId { claimed.insert(hostPlayerId) }
-    return claimed.count
+    var connected = lobby.connectedGuestPlayerIDs
+    connected.insert(hostPlayerId ?? lobby.hostPlayerId)
+    return connected.count
   }
 
-  private var allSlotsClaimed: Bool {
+  private var canConfigureGame: Bool {
     guard let lobby else { return false }
-    return claimedSlotCount >= lobby.players.count
+    guard !trimmedHostName.isEmpty else { return false }
+    return !lobby.hasStarted
   }
 
   private var canStart: Bool {
-    guard let lobby else { return false }
-    guard !trimmedHostName.isEmpty else { return false }
-    guard allSlotsClaimed else { return false }
-    return !lobby.hasStarted
+    canConfigureGame
   }
 
   private var trimmedHostName: String {
@@ -96,12 +95,27 @@ struct MultiplayerLobbyView: View {
           } header: {
             Text("UI.MultiplayerLobby.Players.Header")
           } footer: {
-            if !allSlotsClaimed {
+            VStack(alignment: .leading, spacing: 6) {
               Text("UI.MultiplayerLobby.WaitingForPlayers.Footer")
+              if connectedDeviceCount < lobby.players.count {
+                Text(
+                  String(
+                    format: String(
+                      localized: "UI.MultiplayerLobby.DevicesConnected.Footer",
+                      defaultValue: "%lld of %lld devices connected",
+                      locale: locale
+                    ),
+                    locale: locale,
+                    connectedDeviceCount,
+                    lobby.players.count
+                  )
+                )
+                .foregroundStyle(.secondary)
+              }
             }
           }
 
-          if allSlotsClaimed {
+          if canConfigureGame {
             Section {
               Picker("UI.NewGame.StartingDealer.Title", selection: $startingDealerIndex) {
                 ForEach(Array(lobby.players.enumerated()), id: \.offset) { idx, player in
@@ -152,6 +166,20 @@ struct MultiplayerLobbyView: View {
         ToolbarItem(placement: .cancellationAction) {
           Button("UI.Common.Cancel") { dismiss() }
         }
+        if multiplayerCoordinator.isHosting(gameID: gameID) {
+          ToolbarItem(placement: .primaryAction) {
+            Button {
+              showsSessionSheet = true
+            } label: {
+              Label {
+                Text("UI.GameSession.ShareSession.Toolbar")
+              } icon: {
+                Image(systemName: "person.2.fill")
+              }
+            }
+            .accessibilityLabel("UI.GameSession.ShareSession.Accessibility")
+          }
+        }
         ToolbarItem(placement: .confirmationAction) {
           Button("UI.MultiplayerLobby.StartGame") {
             startGame()
@@ -159,6 +187,9 @@ struct MultiplayerLobbyView: View {
           .disabled(!canStart)
         }
       }
+    }
+    .sheet(isPresented: $showsSessionSheet) {
+      HostMultiplayerSheet(gameID: gameID, mode: .share)
     }
     .onAppear {
       seedFromLobby()
@@ -186,7 +217,7 @@ struct MultiplayerLobbyView: View {
       Text("UI.MultiplayerLobby.Status.Connected")
         .foregroundStyle(.green)
     } else {
-      Text("UI.MultiplayerLobby.Status.Waiting")
+      Text("UI.MultiplayerLobby.Status.HostEnters")
         .foregroundStyle(.secondary)
     }
   }

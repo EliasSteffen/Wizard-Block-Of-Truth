@@ -52,6 +52,7 @@ final class MultiplayerCoordinator: ObservableObject {
 
     let trimmedHostName = hostDisplayName.trimmingCharacters(in: .whitespacesAndNewlines)
     var setupGame = game
+    setupGame.mode = .multiPhone
     if let idx = setupGame.players.firstIndex(where: { $0.id == hostPlayerId }), !trimmedHostName.isEmpty {
       setupGame.players[idx].name = trimmedHostName
     }
@@ -82,7 +83,7 @@ final class MultiplayerCoordinator: ObservableObject {
       hostDisplayName: trimmedHostName.isEmpty ? "Host" : trimmedHostName,
       connectedGuestPlayerIDs: [],
       connectedGuestNames: [:],
-      hasStarted: false
+      hasStarted: setupGame.hasStarted
     )
     hostLobbyState = lobby
 
@@ -109,6 +110,26 @@ final class MultiplayerCoordinator: ObservableObject {
     }
 
     return lobby
+  }
+
+  /// Converts an existing single-phone game to multi-phone and starts hosting (same player roster).
+  @discardableResult
+  func enableMultiplayer(
+    gameID: UUID,
+    modelContext: ModelContext,
+    hostPlayerId: UUID,
+    hostDisplayName: String
+  ) throws -> HostLobbyState {
+    try startHosting(
+      gameID: gameID,
+      modelContext: modelContext,
+      hostPlayerId: hostPlayerId,
+      hostDisplayName: hostDisplayName
+    )
+  }
+
+  func isHosting(gameID: UUID) -> Bool {
+    hostLobbyState?.gameID == gameID || multiplayerStores[gameID] != nil
   }
 
   func updateHostSlot(gameID: UUID, playerId: UUID, displayName: String) {

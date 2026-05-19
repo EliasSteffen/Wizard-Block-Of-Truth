@@ -19,8 +19,9 @@ Multi-phone mode (`.multiPhone`) uses **local network only**. The **host device 
 - Create/select game and manage players
 - Start and end a multiplayer session (guests join this session)
 - Advance rounds, finalize rounds, edit/undo host-side inputs
-- Apply any valid `GameCommand` on the authoritative game
+- Apply any valid `GameCommand` on the authoritative game (including bets/gots for players **without** a connected device)
 - **Broadcast** the latest `currentGame` snapshot to all guests after every **accepted** command
+- Start the game from the lobby **without** requiring every player slot to have a guest device; unconnected slots are entered by the host during play
 
 ### Guest capabilities
 
@@ -29,14 +30,14 @@ Multi-phone mode (`.multiPhone`) uses **local network only**. The **host device 
   - own `submitBet` for the **current** round
   - own `submitGot` for the **current** round
 - **Cannot:** create/select games, change players, change dealer, edit others’ bets/gots, or perform host-only commands
-- On disconnect: may re-join and receive the latest `gameSnapshot`
+- On disconnect: may re-join with persisted `guestToken` (see `SavedGuestSession`) and receive the latest `gameSnapshot`; host keeps slot assignment in `guestRegistry` until the session ends
 
 ### Planned multi-phone setup order (`todos.md`)
 
 1. Host creates game with player slots
-2. Guests join (local discovery + session code) and set their names
+2. Guests **with a phone** join (local discovery + session code) and set their names
 3. Host sets dealer and final rule tweaks
-4. Host starts the game
+4. Host starts the game (optional: some slots remain without a device; host enters those players’ bets/gots)
 
 When implementing lobby/UI flow, preserve this ordering intent even if not fully built yet.
 

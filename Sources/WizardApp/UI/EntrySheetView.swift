@@ -86,7 +86,7 @@ struct EntrySheetView: View {
                 // Fixed name column so steppers stay aligned across rows.
                 .frame(width: 140, alignment: .leading)
               Spacer()
-              StepperPills(
+              ValueStepperControl(
                 value: Binding(
                   get: { values[player.id, default: currentValue(for: player.id)] },
                   set: {
@@ -97,7 +97,8 @@ struct EntrySheetView: View {
                   }
                 ),
                 range: allowedRange?(player.id, valuesWithFallbacks) ?? (0...handSize),
-                isDisabled: isPlayerDisabled?(player.id, valuesWithFallbacks) ?? false
+                isDisabled: isPlayerDisabled?(player.id, valuesWithFallbacks) ?? false,
+                style: .compact
               )
             }
           }
@@ -327,87 +328,3 @@ struct EntrySheetView: View {
     return selectedLanguage == .system ? nil : selectedLanguage.rawValue
   }
 }
-
-private struct StepperPills: View {
-  @Binding var value: Int
-  let range: ClosedRange<Int>
-  let isDisabled: Bool
-
-  @State private var text: String = ""
-  @FocusState private var isFocused: Bool
-
-  var body: some View {
-    HStack(spacing: 10) {
-      Button {
-        isFocused = false
-        value = max(range.lowerBound, value - 1)
-      } label: {
-        pill(String(localized: "UI.Common.Symbol.Minus", defaultValue: "-"))
-      }
-      .buttonStyle(.plain)
-      .disabled(isDisabled || value <= range.lowerBound)
-
-      TextField("", text: $text)
-        .focused($isFocused)
-        .disabled(isDisabled)
-        .multilineTextAlignment(.center)
-        .frame(width: 44)
-        .font(.headline)
-        .padding(.horizontal, 8)
-        .padding(.vertical, 8)
-        .background(Color.white.opacity(0.65), in: Capsule())
-#if os(iOS)
-        .keyboardType(.numberPad)
-        .textInputAutocapitalization(.never)
-#endif
-
-      Button {
-        isFocused = false
-        value = min(range.upperBound, value + 1)
-      } label: {
-        pill(String(localized: "UI.Common.Symbol.Plus", defaultValue: "+"))
-      }
-      .buttonStyle(.plain)
-      .disabled(isDisabled || value >= range.upperBound)
-    }
-    .onAppear {
-      text = "\(value)"
-    }
-    .onChange(of: range) { _, newRange in
-      let clamped = min(newRange.upperBound, max(newRange.lowerBound, value))
-      if clamped != value {
-        value = clamped
-      }
-    }
-    .onChange(of: isDisabled) { _, disabled in
-      if disabled {
-        isFocused = false
-      }
-    }
-    .onChange(of: value) { _, newValue in
-      guard !isFocused else { return }
-      text = "\(newValue)"
-    }
-    .onChange(of: text) { _, newValue in
-      let filtered = newValue.filter(\.isNumber)
-      if filtered != newValue {
-        text = filtered
-        return
-      }
-      guard let parsed = Int(filtered) else { return }
-      let clamped = min(range.upperBound, max(range.lowerBound, parsed))
-      if clamped != value {
-        value = clamped
-      }
-    }
-  }
-
-  private func pill(_ text: String) -> some View {
-    Text(text)
-      .font(.headline)
-      .padding(.horizontal, 14)
-      .padding(.vertical, 8)
-      .background(Color.white.opacity(0.65), in: Capsule())
-  }
-}
-

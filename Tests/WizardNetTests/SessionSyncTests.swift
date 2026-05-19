@@ -282,4 +282,77 @@ final class SessionSyncTests: XCTestCase {
     XCTAssertFalse(host.game.rounds.isEmpty)
     XCTAssertEqual(guest.game?.rounds.count, 1)
   }
+
+  func testClaimDuringStartedGameSendsJoinAccepted() throws {
+    let players = makePlayers()
+    let hostTransport = MockHostTransport()
+    let host = HostSessionService(
+      initialGame: try makeStartedGame(),
+      sessionCode: sessionCode,
+      transport: hostTransport,
+      hostReservedPlayerId: players[0].id
+    )
+    host.reserveHostSlot(playerId: players[0].id, displayName: players[0].name)
+    try host.start()
+
+    let guest = GuestSessionService(sessionCode: sessionCode, transport: MockGuestTransport(host: hostTransport))
+    let joined = expectation(description: "join accepted during live game")
+
+    guest.onJoinLobby = { _ in
+      try? guest.claimPlayer(playerId: players[2].id, displayName: "Late Guest")
+    }
+    guest.onJoinAccepted = { joined.fulfill() }
+
+    try guest.connect()
+    wait(for: [joined], timeout: 1.0)
+
+    XCTAssertEqual(guest.playerId, players[2].id)
+    XCTAssertFalse(guest.game?.rounds.isEmpty ?? true)
+  }
+
+  func testGuestReconnectsWithTokenAfterDisconnect() throws {
+    let players = makePlayers()
+    let hostTransport = MockHostTransport()
+    let host = HostSessionService(
+      initialGame: try makeStartedGame(),
+      sessionCode: sessionCode,
+      transport: hostTransport,
+      hostReservedPlayerId: players[0].id
+    )
+    host.reserveHostSlot(playerId: players[0].id, displayName: players[0].name)
+    try host.start()
+
+    let guestTransport1 = MockGuestTransport(host: hostTransport)
+    let guest1 = GuestSessionService(sessionCode: sessionCode, transport: guestTransport1)
+    var savedToken: String?
+    let joined = expectation(description: "guest joined")
+
+    guest1.onJoinLobby = { _ in
+      try? guest1.claimPlayer(playerId: players[1].id, displayName: players[1].name)
+    }
+    guest1.onJoinAccepted = {
+      savedToken = guest1.guestToken
+      joined.fulfill()
+    }
+
+    try guest1.connect()
+    wait(for: [joined], timeout: 1.0)
+    XCTAssertNotNil(savedToken)
+
+    guest1.disconnect()
+
+    let guest2 = GuestSessionService(
+      sessionCode: sessionCode,
+      guestToken: savedToken,
+      transport: MockGuestTransport(host: hostTransport)
+    )
+    let rejoined = expectation(description: "guest rejoined with token")
+    guest2.onJoinAccepted = { rejoined.fulfill() }
+
+    try guest2.connect()
+    wait(for: [rejoined], timeout: 1.0)
+
+    XCTAssertEqual(guest2.playerId, players[1].id)
+    XCTAssertEqual(guest2.game?.rounds.count, guest1.game?.rounds.count)
+  }
 }

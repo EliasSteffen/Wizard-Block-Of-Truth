@@ -25,6 +25,16 @@ public struct ConnectedGuest: Sendable, Equatable {
   }
 }
 
+public struct RegisteredGuest: Sendable, Equatable {
+  public var playerId: UUID
+  public var playerName: String
+
+  public init(playerId: UUID, playerName: String) {
+    self.playerId = playerId
+    self.playerName = playerName
+  }
+}
+
 @MainActor
 public final class HostSessionService {
   public private(set) var game: Game
@@ -40,6 +50,8 @@ public final class HostSessionService {
   private let sessionCode: String
   private let transport: HostSessionTransport
   private var pendingConnectionIDs: Set<UUID> = []
+  /// Maps guest token to player slot; survives transport disconnect until session ends.
+  private var guestRegistry: [String: RegisteredGuest] = [:]
 
   public var isInSetup: Bool { !game.hasStarted }
 
@@ -71,6 +83,7 @@ public final class HostSessionService {
     let ended = WireEnvelope(payload: .sessionEnded(SessionEndedMessage(reason: reason)))
     try? transport.broadcast(ended)
     transport.stop()
+    guestRegistry.removeAll()
   }
 
   public func reserveHostSlot(playerId: UUID, displayName: String) {
@@ -171,14 +184,15 @@ public final class HostSessionService {
     }
 
     if let token = hello.guestToken,
-       let existing = guestsByConnection.values.first(where: { $0.guestToken == token }) {
-      if existing.connectionID != connectionID {
-        guestsByConnection.removeValue(forKey: existing.connectionID)
+       let registered = guestRegistry[token] {
+      if let existingConnection = guestsByConnection.first(where: { $0.value.guestToken == token })?.key,
+         existingConnection != connectionID {
+        guestsByConnection.removeValue(forKey: existingConnection)
       }
       let reconnected = ConnectedGuest(
         connectionID: connectionID,
-        playerId: existing.playerId,
-        playerName: existing.playerName,
+        playerId: registered.playerId,
+        playerName: registered.playerName,
         guestToken: token
       )
       guestsByConnection[connectionID] = reconnected
@@ -189,7 +203,7 @@ public final class HostSessionService {
         sendJoinAccepted(to: connectionID, guest: reconnected)
         sendSnapshot(to: connectionID)
       } else {
-        send(.claimAccepted(ClaimAcceptedMessage(guestToken: token, playerId: existing.playerId)), to: connectionID)
+        send(.claimAccepted(ClaimAcceptedMessage(guestToken: token, playerId: registered.playerId)), to: connectionID)
         sendLobby(to: connectionID)
       }
       return
@@ -241,6 +255,7 @@ public final class HostSessionService {
       guestToken: token
     )
     guestsByConnection[connectionID] = connected
+    guestRegistry[token] = RegisteredGuest(playerId: targetPlayerId, playerName: displayName)
     pendingConnectionIDs.remove(connectionID)
     onGuestsChanged?(guestsByConnection.values.sorted(by: { $0.playerName < $1.playerName }))
 
@@ -274,6 +289,7 @@ public final class HostSessionService {
 
   private func lobbySlots() -> [LobbyPlayerSlot] {
     let claimedIds = Set(guestsByConnection.values.map(\.playerId))
+      .union(guestRegistry.values.map(\.playerId))
     return game.players.map { player in
       let isHost = player.id == hostReservedPlayerId
       let isGuest = claimedIds.contains(player.id)
@@ -299,7 +315,15 @@ public final class HostSessionService {
 
   private func isPlayerClaimed(_ playerId: UUID, excluding connectionID: UUID) -> Bool {
     if playerId == hostReservedPlayerId { return true }
-    return guestsByConnection.contains { $0.value.playerId == playerId && $0.key != connectionID }
+    if guestsByConnection.contains(where: { $0.value.playerId == playerId && $0.key != connectionID }) {
+      return true
+    }
+    let excludingToken = guestsByConnection[connectionID]?.guestToken
+    for (token, registered) in guestRegistry where registered.playerId == playerId {
+      if excludingToken == token { continue }
+      return true
+    }
+    return false
   }
 
   private func codesMatch(_ lhs: String, _ rhs: String) -> Bool {

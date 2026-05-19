@@ -72,15 +72,19 @@ final class MultiplayerGameStore: ObservableObject, GameStoring {
       }
     }
     guestSession.onCommandResult = { [weak self] result in
-      guard !result.accepted else { return }
       Task { @MainActor [weak self] in
-        self?.lastError = NSError(domain: "WizardNet", code: 1, userInfo: [
-          NSLocalizedDescriptionKey: result.reason ?? "Command rejected."
-        ])
+        if result.accepted {
+          self?.lastError = nil
+        } else {
+          self?.lastError = NSError(domain: "WizardNet", code: 1, userInfo: [
+            NSLocalizedDescriptionKey: result.reason ?? "Command rejected."
+          ])
+        }
       }
     }
     guestSession.onSessionEnded = { [weak self] reason in
       Task { @MainActor [weak self] in
+        SavedGuestSession.clear()
         self?.lastError = NSError(domain: "WizardNet", code: 2, userInfo: [
           NSLocalizedDescriptionKey: reason
         ])

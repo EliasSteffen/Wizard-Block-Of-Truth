@@ -19,10 +19,11 @@
 **Host**:
 - Create/select game
 - Add players
-  - Join via local network discovery and code entry
+  - Guests with a phone join via local network discovery and code entry
+  - Players without a phone do not need a device; host enters their bets and tricks in the game session
 - Advance rounds / finalize round
-- Edit/undo
-- Starts and ends a multiplayer session (guests join this session)
+- Edit/undo (including all players’ bets/gots — host is source of truth)
+- Starts and ends a multiplayer session (guests join this session); game can start before every slot has a connected device
 - Broadcasts authoritative `currentGame` snapshots to all guests after every accepted command
 
 **Guest**:
