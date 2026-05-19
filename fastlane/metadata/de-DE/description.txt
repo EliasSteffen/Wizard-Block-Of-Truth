@@ -1,0 +1,10 @@
+**WizardBlock – der digitale „Block der Wahrheit“ für Ihre Wizard-Runden**
+
+Keine zerknitterten Zettel mehr: Diese App ersetzt den klassischen Papier-Spielblock für das Kartenspiel Wizard. Geben Sie Gebote und Stiche ein – die App berechnet die Punkte und zeigt Ihnen klar den aktuellen Stand, die Handgröße, den Geber und die letzte Punktänderung.
+
+- Spielen Sie am Tisch, wie es Ihnen passt: Führen Sie den Punktestand auf einem iPhone für 2–6 Spieler (der Geber wechselt wie gewohnt jede Runde), oder verbinden Sie mehrere iPhones im gleichen lokalen WLAN, sodass jeder Spieler sein eigenes Gebot und seine Stiche eingibt. Das Host-Gerät führt den maßgeblichen Punktestand; Spieler ohne Telefon können vom Host erfasst werden.
+- Weniger Eingabefehler: Einträge sind auf gültige Werte beschränkt; die App prüft Summen (z. B. Gebote und Stiche pro Runde), damit Sie Fehler früh erkennen.
+- Verlauf: Runden mit Geboten, Stichen und Punktänderungen einsehen; bei Korrekturen werden die Gesamtpunkte konsistent neu berechnet.
+- Speichern & Fortsetzen: Spiele bleiben auf Ihrem Gerät gespeichert – Sie können jederzeit dort weitermachen, wo Sie aufgehört haben.
+
+Wizard ist ein veröffentlichtes Kartenspiel. Diese App ist ein **unabhängiges Punkte-Tool** und **steht in keiner Verbindung zum Verlag oder den Rechteinhabern** des Spiels.

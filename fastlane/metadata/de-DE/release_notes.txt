@@ -1,0 +1,3 @@
+Wir verbessern Wizard Block of Truth fortlaufend und passen die App an, wie Sie Ihre Runden am Tisch erfassen.
+
+Was in dieser Version neu ist, finden Sie in unseren Release Notes: https://eliassteffen.github.io/Wizard-Block-Of-Truth/release-notes/
