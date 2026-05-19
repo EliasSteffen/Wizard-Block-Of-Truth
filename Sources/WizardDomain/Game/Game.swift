@@ -134,6 +134,11 @@ public struct Game: Hashable, Codable, Sendable {
     return rounds[currentRoundIndex]
   }
 
+  /// Players in table bidding order for the given round (dealer last).
+  public func playersInBettingOrder(for round: Round) -> [Player] {
+    Rules.playersInBettingOrder(players: players, dealerId: round.dealer)
+  }
+
   public func totalPoints() throws -> [UUID: Int] {
     var totals: [UUID: Int] = Dictionary(uniqueKeysWithValues: players.map { ($0.id, 0) })
     for round in rounds where round.isFinalized {

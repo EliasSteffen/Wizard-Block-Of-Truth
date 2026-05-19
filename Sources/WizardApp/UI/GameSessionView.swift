@@ -176,7 +176,7 @@ struct GameSessionView: View {
         EntrySheetView(
           title: "UI.Button.EnterBets",
           handSize: round.handSize,
-          players: game.players,
+          players: game.playersInBettingOrder(for: round),
           currentValues: game.rounds[game.currentRoundIndex].entries.mapValues { $0.bet },
           valueLabel: String(localized: "UI.GameSession.Entry.Bet", defaultValue: "Bet"),
           accessory: nil,
@@ -271,7 +271,7 @@ struct GameSessionView: View {
         EntrySheetView(
           title: "UI.Button.EnterWonTricks",
           handSize: round.handSize,
-          players: game.players,
+          players: game.playersInBettingOrder(for: round),
           currentValues: game.rounds[game.currentRoundIndex].entries.mapValues { $0.got },
           valueLabel: String(localized: "UI.GameSession.Entry.Won", defaultValue: "Won"),
           accessory: game.playWithSpecialCards ? AnyView(
@@ -327,7 +327,7 @@ struct GameSessionView: View {
         EntrySheetView(
           title: "UI.Button.EnterCloudCard",
           handSize: round.handSize,
-          players: game.players,
+          players: game.playersInBettingOrder(for: round),
           currentValues: game.rounds[game.currentRoundIndex].entries.mapValues { $0.bet },
           valueLabel: String(localized: "UI.GameSession.Entry.Bet", defaultValue: "Bet"),
           accessory: nil,
