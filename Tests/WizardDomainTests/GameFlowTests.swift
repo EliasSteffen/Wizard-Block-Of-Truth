@@ -140,7 +140,7 @@ final class GameFlowTests: XCTestCase {
     XCTAssertEqual(game.rounds[1].dealer, players[1].id) // P1 -> P2
   }
 
-  func testScoreboardDisplayValuesShowsPriorRoundUntilAllBetsEntered() throws {
+  func testScoreboardDisplayValuesResetAfterFinalize() throws {
     let players = TestSupport.makePlayers(3)
     var game = try Game(id: UUID(), name: "Test", mode: .singlePhone, players: players)
     try game.apply(.startNewGame(startingDealer: players[0].id))
@@ -153,18 +153,18 @@ final class GameFlowTests: XCTestCase {
     try game.apply(.submitGot(playerId: players[2].id, roundIndex: 0, got: 0))
     try game.apply(.finalizeCurrentRound())
 
-    XCTAssertEqual(game.scoreboardDisplayValues(for: players[0].id).bet, 0)
-    XCTAssertEqual(game.scoreboardDisplayValues(for: players[0].id).got, 1)
+    XCTAssertNil(game.scoreboardDisplayValues(for: players[0].id).bet)
+    XCTAssertNil(game.scoreboardDisplayValues(for: players[0].id).got)
 
     try game.apply(.submitBet(playerId: players[0].id, roundIndex: 1, bet: 1))
-    // Partial bids on a new round: still show the last finalized round until everyone bid.
-    XCTAssertEqual(game.scoreboardDisplayValues(for: players[0].id).bet, 0)
-    XCTAssertEqual(game.scoreboardDisplayValues(for: players[0].id).got, 1)
+    XCTAssertEqual(game.scoreboardDisplayValues(for: players[0].id).bet, 1)
+    XCTAssertNil(game.scoreboardDisplayValues(for: players[0].id).got)
+    XCTAssertNil(game.scoreboardDisplayValues(for: players[1].id).bet)
 
     try game.apply(.submitBet(playerId: players[1].id, roundIndex: 1, bet: 1))
     try game.apply(.submitBet(playerId: players[2].id, roundIndex: 1, bet: 0))
     XCTAssertEqual(game.scoreboardDisplayValues(for: players[0].id).bet, 1)
-    XCTAssertEqual(game.scoreboardDisplayValues(for: players[0].id).got, nil)
+    XCTAssertNil(game.scoreboardDisplayValues(for: players[0].id).got)
   }
 
   func testScoreboardDisplayValuesNilBeforeFirstFinalize() throws {

@@ -138,9 +138,7 @@ struct GameSessionView: View {
   @ViewBuilder
   private func content(game: Game) -> some View {
     let isFinished = isGameFinished(game)
-    let totals = isFinished
-      ? ((try? game.totalPoints()) ?? [:])
-      : scoreboardTotalsIncludingOpenRound(game: game)
+    let totals = (try? game.totalPoints()) ?? [:]
 
     ScrollView {
       VStack(spacing: 16) {
@@ -562,12 +560,7 @@ struct GameSessionView: View {
   private func scoreboard(game: Game, totals: [UUID: Int]) -> some View {
     let placeDeltas = placeDeltasComparedToPreviousRound(in: game)
     let histories = scoreHistoryByPlayer(in: game)
-    let sortedPlayers = game.players.sorted { a, b in
-      let ta = totals[a.id, default: 0]
-      let tb = totals[b.id, default: 0]
-      if ta != tb { return ta > tb }
-      return a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
-    }
+    let sortedPlayers = scoreboardPlayerOrder(game: game, totals: totals)
 
     return VStack(spacing: 10) {
       ForEach(Array(sortedPlayers.enumerated()), id: \.element.id) { idx, p in
@@ -979,13 +972,6 @@ struct GameSessionView: View {
         histories[player.id, default: [0]].append(previous + delta)
       }
     }
-    if let round = game.currentRound, !round.isFinalized {
-      for player in game.players {
-        guard let delta = round.entries[player.id].flatMap({ try? $0.pointsDelta() }) else { continue }
-        let previous = histories[player.id]?.last ?? 0
-        histories[player.id, default: [0]].append(previous + delta)
-      }
-    }
     return histories
   }
 
@@ -1005,25 +991,19 @@ struct GameSessionView: View {
     return nil
   }
 
-  /// Totals from finalized rounds plus a preview of the current open round when bet and tricks are set for a player.
-  private func scoreboardTotalsIncludingOpenRound(game: Game) -> [UUID: Int] {
-    var totals = (try? game.totalPoints()) ?? Dictionary(uniqueKeysWithValues: game.players.map { ($0.id, 0) })
-    guard let round = game.currentRound, !round.isFinalized else { return totals }
-    for player in game.players {
-      guard let delta = round.entries[player.id].flatMap({ try? $0.pointsDelta() }) else { continue }
-      totals[player.id, default: 0] += delta
+  /// Rank by finalized totals only; open-round bets/gots do not affect order until the round is finalized.
+  private func scoreboardPlayerOrder(game: Game, totals: [UUID: Int]) -> [Player] {
+    game.players.sorted { a, b in
+      let ta = totals[a.id, default: 0]
+      let tb = totals[b.id, default: 0]
+      if ta != tb { return ta > tb }
+      return a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
     }
-    return totals
   }
 
-  /// Prefer the current open round's points delta when bet and tricks allow scoring; otherwise the last finalized round delta.
+  /// Points delta from the most recent finalized round only (no preview for the open round).
   private func scoreboardPointsDeltaCaption(for playerId: UUID, in game: Game) -> Int? {
-    if let round = game.currentRound, !round.isFinalized,
-       let entry = round.entries[playerId],
-       let delta = try? entry.pointsDelta() {
-      return delta
-    }
-    return lastFinalizedDelta(for: playerId, in: game)
+    lastFinalizedDelta(for: playerId, in: game)
   }
 
   private func loadIfNeeded(force: Bool = false) {

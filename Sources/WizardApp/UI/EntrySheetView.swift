@@ -36,6 +36,7 @@ struct EntrySheetView: View {
   @Environment(\.dismiss) private var dismiss
 
   @State private var values: [UUID: Int] = [:]
+  @State private var locallyEditedPlayerIDs: Set<UUID> = []
   @State private var submitError: Error?
   @State private var constraintFailureText: String?
 
@@ -91,6 +92,7 @@ struct EntrySheetView: View {
                   get: { values[player.id, default: currentValue(for: player.id)] },
                   set: {
                     constraintFailureText = nil
+                    locallyEditedPlayerIDs.insert(player.id)
                     let current = valuesWithFallbacks
                     let allowed = allowedRange?(player.id, current) ?? (0...handSize)
                     values[player.id] = min(allowed.upperBound, max(allowed.lowerBound, $0))
@@ -157,13 +159,36 @@ struct EntrySheetView: View {
       Text(AppErrorMessage.presentableMessage(for: submitError, languageCode: currentLanguageCode))
     }
     .onAppear {
-      // Seed values so the sheet is always fully specified.
-      for p in players {
-        if let v = currentValues[p.id] ?? nil {
-          values[p.id] = v
-        } else {
-          values[p.id] = 0
-        }
+      locallyEditedPlayerIDs = []
+      syncValuesFromCurrentValues(forceReset: true)
+    }
+    .onChange(of: currentValuesToken) { _, _ in
+      syncValuesFromCurrentValues(forceReset: false)
+    }
+  }
+
+  /// Per-player values from the parent (e.g. guest submissions while the host sheet is open).
+  private var currentValuesToken: [PlayerValueSnapshot] {
+    players.map { player in
+      PlayerValueSnapshot(playerId: player.id, value: currentValues[player.id] ?? nil)
+    }
+  }
+
+  private struct PlayerValueSnapshot: Equatable {
+    let playerId: UUID
+    let value: Int?
+  }
+
+  /// Merges authoritative `currentValues` into local stepper state without overwriting rows the host is editing.
+  private func syncValuesFromCurrentValues(forceReset: Bool) {
+    for player in players {
+      if !forceReset, locallyEditedPlayerIDs.contains(player.id) {
+        continue
+      }
+      if let value = currentValues[player.id] ?? nil {
+        values[player.id] = value
+      } else if forceReset {
+        values[player.id] = 0
       }
     }
   }
