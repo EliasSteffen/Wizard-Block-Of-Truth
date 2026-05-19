@@ -5,7 +5,7 @@ import WizardDomain
 #endif
 
 @MainActor
-final class GameStore: ObservableObject {
+final class GameStore: ObservableObject, GameStoring {
   @Published private(set) var currentGame: Game?
   @Published var lastError: Error?
   @Published private(set) var didAttemptLoad: Bool = false
@@ -65,6 +65,16 @@ final class GameStore: ObservableObject {
       )
       currentGame = game
       try upsert(game: game)
+    } catch {
+      lastError = error
+    }
+  }
+
+  func replaceCurrentGame(_ game: Game) {
+    currentGame = game
+    do {
+      try upsert(game: game)
+      lastError = nil
     } catch {
       lastError = error
     }

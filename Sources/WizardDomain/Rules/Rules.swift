@@ -13,5 +13,14 @@ public enum Rules {
     let next = (idx + 1) % players.count
     return players[next].id
   }
+
+  /// Seat order for bidding: first player after the dealer, dealer last.
+  public static func playersInBettingOrder(players: [Player], dealerId: UUID) -> [Player] {
+    guard !players.isEmpty,
+          let dealerIdx = players.firstIndex(where: { $0.id == dealerId })
+    else { return players }
+    let start = (dealerIdx + 1) % players.count
+    return Array(players[start...]) + Array(players[..<start])
+  }
 }
 

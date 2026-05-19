@@ -8,6 +8,7 @@ import WizardDomain
 struct WizardApp: App {
   @AppStorage("app.colorScheme") private var colorSchemeRaw: String = AppColorScheme.system.rawValue
   @AppStorage("app.language") private var appLanguageRaw: String = AppLanguage.system.rawValue
+  @StateObject private var multiplayerCoordinator = MultiplayerCoordinator()
 
   private var appLocale: Locale {
     (AppLanguage(rawValue: appLanguageRaw) ?? .system).locale
@@ -18,6 +19,7 @@ struct WizardApp: App {
       GameListView()
         .preferredColorScheme(AppColorScheme(rawValue: colorSchemeRaw)?.colorScheme)
         .environment(\.locale, appLocale)
+        .environmentObject(multiplayerCoordinator)
     }
     .modelContainer(for: [GameSnapshotEntity.self])
   }

@@ -22,6 +22,25 @@ final class RulesTests: XCTestCase {
     }
   }
 
+  func testPlayersInBettingOrderStartsAfterDealer() throws {
+    let players = TestSupport.makePlayers(3)
+    let ordered = Rules.playersInBettingOrder(players: players, dealerId: players[1].id)
+    XCTAssertEqual(ordered.map(\.id), [players[2].id, players[0].id, players[1].id])
+  }
+
+  func testPlayersInBettingOrderDealerLastWhenDealerIsLastInArray() throws {
+    let players = TestSupport.makePlayers(3)
+    let ordered = Rules.playersInBettingOrder(players: players, dealerId: players[2].id)
+    XCTAssertEqual(ordered.map(\.id), players.map(\.id))
+  }
+
+  func testPlayersInBettingOrderUnknownDealerReturnsOriginalOrder() throws {
+    let players = TestSupport.makePlayers(3)
+    let unknown = UUID()
+    let ordered = Rules.playersInBettingOrder(players: players, dealerId: unknown)
+    XCTAssertEqual(ordered.map(\.id), players.map(\.id))
+  }
+
   func testBetSumNotEqualHandSizeAllowsSumAfterCloudResolved() throws {
     let players = TestSupport.makePlayers(3)
     let id0 = players[0].id

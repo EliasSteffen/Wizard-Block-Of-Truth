@@ -11,8 +11,10 @@ final class GameFlowTests: XCTestCase {
       players: players
     )
 
+    XCTAssertFalse(game.hasStarted)
     XCTAssertTrue(game.rounds.isEmpty)
     try game.apply(.startNewGame(startingDealer: players[0].id))
+    XCTAssertTrue(game.hasStarted)
 
     XCTAssertEqual(game.rounds.count, 1)
     XCTAssertEqual(game.currentRoundIndex, 0)

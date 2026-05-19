@@ -28,12 +28,36 @@
 		000000000000000000000114 /* Constraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000214 /* Constraints.swift */; };
 		000000000000000000000115 /* Rules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000215 /* Rules.swift */; };
 		000000000000000000000116 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000216 /* Errors.swift */; };
+		000000000000000000000134 /* PlayerNaming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000234 /* PlayerNaming.swift */; };
 		000000000000000000000117 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000217 /* Assets.xcassets */; };
 		000000000000000000000118 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000218 /* Localizable.xcstrings */; };
 		000000000000000000000119 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000219 /* Card.swift */; };
 		00000000000000000000011A /* Cards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000021A /* Cards.swift */; };
 		00000000000000000000011B /* AboutInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000021B /* AboutInfoView.swift */; };
 		00000000000000000000011C /* PlayerRoundHistorySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000021C /* PlayerRoundHistorySheet.swift */; };
+		00000000000000000000011D /* GameStoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000021D /* GameStoring.swift */; };
+		00000000000000000000011E /* MultiplayerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000021E /* MultiplayerCoordinator.swift */; };
+		00000000000000000000011F /* MultiplayerGameStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000021F /* MultiplayerGameStore.swift */; };
+		000000000000000000000120 /* GameSessionContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000220 /* GameSessionContainerView.swift */; };
+		000000000000000000000121 /* MultiplayerLobbyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000221 /* MultiplayerLobbyView.swift */; };
+		000000000000000000000122 /* JoinGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000222 /* JoinGameView.swift */; };
+		000000000000000000000123 /* GuestGameSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000223 /* GuestGameSessionView.swift */; };
+		000000000000000000000124 /* MockTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000224 /* MockTransport.swift */; };
+		000000000000000000000125 /* HostSessionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000225 /* HostSessionService.swift */; };
+		000000000000000000000126 /* FrameCodec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000226 /* FrameCodec.swift */; };
+		000000000000000000000127 /* GuestSessionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000227 /* GuestSessionService.swift */; };
+		000000000000000000000128 /* SessionTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000228 /* SessionTransport.swift */; };
+		000000000000000000000129 /* WireProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000229 /* WireProtocol.swift */; };
+		00000000000000000000012A /* TCPNetworkTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000022A /* TCPNetworkTransport.swift */; };
+		00000000000000000000012B /* CommandAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000022B /* CommandAuthorizer.swift */; };
+		00000000000000000000012C /* GuestJoinPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000022C /* GuestJoinPreferences.swift */; };
+		00000000000000000000012D /* GuestWaitingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000022D /* GuestWaitingView.swift */; };
+		00000000000000000000012E /* ValueStepperControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000022E /* ValueStepperControl.swift */; };
+		00000000000000000000012F /* GuestEntryPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000022F /* GuestEntryPhase.swift */; };
+		000000000000000000000130 /* SavedGuestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000230 /* SavedGuestSession.swift */; };
+		000000000000000000000131 /* WizardPrimaryActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000231 /* WizardPrimaryActionButton.swift */; };
+		000000000000000000000132 /* HostMultiplayerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000232 /* HostMultiplayerSheet.swift */; };
+		000000000000000000000133 /* GameSessionMultiplayerToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000233 /* GameSessionMultiplayerToolbar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,12 +84,36 @@
 		000000000000000000000214 /* Constraints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Constraints.swift; path = Sources/WizardDomain/Rules/Constraints.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000215 /* Rules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Rules.swift; path = Sources/WizardDomain/Rules/Rules.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000216 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Errors.swift; path = Sources/WizardDomain/Support/Errors.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000234 /* PlayerNaming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlayerNaming.swift; path = Sources/WizardDomain/PlayerNaming.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000217 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		000000000000000000000218 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		000000000000000000000219 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Card.swift; path = Sources/WizardDomain/Models/Card.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000021A /* Cards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Cards.swift; path = Sources/WizardDomain/Models/Cards.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000021B /* AboutInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AboutInfoView.swift; path = Sources/WizardApp/UI/AboutInfoView.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000021C /* PlayerRoundHistorySheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlayerRoundHistorySheet.swift; path = Sources/WizardApp/UI/PlayerRoundHistorySheet.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000021D /* GameStoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameStoring.swift; path = Sources/WizardApp/App/GameStoring.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000021E /* MultiplayerCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MultiplayerCoordinator.swift; path = Sources/WizardApp/Multiplayer/MultiplayerCoordinator.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000021F /* MultiplayerGameStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MultiplayerGameStore.swift; path = Sources/WizardApp/Multiplayer/MultiplayerGameStore.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000220 /* GameSessionContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameSessionContainerView.swift; path = Sources/WizardApp/UI/GameSessionContainerView.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000221 /* MultiplayerLobbyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MultiplayerLobbyView.swift; path = Sources/WizardApp/UI/MultiplayerLobbyView.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000222 /* JoinGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JoinGameView.swift; path = Sources/WizardApp/UI/JoinGameView.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000223 /* GuestGameSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GuestGameSessionView.swift; path = Sources/WizardApp/UI/GuestGameSessionView.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000224 /* MockTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MockTransport.swift; path = Sources/WizardNet/MockTransport.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000225 /* HostSessionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HostSessionService.swift; path = Sources/WizardNet/HostSessionService.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000226 /* FrameCodec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FrameCodec.swift; path = Sources/WizardNet/FrameCodec.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000227 /* GuestSessionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GuestSessionService.swift; path = Sources/WizardNet/GuestSessionService.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000228 /* SessionTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SessionTransport.swift; path = Sources/WizardNet/SessionTransport.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000229 /* WireProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WireProtocol.swift; path = Sources/WizardNet/WireProtocol.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000022A /* TCPNetworkTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TCPNetworkTransport.swift; path = Sources/WizardNet/TCPNetworkTransport.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000022B /* CommandAuthorizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CommandAuthorizer.swift; path = Sources/WizardNet/CommandAuthorizer.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000022C /* GuestJoinPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GuestJoinPreferences.swift; path = Sources/WizardApp/Multiplayer/GuestJoinPreferences.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000022D /* GuestWaitingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GuestWaitingView.swift; path = Sources/WizardApp/UI/GuestWaitingView.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000022E /* ValueStepperControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ValueStepperControl.swift; path = Sources/WizardApp/UI/ValueStepperControl.swift; sourceTree = SOURCE_ROOT; };
+		00000000000000000000022F /* GuestEntryPhase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GuestEntryPhase.swift; path = Sources/WizardApp/UI/GuestEntryPhase.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000230 /* SavedGuestSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SavedGuestSession.swift; path = Sources/WizardApp/Multiplayer/SavedGuestSession.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000231 /* WizardPrimaryActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WizardPrimaryActionButton.swift; path = Sources/WizardApp/UI/WizardPrimaryActionButton.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000232 /* HostMultiplayerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HostMultiplayerSheet.swift; path = Sources/WizardApp/UI/HostMultiplayerSheet.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000233 /* GameSessionMultiplayerToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameSessionMultiplayerToolbar.swift; path = Sources/WizardApp/UI/GameSessionMultiplayerToolbar.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +132,7 @@
 			children = (
 				000000000000000000000401 /* Wizard-Block-Of-Truth */,
 				000000000000000000000402 /* WizardDomain */,
+				000000000000000000000411 /* WizardNet */,
 				000000000000000000000403 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -97,6 +146,7 @@
 				000000000000000000000201 /* WizardApp.swift */,
 				000000000000000000000404 /* App */,
 				000000000000000000000405 /* Persistence */,
+				000000000000000000000412 /* Multiplayer */,
 				000000000000000000000406 /* UI */,
 			);
 			path = "Wizard-Block-Of-Truth";
@@ -109,6 +159,7 @@
 				000000000000000000000408 /* Models */,
 				000000000000000000000409 /* Rules */,
 				000000000000000000000410 /* Support */,
+				000000000000000000000234 /* PlayerNaming.swift */,
 			);
 			name = WizardDomain;
 			sourceTree = "<group>";
@@ -130,6 +181,7 @@
 				00000000000000000000020E /* AppLocalization.swift */,
 				00000000000000000000020F /* AppErrorMessage.swift */,
 				000000000000000000000203 /* GameStore.swift */,
+				00000000000000000000021D /* GameStoring.swift */,
 			);
 			name = App;
 			sourceTree = "<group>";
@@ -154,6 +206,16 @@
 				00000000000000000000020C /* CloudCardAdjustmentRules.swift */,
 				00000000000000000000021B /* AboutInfoView.swift */,
 				00000000000000000000021C /* PlayerRoundHistorySheet.swift */,
+				000000000000000000000220 /* GameSessionContainerView.swift */,
+				000000000000000000000221 /* MultiplayerLobbyView.swift */,
+				000000000000000000000222 /* JoinGameView.swift */,
+				000000000000000000000223 /* GuestGameSessionView.swift */,
+				00000000000000000000022D /* GuestWaitingView.swift */,
+				00000000000000000000022E /* ValueStepperControl.swift */,
+				00000000000000000000022F /* GuestEntryPhase.swift */,
+				000000000000000000000231 /* WizardPrimaryActionButton.swift */,
+				000000000000000000000232 /* HostMultiplayerSheet.swift */,
+				000000000000000000000233 /* GameSessionMultiplayerToolbar.swift */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -192,6 +254,32 @@
 				000000000000000000000216 /* Errors.swift */,
 			);
 			name = Support;
+			sourceTree = "<group>";
+		};
+		000000000000000000000411 /* WizardNet */ = {
+			isa = PBXGroup;
+			children = (
+				000000000000000000000224 /* MockTransport.swift */,
+				000000000000000000000225 /* HostSessionService.swift */,
+				000000000000000000000226 /* FrameCodec.swift */,
+				000000000000000000000227 /* GuestSessionService.swift */,
+				000000000000000000000228 /* SessionTransport.swift */,
+				000000000000000000000229 /* WireProtocol.swift */,
+				00000000000000000000022A /* TCPNetworkTransport.swift */,
+				00000000000000000000022B /* CommandAuthorizer.swift */,
+			);
+			name = WizardNet;
+			sourceTree = "<group>";
+		};
+		000000000000000000000412 /* Multiplayer */ = {
+			isa = PBXGroup;
+			children = (
+				00000000000000000000021E /* MultiplayerCoordinator.swift */,
+				00000000000000000000021F /* MultiplayerGameStore.swift */,
+				00000000000000000000022C /* GuestJoinPreferences.swift */,
+				000000000000000000000230 /* SavedGuestSession.swift */,
+			);
+			name = Multiplayer;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -281,6 +369,29 @@
 				00000000000000000000010C /* CloudCardAdjustmentRules.swift in Sources */,
 				00000000000000000000011B /* AboutInfoView.swift in Sources */,
 				00000000000000000000011C /* PlayerRoundHistorySheet.swift in Sources */,
+				00000000000000000000011D /* GameStoring.swift in Sources */,
+				00000000000000000000011E /* MultiplayerCoordinator.swift in Sources */,
+				00000000000000000000011F /* MultiplayerGameStore.swift in Sources */,
+				00000000000000000000012C /* GuestJoinPreferences.swift in Sources */,
+				000000000000000000000120 /* GameSessionContainerView.swift in Sources */,
+				000000000000000000000121 /* MultiplayerLobbyView.swift in Sources */,
+				000000000000000000000122 /* JoinGameView.swift in Sources */,
+				000000000000000000000123 /* GuestGameSessionView.swift in Sources */,
+				00000000000000000000012D /* GuestWaitingView.swift in Sources */,
+				00000000000000000000012E /* ValueStepperControl.swift in Sources */,
+				00000000000000000000012F /* GuestEntryPhase.swift in Sources */,
+				000000000000000000000130 /* SavedGuestSession.swift in Sources */,
+				000000000000000000000131 /* WizardPrimaryActionButton.swift in Sources */,
+				000000000000000000000132 /* HostMultiplayerSheet.swift in Sources */,
+				000000000000000000000133 /* GameSessionMultiplayerToolbar.swift in Sources */,
+				000000000000000000000124 /* MockTransport.swift in Sources */,
+				000000000000000000000125 /* HostSessionService.swift in Sources */,
+				000000000000000000000126 /* FrameCodec.swift in Sources */,
+				000000000000000000000127 /* GuestSessionService.swift in Sources */,
+				000000000000000000000128 /* SessionTransport.swift in Sources */,
+				000000000000000000000129 /* WireProtocol.swift in Sources */,
+				00000000000000000000012A /* TCPNetworkTransport.swift in Sources */,
+				00000000000000000000012B /* CommandAuthorizer.swift in Sources */,
 				000000000000000000000111 /* Commands.swift in Sources */,
 				000000000000000000000112 /* Game.swift in Sources */,
 				000000000000000000000113 /* Models.swift in Sources */,
@@ -289,6 +400,7 @@
 				000000000000000000000114 /* Constraints.swift in Sources */,
 				000000000000000000000115 /* Rules.swift in Sources */,
 				000000000000000000000116 /* Errors.swift in Sources */,
+				000000000000000000000134 /* PlayerNaming.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -302,7 +414,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGNING_ALLOWED = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "Wizard-Block-Of-Truth/Info.plist";
@@ -312,6 +424,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "de.elias-steffen.WizardBlockOfTruth";
 				PRODUCT_NAME = "Wizard Block of Truth";
 				SDKROOT = iphoneos;
@@ -330,7 +443,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGNING_ALLOWED = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "Wizard-Block-Of-Truth/Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.card-games";
@@ -339,6 +452,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "de.elias-steffen.WizardBlockOfTruth";
 				PRODUCT_NAME = "Wizard Block of Truth";
 				SDKROOT = iphoneos;

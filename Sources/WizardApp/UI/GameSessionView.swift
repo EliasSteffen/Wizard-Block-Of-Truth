@@ -17,6 +17,7 @@ struct GameSessionView: View {
   private let sparklineMinWidth: CGFloat = 90
 
   @Environment(\.modelContext) private var modelContext
+  @EnvironmentObject private var multiplayerCoordinator: MultiplayerCoordinator
   @StateObject private var storeHolder = StoreHolder()
 
   @State private var showingBets = false
@@ -84,6 +85,14 @@ struct GameSessionView: View {
       )
     }
     .wizardBackground()
+    .onChange(of: multiplayerCoordinator.hostLobbyState?.gameID) { _, _ in
+      attachMultiplayerStoreIfNeeded()
+    }
+  }
+
+  private func attachMultiplayerStoreIfNeeded() {
+    guard let multiplayerStore = multiplayerCoordinator.store(for: gameId) else { return }
+    storeHolder.store = multiplayerStore
   }
 
   private var shouldPresentGlobalErrorAlert: Bool {
@@ -167,7 +176,7 @@ struct GameSessionView: View {
         EntrySheetView(
           title: "UI.Button.EnterBets",
           handSize: round.handSize,
-          players: game.players,
+          players: game.playersInBettingOrder(for: round),
           currentValues: game.rounds[game.currentRoundIndex].entries.mapValues { $0.bet },
           valueLabel: String(localized: "UI.GameSession.Entry.Bet", defaultValue: "Bet"),
           accessory: nil,
@@ -190,7 +199,8 @@ struct GameSessionView: View {
                 roundConstraints: [.gotSumEqualsHandSize]
               )
             }
-          }
+          },
+          liveBetsProgressRoundNumber: activeRoundNumber(for: game)
         )
         .presentationDetents(Self.entrySheetDetents, selection: $betsDetent)
       }
@@ -249,7 +259,8 @@ struct GameSessionView: View {
                 roundConstraints: [.gotSumEqualsHandSize]
               )
             }
-          }
+          },
+          liveBetsProgressRoundNumber: activeRoundNumber(for: game)
         )
         .presentationDetents(Self.entrySheetDetents, selection: $betsDetent)
       }
@@ -260,7 +271,7 @@ struct GameSessionView: View {
         EntrySheetView(
           title: "UI.Button.EnterWonTricks",
           handSize: round.handSize,
-          players: game.players,
+          players: game.playersInBettingOrder(for: round),
           currentValues: game.rounds[game.currentRoundIndex].entries.mapValues { $0.got },
           valueLabel: String(localized: "UI.GameSession.Entry.Won", defaultValue: "Won"),
           accessory: game.playWithSpecialCards ? AnyView(
@@ -316,7 +327,7 @@ struct GameSessionView: View {
         EntrySheetView(
           title: "UI.Button.EnterCloudCard",
           handSize: round.handSize,
-          players: game.players,
+          players: game.playersInBettingOrder(for: round),
           currentValues: game.rounds[game.currentRoundIndex].entries.mapValues { $0.bet },
           valueLabel: String(localized: "UI.GameSession.Entry.Bet", defaultValue: "Bet"),
           accessory: nil,
@@ -366,40 +377,39 @@ struct GameSessionView: View {
     return game.rounds.last?.isFinalized == true
   }
 
-  private var activeRoundNumber: Int {
-    guard let game = storeHolder.store?.currentGame, !game.rounds.isEmpty else { return 0 }
+  private func activeRoundNumber(for game: Game) -> Int {
+    guard !game.rounds.isEmpty else { return 0 }
     return min(game.currentRoundIndex + 1, game.totalRoundsPlanned)
   }
 
-  private var activeRoundTarget: Int {
-    storeHolder.store?.currentGame?.totalRoundsPlanned ?? 0
-  }
-
-  private var activeRoundText: String {
-    let current = activeRoundNumber
-    let total = activeRoundTarget
+  private func roundProgressText(for game: Game) -> String {
+    let current = activeRoundNumber(for: game)
+    let total = game.totalRoundsPlanned
     guard current > 0, total > 0 else {
       return String(localized: "UI.Common.EmptyValue", defaultValue: "—")
     }
     return "\(current)/\(total)"
   }
 
-  private var activeBetsProgressText: String {
-    guard let game = storeHolder.store?.currentGame,
-          let round = game.currentRound else {
-      return "\(0)/\(0)"
-    }
+  private func betsProgressText(for game: Game, betsSum: Int) -> String {
+    let roundNumber = activeRoundNumber(for: game)
+    guard roundNumber > 0 else { return "\(0)/\(0)" }
+    return "\(betsSum)/\(roundNumber)"
+  }
+
+  private func betsProgressText(for game: Game) -> String {
+    guard let round = game.currentRound else { return "\(0)/\(0)" }
     let betsSum = round.entries.values.reduce(into: 0) { partialResult, entry in
       partialResult += entry.bet ?? 0
     }
-    return "\(betsSum)/\(activeRoundNumber)"
+    return betsProgressText(for: game, betsSum: betsSum)
   }
 
   private func header(game: Game) -> some View {
     let round = game.currentRound
     let players = game.players
-    let roundText = activeRoundText
-    let betsText = activeBetsProgressText
+    let roundText = roundProgressText(for: game)
+    let betsText = betsProgressText(for: game)
     let dealerName: String = {
       guard let dealerId = round?.dealer,
             let dealer = players.first(where: { $0.id == dealerId }) else { return String(localized: "UI.Common.EmptyValue", defaultValue: "—") }
@@ -773,8 +783,8 @@ struct GameSessionView: View {
     } else {
       let isLastRound = (round?.handSize ?? 0) >= game.totalRoundsPlanned
       return AnyView(
-        Button(action: { finalizeCompletedRoundThenOpenNextBets(game: game) }) {
-          Text(isLastRound ? "UI.Button.FinishGame" : "UI.Button.EnterBets")
+        Button(action: { finalizeCurrentRound(game: game) }) {
+          Text(isLastRound ? "UI.Button.FinishGame" : "UI.Button.FinalizeRound")
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
             .font(.headline)
@@ -784,18 +794,14 @@ struct GameSessionView: View {
     }
   }
 
-  /// Closes the current round, then opens the bet sheet for the next hand. On the last hand, only finalizes the game.
-  private func finalizeCompletedRoundThenOpenNextBets(game: Game) {
+  /// Finalizes the current round and advances to the next (or ends the game on the last hand).
+  private func finalizeCurrentRound(game: Game) {
     guard let store = storeHolder.store else { return }
     guard let round = game.currentRound, !round.isFinalized else { return }
-    let isLastRound = round.handSize >= game.totalRoundsPlanned
     let constraints = constraintsForFinalize(game: game, bombPlayed: bombPlayedThisRound)
     store.apply(.finalizeCurrentRound(roundConstraints: constraints))
     guard store.lastError == nil else { return }
     bombPlayedThisRound = false
-    if !isLastRound {
-      showingBets = true
-    }
   }
 
   private func startAndShowBetsIfNeeded(game: Game) {
@@ -1022,7 +1028,11 @@ struct GameSessionView: View {
 
   private func loadIfNeeded(force: Bool = false) {
     if storeHolder.store == nil {
-      storeHolder.store = GameStore(modelContext: modelContext)
+      if let multiplayerStore = multiplayerCoordinator.store(for: gameId) {
+        storeHolder.store = multiplayerStore
+      } else {
+        storeHolder.store = GameStore(modelContext: modelContext)
+      }
       storeHolder.store?.loadGame(id: gameId)
     } else if force || storeHolder.store?.currentGame?.id != gameId {
       storeHolder.store?.loadGame(id: gameId)
@@ -1067,7 +1077,7 @@ private struct SparklineView: View {
 
 @MainActor
 private final class StoreHolder: ObservableObject {
-  @Published var store: GameStore? {
+  @Published var store: (any GameStoring)? {
     didSet { bindStoreChanges() }
   }
 

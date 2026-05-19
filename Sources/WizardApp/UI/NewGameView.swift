@@ -9,9 +9,11 @@ struct NewGameView: View {
   @Environment(\.modelContext) private var modelContext
   @Environment(\.colorScheme) private var colorScheme
   @Environment(\.locale) private var locale
+  @EnvironmentObject private var multiplayerCoordinator: MultiplayerCoordinator
   @AppStorage("app.language") private var appLanguageRaw: String = AppLanguage.system.rawValue
 
   let onCreated: (UUID) -> Void
+  var onMultiplayerGameStarted: ((UUID) -> Void)?
 
   @State private var name: String = String(localized: "UI.NewGame.DefaultName", defaultValue: "New Game")
   @AppStorage("newGame.defaultPlayerCount") private var defaultPlayerCount: Int = 4
@@ -21,6 +23,10 @@ struct NewGameView: View {
 
   @State private var enabledGameConstraints: Set<Constraint.GameConstraint> = [.betSumNotEqualHandSize]
   @State private var playWithSpecialCards: Bool = true
+  @State private var gameMode: GameMode = .singlePhone
+  @State private var hostLobbyGameID: UUID?
+  @State private var hostPlayerId: UUID?
+  @State private var hostDisplayName: String = GuestJoinPreferences.hostDisplayName
 
   @FocusState private var focusedField: Field?
 
@@ -42,6 +48,8 @@ struct NewGameView: View {
     defaultNameFormatter.string(from: now)
   }
 
+  private var isMultiPhone: Bool { gameMode == .multiPhone }
+
   var body: some View {
     NavigationStack {
       Form {
@@ -61,57 +69,73 @@ struct NewGameView: View {
         }
 
         Section {
-          ForEach(0..<playerCount, id: \.self) { idx in
-            HStack {
-              TextField(String(localized: "UI.NewGame.Player.Placeholder", defaultValue: "Player \(idx + 1)", locale: locale), text: Binding(
-                get: { playerNames[safe: idx] ?? "" },
-                set: { newValue in
-                  if idx < playerNames.count { playerNames[idx] = newValue }
-                }
-              ))
-              .focused($focusedField, equals: .playerName(idx))
-            }
-            .contentShape(Rectangle())
-            .onTapGesture { focusedField = .playerName(idx) }
+          Picker("Mode", selection: $gameMode) {
+            Text("Single Phone").tag(GameMode.singlePhone)
+            Text("Multi Phone").tag(GameMode.multiPhone)
           }
-        } header: {
-          playerCountBar
+          .pickerStyle(.segmented)
         }
 
-        Section {
-          Picker("UI.NewGame.StartingDealer.Title", selection: $startingDealerIndex) {
+        if isMultiPhone {
+          Section {
+            Text("UI.NewGame.MultiPhone.PlayersHint")
+              .foregroundStyle(.secondary)
+          } header: {
+            playerCountBar
+          }
+        } else {
+          Section {
             ForEach(0..<playerCount, id: \.self) { idx in
-              Text(playerNames[safe: idx] ?? String(localized: "UI.NewGame.Player.Placeholder", defaultValue: "Player \(idx + 1)", locale: locale))
-                .tag(idx)
-            }
-          }
-          .pickerStyle(.menu)
-        }
-
-        Section {
-          ForEach(Constraint.GameConstraint.allCases, id: \.self) { constraint in
-            Toggle(isOn: Binding(
-              get: { enabledGameConstraints.contains(constraint) },
-              set: { isEnabled in
-                if isEnabled {
-                  enabledGameConstraints.insert(constraint)
-                } else {
-                  enabledGameConstraints.remove(constraint)
-                }
+              HStack {
+                TextField(String(localized: "UI.NewGame.Player.Placeholder", defaultValue: "Player \(idx + 1)", locale: locale), text: Binding(
+                  get: { playerNames[safe: idx] ?? "" },
+                  set: { newValue in
+                    if idx < playerNames.count { playerNames[idx] = newValue }
+                  }
+                ))
+                .focused($focusedField, equals: .playerName(idx))
               }
-            )) {
-              Text(LocalizedStringKey(constraint.titleKey))
+              .contentShape(Rectangle())
+              .onTapGesture { focusedField = .playerName(idx) }
+            }
+          } header: {
+            playerCountBar
+          }
+
+          Section {
+            Picker("UI.NewGame.StartingDealer.Title", selection: $startingDealerIndex) {
+              ForEach(0..<playerCount, id: \.self) { idx in
+                Text(playerNames[safe: idx] ?? String(localized: "UI.NewGame.Player.Placeholder", defaultValue: "Player \(idx + 1)", locale: locale))
+                  .tag(idx)
+              }
+            }
+            .pickerStyle(.menu)
+
+            Toggle(isOn: $playWithSpecialCards) {
+              Text("UI.NewGame.PlayWithSpecialCards.Toggle")
             }
           }
-        } header: {
-          Text("UI.NewGame.HouseRules.Header")
-        }
 
-        Section {
-          Toggle(isOn: $playWithSpecialCards) {
-            Text("UI.NewGame.PlayWithSpecialCards.Toggle")
+          Section {
+            ForEach(Constraint.GameConstraint.allCases, id: \.self) { constraint in
+              Toggle(isOn: Binding(
+                get: { enabledGameConstraints.contains(constraint) },
+                set: { isEnabled in
+                  if isEnabled {
+                    enabledGameConstraints.insert(constraint)
+                  } else {
+                    enabledGameConstraints.remove(constraint)
+                  }
+                }
+              )) {
+                Text(LocalizedStringKey(constraint.titleKey))
+              }
+            }
+          } header: {
+            Text("UI.NewGame.HouseRules.Header")
           }
         }
+
       }
 #if os(iOS)
       .scrollContentBackground(.hidden)
@@ -121,11 +145,15 @@ struct NewGameView: View {
           Button("UI.Common.Cancel") { dismiss() }
         }
         ToolbarItem(placement: .confirmationAction) {
-          Button("UI.Common.Create") {
+          Button(isMultiPhone ? "UI.NewGame.CreateLobby" : "UI.Common.Create") {
             if let id = create() {
-              onCreated(id)
+              if isMultiPhone {
+                hostLobbyGameID = id
+              } else {
+                onCreated(id)
+                dismiss()
+              }
             }
-            dismiss()
           }
           .disabled(!canCreate)
         }
@@ -139,7 +167,24 @@ struct NewGameView: View {
       if name == String(localized: "UI.NewGame.DefaultName", defaultValue: "New Game") {
         name = Self.defaultGameName()
       }
+      if hostDisplayName.isEmpty {
+        hostDisplayName = GuestJoinPreferences.hostDisplayName
+      }
       focusedField = nil
+    }
+    .sheet(isPresented: Binding(
+      get: { hostLobbyGameID != nil },
+      set: { newValue in if !newValue { hostLobbyGameID = nil } }
+    )) {
+      if let hostLobbyGameID {
+        MultiplayerLobbyView(gameID: hostLobbyGameID) {
+          onMultiplayerGameStarted?(hostLobbyGameID)
+          onCreated(hostLobbyGameID)
+          dismiss()
+        }
+        .environmentObject(multiplayerCoordinator)
+        .presentationDetents([.medium, .large])
+      }
     }
   }
 
@@ -202,9 +247,11 @@ struct NewGameView: View {
   }
 
   private var canCreate: Bool {
+    let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !trimmedName.isEmpty else { return false }
+    if isMultiPhone { return true }
     let trimmed = playerNames.prefix(playerCount).map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-    return !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-      && trimmed.allSatisfy { !$0.isEmpty }
+    return trimmed.allSatisfy { !$0.isEmpty }
   }
 
   private var currentLanguageCode: String? {
@@ -228,25 +275,51 @@ struct NewGameView: View {
   }
 
   private func create() -> UUID? {
-    let players: [Player] = (0..<playerCount).map { idx in
-      Player(id: UUID(), name: playerNames[idx].trimmingCharacters(in: .whitespacesAndNewlines))
+    let players: [Player]
+    if isMultiPhone {
+      players = (0..<playerCount).map { idx in
+        Player(
+          id: UUID(),
+          name: String(localized: "UI.NewGame.Player.Placeholder", defaultValue: "Player \(idx + 1)", locale: locale)
+        )
+      }
+    } else {
+      players = (0..<playerCount).map { idx in
+        Player(id: UUID(), name: playerNames[idx].trimmingCharacters(in: .whitespacesAndNewlines))
+      }
     }
 
     let store = GameStore(modelContext: modelContext)
     let constraints = Constraint.GameConstraint.allCases.filter { enabledGameConstraints.contains($0) }
     store.createGame(
       name: name.trimmingCharacters(in: .whitespacesAndNewlines),
-      mode: .singlePhone,
+      mode: gameMode,
       players: players,
       playWithSpecialCards: playWithSpecialCards,
-      gameConstraints: constraints
+      gameConstraints: isMultiPhone ? [.betSumNotEqualHandSize] : constraints
     )
 
-    // Start immediately so the session doesn't need a separate "pick dealer" step.
-    if let dealerId = players[safe: startingDealerIndex]?.id {
+    if !isMultiPhone, let dealerId = players[safe: startingDealerIndex]?.id {
       store.apply(.startNewGame(startingDealer: dealerId))
     }
-    return store.currentGame?.id
+
+    guard let gameID = store.currentGame?.id else { return nil }
+
+    if isMultiPhone {
+      let hostId = players[0].id
+      hostPlayerId = hostId
+      let hostName = hostDisplayName.trimmingCharacters(in: .whitespacesAndNewlines)
+      let resolvedHostName = hostName.isEmpty ? String(localized: "UI.MultiplayerLobby.HostDefaultName", defaultValue: "Host", locale: locale) : hostName
+      GuestJoinPreferences.hostDisplayName = resolvedHostName
+      _ = try? multiplayerCoordinator.startHosting(
+        gameID: gameID,
+        modelContext: modelContext,
+        hostPlayerId: hostId,
+        hostDisplayName: resolvedHostName
+      )
+    }
+
+    return gameID
   }
 }
 
@@ -256,4 +329,3 @@ private extension Array {
     return self[index]
   }
 }
-

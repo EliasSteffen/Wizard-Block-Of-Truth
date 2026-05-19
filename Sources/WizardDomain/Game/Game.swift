@@ -126,10 +126,17 @@ public struct Game: Hashable, Codable, Sendable {
     }
   }
 
+  public var hasStarted: Bool { !rounds.isEmpty }
+
   public var currentRound: Round? {
     guard !rounds.isEmpty else { return nil }
     guard (0..<rounds.count).contains(currentRoundIndex) else { return nil }
     return rounds[currentRoundIndex]
+  }
+
+  /// Players in table bidding order for the given round (dealer last).
+  public func playersInBettingOrder(for round: Round) -> [Player] {
+    Rules.playersInBettingOrder(players: players, dealerId: round.dealer)
   }
 
   public func totalPoints() throws -> [UUID: Int] {
