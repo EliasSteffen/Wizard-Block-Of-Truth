@@ -28,6 +28,7 @@
 		000000000000000000000114 /* Constraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000214 /* Constraints.swift */; };
 		000000000000000000000115 /* Rules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000215 /* Rules.swift */; };
 		000000000000000000000116 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000216 /* Errors.swift */; };
+		000000000000000000000134 /* PlayerNaming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000234 /* PlayerNaming.swift */; };
 		000000000000000000000117 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000217 /* Assets.xcassets */; };
 		000000000000000000000118 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000218 /* Localizable.xcstrings */; };
 		000000000000000000000119 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000219 /* Card.swift */; };
@@ -83,6 +84,7 @@
 		000000000000000000000214 /* Constraints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Constraints.swift; path = Sources/WizardDomain/Rules/Constraints.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000215 /* Rules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Rules.swift; path = Sources/WizardDomain/Rules/Rules.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000216 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Errors.swift; path = Sources/WizardDomain/Support/Errors.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000234 /* PlayerNaming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlayerNaming.swift; path = Sources/WizardDomain/PlayerNaming.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000217 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		000000000000000000000218 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		000000000000000000000219 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Card.swift; path = Sources/WizardDomain/Models/Card.swift; sourceTree = SOURCE_ROOT; };
@@ -157,6 +159,7 @@
 				000000000000000000000408 /* Models */,
 				000000000000000000000409 /* Rules */,
 				000000000000000000000410 /* Support */,
+				000000000000000000000234 /* PlayerNaming.swift */,
 			);
 			name = WizardDomain;
 			sourceTree = "<group>";
@@ -397,6 +400,7 @@
 				000000000000000000000114 /* Constraints.swift in Sources */,
 				000000000000000000000115 /* Rules.swift in Sources */,
 				000000000000000000000116 /* Errors.swift in Sources */,
+				000000000000000000000134 /* PlayerNaming.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

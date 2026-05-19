@@ -226,8 +226,9 @@ public final class HostSessionService {
     }
 
     let targetPlayerId: UUID
+    let updatesPlayerName: Bool
     if let requestedId = claim.playerId {
-      guard game.players.contains(where: { $0.id == requestedId }) else {
+      guard let playerIndex = game.players.firstIndex(where: { $0.id == requestedId }) else {
         send(.joinRejected(JoinRejectedMessage(reason: "Unknown player.")), to: connectionID)
         return
       }
@@ -235,15 +236,42 @@ public final class HostSessionService {
         send(.joinRejected(JoinRejectedMessage(reason: "That player is already taken.")), to: connectionID)
         return
       }
+      let player = game.players[playerIndex]
+      let isPlaceholder = PlayerNaming.isPlaceholderName(player.name, playerNumber: playerIndex + 1)
+      if isPlaceholder {
+        send(
+          .joinRejected(JoinRejectedMessage(reason: "Use your own name to join an open default slot.")),
+          to: connectionID
+        )
+        return
+      }
+      guard displayName == player.name else {
+        send(
+          .joinRejected(JoinRejectedMessage(reason: "Display name must match the player you are claiming.")),
+          to: connectionID
+        )
+        return
+      }
       targetPlayerId = requestedId
-    } else if let firstOpen = game.players.first(where: { !isPlayerClaimed($0.id, excluding: connectionID) }) {
-      targetPlayerId = firstOpen.id
+      updatesPlayerName = false
+    } else if let openIndex = game.players.enumerated().first(where: { index, player in
+      !isPlayerClaimed(player.id, excluding: connectionID)
+        && PlayerNaming.isPlaceholderName(player.name, playerNumber: index + 1)
+    })?.offset {
+      targetPlayerId = game.players[openIndex].id
+      updatesPlayerName = true
+    } else if game.players.contains(where: { !isPlayerClaimed($0.id, excluding: connectionID) }) {
+      send(
+        .joinRejected(JoinRejectedMessage(reason: "No slot available for a custom name. Pick a player from the list.")),
+        to: connectionID
+      )
+      return
     } else {
       send(.joinRejected(JoinRejectedMessage(reason: "No open player slots.")), to: connectionID)
       return
     }
 
-    if let idx = game.players.firstIndex(where: { $0.id == targetPlayerId }) {
+    if updatesPlayerName, let idx = game.players.firstIndex(where: { $0.id == targetPlayerId }) {
       game.players[idx].name = displayName
     }
 
@@ -290,13 +318,14 @@ public final class HostSessionService {
   private func lobbySlots() -> [LobbyPlayerSlot] {
     let claimedIds = Set(guestsByConnection.values.map(\.playerId))
       .union(guestRegistry.values.map(\.playerId))
-    return game.players.map { player in
+    return game.players.enumerated().map { index, player in
       let isHost = player.id == hostReservedPlayerId
       let isGuest = claimedIds.contains(player.id)
       return LobbyPlayerSlot(
         playerId: player.id,
         name: player.name,
-        isClaimed: isHost || isGuest
+        isClaimed: isHost || isGuest,
+        isPlaceholderName: PlayerNaming.isPlaceholderName(player.name, playerNumber: index + 1)
       )
     }
   }

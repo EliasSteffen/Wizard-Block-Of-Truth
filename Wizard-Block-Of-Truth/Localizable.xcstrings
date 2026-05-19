@@ -1821,18 +1821,84 @@
         }
       }
     },
-    "UI.JoinGame.InProgress.Footer" : {
+    "UI.JoinGame.ClaimPlayer.Header" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Spiel läuft bereits. Wähle einen freien Spieler-Slot."
+            "value" : "Spieler übernehmen"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This game is already in progress. Pick an open player slot."
+            "value" : "Claim player"
+          }
+        }
+      }
+    },
+    "UI.JoinGame.CustomName.Button" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beitreten als %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Join as %@"
+          }
+        }
+      }
+    },
+    "UI.JoinGame.CustomName.Header" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit eigenem Namen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Join with your name"
+          }
+        }
+      }
+    },
+    "UI.JoinGame.CustomName.Placeholder" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anzeigename"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Display name"
+          }
+        }
+      }
+    },
+    "UI.JoinGame.InProgress.Footer" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offene Standard-Slots: mit eigenem Namen beitreten. Offene Spieler mit Namen: genau diesen Namen übernehmen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open default slots: join with your own name. Named open players: claim that exact name."
           }
         }
       }

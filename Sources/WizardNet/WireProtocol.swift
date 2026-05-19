@@ -152,11 +152,13 @@ public struct LobbyPlayerSlot: Codable, Sendable, Equatable {
   public var playerId: UUID
   public var name: String
   public var isClaimed: Bool
+  public var isPlaceholderName: Bool
 
-  public init(playerId: UUID, name: String, isClaimed: Bool) {
+  public init(playerId: UUID, name: String, isClaimed: Bool, isPlaceholderName: Bool) {
     self.playerId = playerId
     self.name = name
     self.isClaimed = isClaimed
+    self.isPlaceholderName = isPlaceholderName
   }
 }
 

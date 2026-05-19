@@ -27,8 +27,20 @@ struct JoinGameView: View {
     return multiplayerCoordinator.browser.sessions.filter { $0.code.uppercased().contains(normalized) }
   }
 
-  private var unclaimedSlots: [LobbyPlayerSlot] {
-    lobbySlots.filter { !$0.isClaimed }
+  private var unclaimedPlaceholderSlots: [LobbyPlayerSlot] {
+    lobbySlots.filter { !$0.isClaimed && $0.isPlaceholderName }
+  }
+
+  private var unclaimedNamedSlots: [LobbyPlayerSlot] {
+    lobbySlots.filter { !$0.isClaimed && !$0.isPlaceholderName }
+  }
+
+  private var hasUnclaimedSlots: Bool {
+    !unclaimedPlaceholderSlots.isEmpty || !unclaimedNamedSlots.isEmpty
+  }
+
+  private var canJoinWithCustomName: Bool {
+    !unclaimedPlaceholderSlots.isEmpty
   }
 
   private var trimmedCustomName: String {
@@ -208,7 +220,7 @@ struct JoinGameView: View {
 
   @ViewBuilder
   private var playerPickerSections: some View {
-    if unclaimedSlots.isEmpty {
+    if !hasUnclaimedSlots {
       Section {
         Text("UI.JoinGame.NoOpenSlots")
           .foregroundStyle(.secondary)
@@ -220,22 +232,43 @@ struct JoinGameView: View {
           .foregroundStyle(.secondary)
       }
 
-      Section("Open Players") {
-        ForEach(unclaimedSlots, id: \.playerId) { slot in
-          Button(slot.name) {
-            claimSlot(playerId: slot.playerId, displayName: slot.name)
+      if !unclaimedNamedSlots.isEmpty {
+        Section {
+          ForEach(unclaimedNamedSlots, id: \.playerId) { slot in
+            Button(slot.name) {
+              claimSlot(playerId: slot.playerId, displayName: slot.name)
+            }
           }
+        } header: {
+          Text("UI.JoinGame.ClaimPlayer.Header")
+        }
+      }
+
+      if canJoinWithCustomName {
+        Section {
+          TextField("UI.JoinGame.CustomName.Placeholder", text: $customDisplayName)
+          Button(customNameJoinTitle) {
+            claimSlot(playerId: nil, displayName: trimmedCustomName)
+          }
+          .disabled(trimmedCustomName.isEmpty)
+        } header: {
+          Text("UI.JoinGame.CustomName.Header")
         }
       }
     }
+  }
 
-    Section("Join With Your Name") {
-      TextField("Display name", text: $customDisplayName)
-      Button("Join as \(trimmedCustomName.isEmpty ? "…" : trimmedCustomName)") {
-        claimSlot(playerId: nil, displayName: trimmedCustomName)
-      }
-      .disabled(trimmedCustomName.isEmpty || unclaimedSlots.isEmpty)
-    }
+  private var customNameJoinTitle: String {
+    let name = trimmedCustomName.isEmpty ? "…" : trimmedCustomName
+    return String(
+      format: String(
+        localized: "UI.JoinGame.CustomName.Button",
+        defaultValue: "Join as %@",
+        locale: locale
+      ),
+      locale: locale,
+      name
+    )
   }
 
   private func rejoinSavedSession(_ saved: SavedGuestSession) {
