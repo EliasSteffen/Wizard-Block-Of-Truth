@@ -192,7 +192,6 @@ struct GameSessionView: View {
               )
             }
           },
-          sumContextLines: betsSheetSumContextLines(for: game),
           liveBetsProgressRoundNumber: activeRoundNumber(for: game)
         )
         .presentationDetents(Self.entrySheetDetents, selection: $betsDetent)
@@ -253,7 +252,6 @@ struct GameSessionView: View {
               )
             }
           },
-          sumContextLines: betsSheetSumContextLines(for: game),
           liveBetsProgressRoundNumber: activeRoundNumber(for: game)
         )
         .presentationDetents(Self.entrySheetDetents, selection: $betsDetent)
@@ -397,10 +395,6 @@ struct GameSessionView: View {
       partialResult += entry.bet ?? 0
     }
     return betsProgressText(for: game, betsSum: betsSum)
-  }
-
-  private func betsSheetSumContextLines(for game: Game) -> [(label: LocalizedStringKey, value: String)] {
-    [(label: "UI.GameSession.Header.Round", value: roundProgressText(for: game))]
   }
 
   private func header(game: Game) -> some View {
