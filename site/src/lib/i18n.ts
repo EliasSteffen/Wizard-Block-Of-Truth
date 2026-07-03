@@ -7,6 +7,7 @@ export function getDictionary(): Dictionary {
 }
 
 export function pathHref(path: string): string {
+  const base = import.meta.env.BASE_URL.replace(/\/$/, ''); // strip trailing slash
   const normalized = path.startsWith('/') ? path : `/${path}`;
-  return normalized === '/' ? '/' : normalized;
+  return `${base}${normalized}`;
 }
