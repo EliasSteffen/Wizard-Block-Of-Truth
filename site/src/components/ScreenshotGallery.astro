@@ -1,6 +1,6 @@
 ---
-import PhoneFrame from './PhoneFrame.astro';
 import type { Dictionary } from '../lib/i18n';
+import { assetUrl } from '../lib/assets';
 
 interface Props {
   t: Dictionary;
@@ -10,16 +10,27 @@ const { t } = Astro.props;
 ---
 
 <section class="section" id="screenshots">
-  <h2>{t.screenshots.title}</h2>
-  <p class="section-intro">{t.screenshots.intro}</p>
-  <div class="screenshot-scroll">
-    {
-      t.screenshots.items.map((shot) => (
+  <div class="site-shell">
+    <p class="section-label">App Preview</p>
+    <h2 class="section-heading">{t.screenshots.title}</h2>
+    <p class="section-intro">{t.screenshots.intro}</p>
+
+    <div class="screenshot-grid">
+      {t.screenshots.items.map((shot) => (
         <figure class="shot-card">
-          <PhoneFrame src={shot.src} alt={shot.alt} />
-          <figcaption class="shot-label">{shot.caption}</figcaption>
+          <div class="shot-image-wrap">
+            <img
+              src={assetUrl(shot.src)}
+              alt={shot.alt}
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <figcaption class="shot-meta">
+            <span class="shot-label">{shot.caption}</span>
+          </figcaption>
         </figure>
-      ))
-    }
+      ))}
+    </div>
   </div>
 </section>

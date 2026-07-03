@@ -10,9 +10,13 @@ const t = getDictionary();
   title={t.meta.privacyTitle}
   description={t.meta.privacyDescription}
 >
-  <article class="subpage-main subpage-card">
-    <h1>{t.privacy.title}</h1>
-    {t.privacy.body.map((paragraph) => <p>{paragraph}</p>)}
-    <a class="back-link" href={pathHref('/')}>{t.privacy.back}</a>
-  </article>
+  <div class="subpage-main">
+    <article class="subpage-card">
+      <h1>{t.privacy.title}</h1>
+      <div>
+        {t.privacy.body.map((paragraph) => <p>{paragraph}</p>)}
+      </div>
+      <a class="back-link" href={pathHref('/')}>← {t.privacy.back}</a>
+    </article>
+  </div>
 </BaseLayout>

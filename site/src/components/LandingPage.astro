@@ -1,7 +1,6 @@
 ---
 import AppStoreButton from './AppStoreButton.astro';
 import FeatureShowcase from './FeatureShowcase.astro';
-import PhoneFrame from './PhoneFrame.astro';
 import ScreenshotGallery from './ScreenshotGallery.astro';
 import { GITHUB_URL } from '../config';
 import { pathHref, type Dictionary } from '../lib/i18n';
@@ -13,72 +12,80 @@ interface Props {
 const { t } = Astro.props;
 ---
 
-<section class="section hero">
-  <div class="hero-grid">
-    <div class="hero-copy">
-      <p class="eyebrow">{t.hero.eyebrow}</p>
-      <h1>{t.hero.title}</h1>
-      <p class="lead">{t.hero.lead}</p>
-      <div class="cta-row">
-        <AppStoreButton label={t.cta.appStore} soonLabel={t.cta.appStoreSoon} class="cta-primary" />
-        <a class="button button-ghost" href={GITHUB_URL} rel="noopener noreferrer">{t.cta.github}</a>
-        <a class="button button-ghost" href={pathHref('/support/')}>{t.cta.support}</a>
-      </div>
-      <ul class="hero-metrics">
-        <li>
-          <span class="metric-value">2–6</span>
-          <span class="metric-label">{t.hero.metricPlayers}</span>
-        </li>
-        <li>
-          <span class="metric-value">LAN</span>
-          <span class="metric-label">{t.hero.metricMultiplayer}</span>
-        </li>
-        <li>
-          <span class="metric-value">0</span>
-          <span class="metric-label">{t.hero.metricTrackers}</span>
-        </li>
-      </ul>
-    </div>
-    <div class="hero-device">
-      <PhoneFrame
-        src="assets/screenshots/scoreboard.png"
-        alt="Wizard Block of Truth scoreboard"
-        size="large"
-        loading="eager"
-      />
-    </div>
+<!-- Hero -->
+<section class="site-shell hero">
+  <p class="hero-eyebrow">✦ {t.hero.eyebrow}</p>
+
+  <h1 class="hero-title">
+    The modern score sheet<br />
+    <em>for Wizard nights.</em>
+  </h1>
+
+  <p class="hero-lead">{t.hero.lead}</p>
+
+  <div class="hero-cta-row">
+    <AppStoreButton label={t.cta.appStore} soonLabel={t.cta.appStoreSoon} class="btn btn-primary" />
+    <a class="btn btn-ghost" href={GITHUB_URL} rel="noopener noreferrer">{t.cta.github}</a>
+    <a class="btn btn-ghost" href={pathHref('/support/')}>{t.cta.support}</a>
   </div>
+
+  <ul class="hero-stats">
+    <li class="stat-pill">
+      <span class="val">2–6</span>
+      <span class="stat-divider"></span>
+      <span class="lbl">{t.hero.metricPlayers}</span>
+    </li>
+    <li class="stat-pill">
+      <span class="val">LAN</span>
+      <span class="stat-divider"></span>
+      <span class="lbl">{t.hero.metricMultiplayer}</span>
+    </li>
+    <li class="stat-pill">
+      <span class="val">0</span>
+      <span class="stat-divider"></span>
+      <span class="lbl">{t.hero.metricTrackers}</span>
+    </li>
+  </ul>
 </section>
 
 <FeatureShowcase t={t} />
 <ScreenshotGallery t={t} />
 
+<!-- How it works -->
 <section class="section" id="how-it-works">
-  <h2>{t.howItWorks.title}</h2>
-  <p class="section-intro">{t.howItWorks.intro}</p>
-  <div class="steps-grid">
-    {
-      t.howItWorks.steps.map((step, index) => (
+  <div class="site-shell">
+    <p class="section-label">How it works</p>
+    <h2 class="section-heading">{t.howItWorks.title}</h2>
+    <p class="section-intro">{t.howItWorks.intro}</p>
+
+    <div class="steps-grid">
+      {t.howItWorks.steps.map((step, i) => (
         <article class="step-card">
-          <span class="step-number">{index + 1}</span>
+          <span class="step-badge">0{i + 1}</span>
           <h3>{step.title}</h3>
           <p>{step.body}</p>
         </article>
-      ))
-    }
+      ))}
+    </div>
   </div>
 </section>
 
+<!-- Trust -->
 <section class="section" id="trust">
-  <div class="trust-card">
-    <h2>{t.trust.title}</h2>
-    <p class="section-intro">{t.trust.intro}</p>
-    <ul class="checklist">
-      {t.trust.items.map((item) => <li>{item}</li>)}
-    </ul>
-    <p class="attribution">{t.trust.attribution}</p>
-    <p style="margin-top: var(--space-3);">
-      <a href={pathHref('/privacy/')}>{t.trust.privacyLink}</a>
-    </p>
+  <div class="site-shell">
+    <div class="trust-card">
+      <div>
+        <p class="section-label">{t.trust.title}</p>
+        <h2>{t.trust.title}</h2>
+      </div>
+      <p style="color: var(--muted);">{t.trust.intro}</p>
+      <ul class="checklist">
+        {t.trust.items.map((item) => <li>{item}</li>)}
+      </ul>
+      <p class="attribution">{t.trust.attribution}</p>
+      <p>
+        <a href={pathHref('/privacy/')}>{t.trust.privacyLink}</a>
+      </p>
+    </div>
   </div>
 </section>

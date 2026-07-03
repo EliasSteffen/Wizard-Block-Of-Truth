@@ -1,5 +1,4 @@
 ---
-import PhoneFrame from './PhoneFrame.astro';
 import type { Dictionary } from '../lib/i18n';
 
 interface Props {
@@ -7,22 +6,26 @@ interface Props {
 }
 
 const { t } = Astro.props;
+
+const accentColors = ['#4F6EFF', '#F5A623', '#34D399', '#8BA3FF'];
+const icons = ['🃏', '⚡', '📊', '🛡'];
 ---
 
 <section class="section" id="features">
-  <h2>{t.features.title}</h2>
-  <p class="section-intro">{t.features.intro}</p>
-  <div class="feature-showcase">
-    {
-      t.features.items.map((item, index) => (
-        <article class:list={['feature-block', { 'is-reversed': index % 2 === 1 }]}>
-          <PhoneFrame src={item.screenshot} alt={item.title} />
-          <div class="feature-copy">
-            <h3>{item.title}</h3>
-            <p>{item.body}</p>
-          </div>
+  <div class="site-shell">
+    <p class="section-label">Features</p>
+    <h2 class="section-heading">{t.features.title}</h2>
+    <p class="section-intro">{t.features.intro}</p>
+
+    <div class="feature-grid">
+      {t.features.items.map((item, i) => (
+        <article class="feature-card">
+          <div class="feature-accent" style={`background: ${accentColors[i % accentColors.length]};`}></div>
+          <span class="feature-icon">{icons[i % icons.length]}</span>
+          <h3>{item.title}</h3>
+          <p>{item.body}</p>
         </article>
-      ))
-    }
+      ))}
+    </div>
   </div>
 </section>
