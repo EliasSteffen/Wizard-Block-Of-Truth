@@ -1,0 +1,28 @@
+---
+import PhoneFrame from './PhoneFrame.astro';
+import type { Dictionary } from '../lib/i18n';
+
+interface Props {
+  t: Dictionary;
+}
+
+const { t } = Astro.props;
+---
+
+<section class="section" id="features">
+  <h2>{t.features.title}</h2>
+  <p class="section-intro">{t.features.intro}</p>
+  <div class="feature-showcase">
+    {
+      t.features.items.map((item, index) => (
+        <article class:list={['feature-block', { 'is-reversed': index % 2 === 1 }]}>
+          <PhoneFrame src={item.screenshot} alt={item.title} />
+          <div class="feature-copy">
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</section>

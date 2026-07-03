@@ -1,0 +1,46 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { assetUrl } from '../lib/assets';
+import { getDictionary } from '../lib/i18n';
+import '../styles/global.css';
+
+interface Props {
+  currentPath: string;
+  title: string;
+  description: string;
+}
+
+const { currentPath, title, description } = Astro.props;
+const t = getDictionary();
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(assetUrl('assets/og-image.png'), Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/png" href={assetUrl('assets/icon.png')} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+  </head>
+  <body>
+    <Header t={t} currentPath={currentPath} />
+    <main class="site-shell">
+      <slot />
+    </main>
+    <Footer t={t} />
+  </body>
+</html>

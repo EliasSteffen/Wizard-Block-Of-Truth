@@ -43,7 +43,7 @@ Tests/
 
 | Path | Purpose |
 |------|---------|
-| `www/` | Static marketing / support / privacy site (GitHub Pages) |
+| `site/` | Astro marketing / support / privacy site (builds to GitHub Pages) |
 | `.github/workflows/` | CI (e.g. Pages deploy) |
 | `Assets/icon.png` | App icon source asset |
 

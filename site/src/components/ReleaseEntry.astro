@@ -1,0 +1,19 @@
+---
+interface Props {
+  version: string;
+  date: string;
+  items: string[];
+}
+
+const { version, date, items } = Astro.props;
+---
+
+<li class="release-entry">
+  <header class="release-entry-header">
+    <h2 class="release-version">{version}</h2>
+    <time class="release-date" datetime={date}>{date}</time>
+  </header>
+  <ul>
+    {items.map((item) => <li>{item}</li>)}
+  </ul>
+</li>

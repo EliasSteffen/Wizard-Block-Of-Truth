@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "www/**"
+      - "site/**"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -31,10 +31,21 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: Build site
+        run: npm ci && npm run build
+        working-directory: site
+
       - name: Stage site root
         run: |
           mkdir -p _site
-          cp -R www/. _site/
+          cp -R site/dist/. _site/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

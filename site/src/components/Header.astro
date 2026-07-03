@@ -1,0 +1,105 @@
+---
+import { SITE_NAME } from '../config';
+import { pathHref, type Dictionary } from '../lib/i18n';
+
+interface Props {
+  t: Dictionary;
+  currentPath: string;
+}
+
+const { t, currentPath } = Astro.props;
+const isHome = currentPath === '/';
+---
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href={pathHref('/')}>{SITE_NAME}</a>
+    <nav class="top-nav" aria-label="Main">
+      {
+        isHome ? (
+          <>
+            <a href="#features">{t.nav.features}</a>
+            <a href="#screenshots">{t.nav.screenshots}</a>
+            <a href="#how-it-works">{t.nav.howItWorks}</a>
+            <a href="#trust">{t.nav.trust}</a>
+          </>
+        ) : (
+          <>
+            <a href={pathHref('/#features')}>{t.nav.features}</a>
+            <a href={pathHref('/privacy/')}>{t.nav.privacy}</a>
+            <a href={pathHref('/support/')}>{t.nav.support}</a>
+            <a href={pathHref('/release-notes/')}>{t.nav.releaseNotes}</a>
+          </>
+        )
+      }
+    </nav>
+    <div class="header-actions">
+      <button
+        class="menu-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        data-menu-toggle
+      >
+        <span class="sr-only">{t.nav.menuOpen}</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" fill="currentColor">
+          <rect y="3" width="20" height="2" rx="1"></rect>
+          <rect y="9" width="20" height="2" rx="1"></rect>
+          <rect y="15" width="20" height="2" rx="1"></rect>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile">
+    <div class="mobile-nav-inner">
+      {
+        isHome ? (
+          <>
+            <a href="#features">{t.nav.features}</a>
+            <a href="#screenshots">{t.nav.screenshots}</a>
+            <a href="#how-it-works">{t.nav.howItWorks}</a>
+            <a href="#trust">{t.nav.trust}</a>
+          </>
+        ) : (
+          <>
+            <a href={pathHref('/#features')}>{t.nav.features}</a>
+            <a href={pathHref('/privacy/')}>{t.nav.privacy}</a>
+            <a href={pathHref('/support/')}>{t.nav.support}</a>
+            <a href={pathHref('/release-notes/')}>{t.nav.releaseNotes}</a>
+          </>
+        )
+      }
+    </div>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.querySelector('[data-menu-toggle]');
+  const panel = document.getElementById('mobile-nav');
+
+  toggle?.addEventListener('click', () => {
+    const open = panel?.classList.toggle('is-open') ?? false;
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+
+  panel?.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      panel.classList.remove('is-open');
+      toggle?.setAttribute('aria-expanded', 'false');
+    });
+  });
+</script>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

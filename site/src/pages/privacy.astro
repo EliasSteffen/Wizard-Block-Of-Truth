@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getDictionary, pathHref } from '../lib/i18n';
+
+const t = getDictionary();
+---
+
+<BaseLayout
+  currentPath="/privacy/"
+  title={t.meta.privacyTitle}
+  description={t.meta.privacyDescription}
+>
+  <article class="subpage-main subpage-card">
+    <h1>{t.privacy.title}</h1>
+    {t.privacy.body.map((paragraph) => <p>{paragraph}</p>)}
+    <a class="back-link" href={pathHref('/')}>{t.privacy.back}</a>
+  </article>
+</BaseLayout>

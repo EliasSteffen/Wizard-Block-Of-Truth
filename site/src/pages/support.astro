@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { GITHUB_ISSUES_URL, GITHUB_URL } from '../config';
+import { getDictionary, pathHref } from '../lib/i18n';
+
+const t = getDictionary();
+---
+
+<BaseLayout
+  currentPath="/support/"
+  title={t.meta.supportTitle}
+  description={t.meta.supportDescription}
+>
+  <article class="subpage-main subpage-card">
+    <h1>{t.support.title}</h1>
+    <p>{t.support.intro}</p>
+    <p>
+      <strong>{t.support.issuesLabel}:</strong>
+      <a href={GITHUB_ISSUES_URL}>{t.support.issuesText}</a>
+    </p>
+    <p>
+      <strong>{t.support.repoLabel}:</strong>
+      <a href={GITHUB_URL}>{GITHUB_URL.replace('https://', '')}</a>
+    </p>
+    <h2>{t.support.faqTitle}</h2>
+    <div class="faq-list">
+      {
+        t.support.faq.map((item) => (
+          <details class="faq-item">
+            <summary>{item.q}</summary>
+            <p>{item.a}</p>
+          </details>
+        ))
+      }
+    </div>
+    <a class="back-link" href={pathHref('/')}>{t.support.back}</a>
+  </article>
+</BaseLayout>

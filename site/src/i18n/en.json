@@ -1,0 +1,161 @@
+{
+  "meta": {
+    "homeTitle": "Wizard Block of Truth - Score Wizard Games",
+    "homeDescription": "Wizard Block of Truth is a modern score tracker for Wizard: rounds, bids, tricks, multiplayer, and clear history. Mobile-first and built for smooth table sessions.",
+    "privacyTitle": "Privacy - Wizard Block of Truth",
+    "privacyDescription": "Privacy information for Wizard Block of Truth.",
+    "supportTitle": "Support - Wizard Block of Truth",
+    "supportDescription": "Support page for Wizard Block of Truth with issue reporting and repository links.",
+    "releaseNotesTitle": "Release Notes - Wizard Block of Truth",
+    "releaseNotesDescription": "Release notes and version history for Wizard Block of Truth."
+  },
+  "nav": {
+    "features": "Features",
+    "screenshots": "Screenshots",
+    "howItWorks": "How it works",
+    "trust": "Trust",
+    "privacy": "Privacy",
+    "support": "Support",
+    "releaseNotes": "Release notes",
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu"
+  },
+  "hero": {
+    "eyebrow": "Score smarter · Play smoother",
+    "title": "The modern score sheet for Wizard nights.",
+    "lead": "Replace paper chaos with a fast, transparent game flow: bids, tricks, scoring, round history, and local multiplayer in one clean app.",
+    "metricPlayers": "Players",
+    "metricMultiplayer": "Multiplayer",
+    "metricTrackers": "Ad trackers"
+  },
+  "cta": {
+    "appStore": "Download on the App Store",
+    "appStoreSoon": "App Store coming soon",
+    "github": "GitHub",
+    "support": "Support"
+  },
+  "features": {
+    "title": "Built for real game tables",
+    "intro": "Fast setup, strict score logic, and smooth handovers between rounds.",
+    "items": [
+      {
+        "slug": "track-every-trick",
+        "title": "Track every trick",
+        "body": "Keep every game saved on device with searchable history, timestamps, and quick resume.",
+        "screenshot": "assets/screenshots/game-list.png"
+      },
+      {
+        "slug": "set-up-in-seconds",
+        "title": "Set up in seconds",
+        "body": "Create a game for 2–6 players, pick single-phone or multi-phone mode, and configure house rules before the first deal.",
+        "screenshot": "assets/screenshots/create-game.png"
+      },
+      {
+        "slug": "live-scores-zero-math",
+        "title": "Live scores, zero math",
+        "body": "See bids, tricks, round totals, and per-player trends on a scoreboard that updates as you play.",
+        "screenshot": "assets/screenshots/scoreboard.png"
+      },
+      {
+        "slug": "keep-every-round-honest",
+        "title": "Keep every round honest",
+        "body": "Validation catches impossible totals early—like when the sum of bets must not equal hand size.",
+        "screenshot": "assets/screenshots/enter-bets.png"
+      }
+    ]
+  },
+  "screenshots": {
+    "title": "App preview",
+    "intro": "Real screens from the latest build—dark mode, clear round flow, and multiplayer-ready setup.",
+    "items": [
+      {
+        "src": "assets/screenshots/game-list.png",
+        "alt": "Game list with saved sessions",
+        "caption": "Game list"
+      },
+      {
+        "src": "assets/screenshots/create-game.png",
+        "alt": "Create game with player setup and house rules",
+        "caption": "Create game"
+      },
+      {
+        "src": "assets/screenshots/scoreboard.png",
+        "alt": "Live scoreboard with round progress",
+        "caption": "Scoreboard"
+      },
+      {
+        "src": "assets/screenshots/enter-bets.png",
+        "alt": "Enter bets with validation feedback",
+        "caption": "Enter bets"
+      }
+    ]
+  },
+  "howItWorks": {
+    "title": "How it works",
+    "intro": "From first deal to final round—single phone at the table or one device per player on the same Wi‑Fi.",
+    "steps": [
+      {
+        "title": "Create a game",
+        "body": "Choose players, dealer, special cards, and house rules. Switch to multi-phone mode when everyone has their own iPhone."
+      },
+      {
+        "title": "Enter bids and tricks",
+        "body": "Step through each round with guided entry. The app validates sums and keeps the host authoritative in multiplayer."
+      },
+      {
+        "title": "Review and continue",
+        "body": "Inspect round history, spot corrections, and pick up saved games whenever you return to the table."
+      }
+    ]
+  },
+  "trust": {
+    "title": "Privacy and trust",
+    "intro": "An independent Wizard score helper—no ad SDKs, no custom analytics stack in this distribution.",
+    "items": [
+      "No custom ad tracking in this distribution.",
+      "Clear support and issue-report path via GitHub.",
+      "Privacy and support pages are publicly accessible."
+    ],
+    "attribution": "Wizard is a published card game. This app is an independent scoring tool and is not affiliated with the publisher or rights holders of the game.",
+    "privacyLink": "Read the full privacy policy"
+  },
+  "privacy": {
+    "title": "Privacy",
+    "body": [
+      "Wizard Block of Truth is committed to protecting your privacy.",
+      "This app does not collect, store, or share personal user data beyond what the platform (Apple) provides for normal app operation. There is no custom analytics or advertising SDK in this distribution."
+    ],
+    "back": "Back to landing page"
+  },
+  "support": {
+    "title": "Support",
+    "intro": "Need help with Wizard Block of Truth? Use the links below for bug reports, feature ideas, and project questions.",
+    "issuesLabel": "GitHub Issues",
+    "issuesText": "Report an issue or ask a question",
+    "repoLabel": "Repository",
+    "faqTitle": "Common questions",
+    "faq": [
+      {
+        "q": "Does the app replace the paper score pad?",
+        "a": "Yes. It tracks bids, tricks, and points per round with saved game history on your device."
+      },
+      {
+        "q": "Can each player use their own phone?",
+        "a": "Yes, on the same local Wi‑Fi. The host device keeps the authoritative score; guests enter their own bids and tricks."
+      },
+      {
+        "q": "Is Wizard Block of Truth official?",
+        "a": "No. It is an independent scoring tool and is not affiliated with the Wizard publisher or rights holders."
+      }
+    ],
+    "back": "Back to landing page"
+  },
+  "releaseNotes": {
+    "title": "Release notes",
+    "intro": "What changed in each version. For App Store updates, this page is the full changelog.",
+    "back": "Back to landing page"
+  },
+  "footer": {
+    "copyright": "Wizard Block of Truth"
+  }
+}

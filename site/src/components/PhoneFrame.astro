@@ -1,0 +1,16 @@
+---
+import { assetUrl } from '../lib/assets';
+
+interface Props {
+  src: string;
+  alt: string;
+  size?: 'default' | 'large';
+  loading?: 'lazy' | 'eager';
+}
+
+const { src, alt, size = 'default', loading = 'lazy' } = Astro.props;
+---
+
+<div class:list={['app-screenshot', { 'app-screenshot--large': size === 'large' }]}>
+  <img src={assetUrl(src)} alt={alt} loading={loading} width="390" height="844" />
+</div>

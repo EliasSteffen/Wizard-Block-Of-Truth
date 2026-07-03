@@ -1,0 +1,13 @@
+{
+  "version": "1.1",
+  "date": "2026-05",
+  "sortOrder": 2,
+  "items": [
+    "Local multiplayer on the same Wi-Fi network (host and guests).",
+    "Guests join with a session code and choose their player name.",
+    "Host is the source of truth for rounds, scoring, and all player inputs.",
+    "Clearer bet and trick entry, including validation when bets must not equal hand size.",
+    "Per-player round history from the scoreboard.",
+    "Appearance and language settings (English and German)."
+  ]
+}

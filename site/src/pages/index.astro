@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LandingPage from '../components/LandingPage.astro';
+import { getDictionary } from '../lib/i18n';
+
+const t = getDictionary();
+---
+
+<BaseLayout
+  currentPath="/"
+  title={t.meta.homeTitle}
+  description={t.meta.homeDescription}
+>
+  <LandingPage t={t} />
+</BaseLayout>

@@ -1,0 +1,24 @@
+---
+import { APP_STORE_URL, isAppStoreConfigured } from '../config';
+
+interface Props {
+  label: string;
+  soonLabel: string;
+  class?: string;
+}
+
+const { label, soonLabel, class: className = '' } = Astro.props;
+const configured = isAppStoreConfigured();
+---
+
+{
+  configured ? (
+    <a class={`button primary app-store ${className}`} href={APP_STORE_URL} rel="noopener noreferrer">
+      {label}
+    </a>
+  ) : (
+    <span class={`button primary app-store disabled ${className}`} aria-disabled="true">
+      {soonLabel}
+    </span>
+  )
+}
