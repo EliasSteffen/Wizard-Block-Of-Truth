@@ -15,6 +15,7 @@ struct MultiplayerLobbyView: View {
   @State private var hostPlayerId: UUID?
   @State private var startingDealerIndex: Int = 0
   @State private var enabledGameConstraints: Set<Constraint.GameConstraint> = [.betSumNotEqualHandSize]
+  @State private var firstRoundBetSumMayEqualHandSize: Bool = false
   @State private var playWithSpecialCards: Bool = true
   @State private var startError: String?
   @State private var showsSessionSheet = false
@@ -143,6 +144,11 @@ struct MultiplayerLobbyView: View {
                 )) {
                   Text(LocalizedStringKey(constraint.titleKey))
                 }
+                if constraint == .betSumNotEqualHandSize, enabledGameConstraints.contains(.betSumNotEqualHandSize) {
+                  Toggle(isOn: $firstRoundBetSumMayEqualHandSize) {
+                    Text("UI.NewGame.HouseRules.FirstRoundMayEqualHandSize")
+                  }
+                }
               }
             } header: {
               Text("UI.NewGame.HouseRules.Header")
@@ -257,7 +263,9 @@ struct MultiplayerLobbyView: View {
         gameID: gameID,
         startingDealerId: dealerId,
         gameConstraints: constraints,
-        playWithSpecialCards: playWithSpecialCards
+        playWithSpecialCards: playWithSpecialCards,
+        firstRoundBetSumMayEqualHandSize: firstRoundBetSumMayEqualHandSize
+          && constraints.contains(.betSumNotEqualHandSize)
       )
       onGameStarted()
       dismiss()

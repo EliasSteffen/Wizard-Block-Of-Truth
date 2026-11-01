@@ -13,7 +13,7 @@ All authoritative game state changes live in **WizardDomain**. UI and network la
 
 ## State model
 
-- **`Game`** — players, rounds, `currentRoundIndex`, `gameConstraints`, `playWithSpecialCards`, `mode` (`.singlePhone` / `.multiPhone`).
+- **`Game`** — players, rounds, `currentRoundIndex`, `gameConstraints`, `firstRoundBetSumMayEqualHandSize`, `playWithSpecialCards`, `mode` (`.singlePhone` / `.multiPhone`).
 - **`Round`** — `handSize`, `dealer`, `entries` per player, `isFinalized`, `cloudCardResolved`.
 - **`RoundEntry`** — optional `bet` and `got`; scoring via `pointsDelta()`.
 - **`Player`** — `id`, `name`.
@@ -52,6 +52,8 @@ Never patch `game.rounds[...].entries[...]` from WizardApp or WizardNet except t
 Defined in `Sources/WizardDomain/Rules/Constraints.swift`. New games default to `gameConstraints: [.betSumNotEqualHandSize]` in `GameStore.createGame`.
 
 Validate with `round.validateConstraints(players:gameConstraints:roundConstraints:)`.
+
+**Which game constraints apply to a round:** always ask `game.gameConstraints(forRoundAt: roundIndex)` (never `game.gameConstraints` directly) when validating bets. With the house rule `firstRoundBetSumMayEqualHandSize` ("Erste Runde darf aufgehen", default off, set at creation via `GameStore.createGame` / `HostSessionService.startGame`) it drops `.betSumNotEqualHandSize` for round 1 (index 0). Change it only via `setFirstRoundBetSumMayEqualHandSize(_:)`, which—like `setGameConstraints(_:)`—throws `constraintsLocked` after the first finalized round.
 
 ## Errors
 

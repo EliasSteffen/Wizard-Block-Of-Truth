@@ -52,7 +52,8 @@ final class GameStore: ObservableObject, GameStoring {
     mode: GameMode,
     players: [Player],
     playWithSpecialCards: Bool = true,
-    gameConstraints: [Constraint.GameConstraint] = [.betSumNotEqualHandSize]
+    gameConstraints: [Constraint.GameConstraint] = [.betSumNotEqualHandSize],
+    firstRoundBetSumMayEqualHandSize: Bool = false
   ) {
     do {
       let game = try Game(
@@ -61,7 +62,8 @@ final class GameStore: ObservableObject, GameStoring {
         mode: mode,
         playWithSpecialCards: playWithSpecialCards,
         players: players,
-        gameConstraints: gameConstraints
+        gameConstraints: gameConstraints,
+        firstRoundBetSumMayEqualHandSize: firstRoundBetSumMayEqualHandSize
       )
       currentGame = game
       try upsert(game: game)

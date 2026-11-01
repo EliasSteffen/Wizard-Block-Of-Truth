@@ -192,7 +192,7 @@ struct GameSessionView: View {
             return store.applyBatch(cmds) { updated in
               try updated.rounds[updated.currentRoundIndex].validateConstraints(
                 players: updated.players,
-                gameConstraints: updated.gameConstraints,
+                gameConstraints: updated.gameConstraints(forRoundAt: updated.currentRoundIndex),
                 roundConstraints: [.gotSumEqualsHandSize]
               )
             }
@@ -252,7 +252,7 @@ struct GameSessionView: View {
             return store.applyBatch([cmd]) { updated in
               try updated.rounds[updated.currentRoundIndex].validateConstraints(
                 players: updated.players,
-                gameConstraints: updated.gameConstraints,
+                gameConstraints: updated.gameConstraints(forRoundAt: updated.currentRoundIndex),
                 roundConstraints: [.gotSumEqualsHandSize]
               )
             }
@@ -310,7 +310,7 @@ struct GameSessionView: View {
             return store.applyBatch(cmds) { updated in
               try updated.rounds[updated.currentRoundIndex].validateConstraints(
                 players: updated.players,
-                gameConstraints: updated.gameConstraints,
+                gameConstraints: updated.gameConstraints(forRoundAt: updated.currentRoundIndex),
                 roundConstraints: roundConstraints
               )
             }
@@ -395,7 +395,7 @@ struct GameSessionView: View {
     game: Game,
     round: Round
   ) -> EntrySheetView.SumValidation? {
-    guard game.gameConstraints.contains(.betSumNotEqualHandSize),
+    guard game.gameConstraints(forRoundAt: game.currentRoundIndex).contains(.betSumNotEqualHandSize),
           !round.cloudCardResolved else { return nil }
     return .init(
       expectedSum: round.handSize,

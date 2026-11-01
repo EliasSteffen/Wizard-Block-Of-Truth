@@ -2402,6 +2402,22 @@
         }
       }
     },
+    "UI.NewGame.HouseRules.FirstRoundMayEqualHandSize" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erste Runde darf aufgehen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First round: bets may add up to the hand size"
+          }
+        }
+      }
+    },
     "UI.NewGame.HouseRules.Header" : {
       "localizations" : {
         "de" : {
