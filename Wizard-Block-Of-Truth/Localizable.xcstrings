@@ -585,6 +585,582 @@
         }
       }
     },
+    "Error.Multiplayer.Connection.CommandTimedOut" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Host hat nicht rechtzeitig geantwortet. Prüfe die Tabelle und versuche es erneut."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The host didn’t answer in time. Check the scoreboard and try again."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Connection.HostIncompatible" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Host antwortet nicht. Möglicherweise verwendet er eine ältere App-Version – aktualisiere beide Geräte."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The host doesn’t answer. It may be using an older app version – update both devices."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Connection.HostUnreachable" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Host ist nicht erreichbar. Stelle sicher, dass beide Geräte im selben WLAN sind und der Host die Sitzung geöffnet hat."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t reach the host. Make sure both devices are on the same Wi-Fi and the host has the session open."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Connection.LocalNetworkDenied" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Zugriff auf das lokale Netzwerk ist deaktiviert. Erlaube ihn unter Einstellungen › Datenschutz & Sicherheit › Lokales Netzwerk und versuche es erneut."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Local network access is off. Allow it in Settings › Privacy & Security › Local Network, then try again."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Connection.Lost" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Verbindung zum Host wurde unterbrochen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The connection to the host was lost."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Connection.NotConnected" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gerade nicht mit dem Host verbunden. Verbindung wird wiederhergestellt…"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not connected to the host right now. Reconnecting…"
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Connection.NotJoined" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast noch keinen Platz gewählt."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You haven’t taken a seat yet."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Host.AnotherSessionActive" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für „%@“ läuft noch eine Multi-Phone-Sitzung. Beende sie zuerst."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A multi-phone session for “%@” is still running. End it first."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Host.GameNotFound" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Spiel konnte zum Hosten nicht geladen werden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The game couldn’t be loaded for hosting."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Host.InvalidSeatOrder" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Sitzreihenfolge ist ungültig."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The seat order is invalid."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Host.NoActiveSession" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es gibt keine aktive Multi-Phone-Sitzung."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There is no active multi-phone session."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Host.NotInSetup" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das ist nur vor Spielbeginn möglich."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This is only possible before the game starts."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Host.SeatBoundToDevice" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Platz gehört zum Handy eines Gasts. Entferne den Gast zuerst."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This seat belongs to a guest’s phone. Remove the guest first."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Host.SessionEnded" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Sitzung ist bereits beendet."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This session has already ended."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Reason.BetsComplete" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Wetten sind abgegeben – Wetten können nicht mehr geändert werden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All bets are in – bets can no longer be changed."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Reason.BetsIncomplete" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du kannst deine Stiche eintragen, sobald alle Wetten abgegeben sind."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can enter your won tricks once all bets are in."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Reason.BetSumEqualsHandSize" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Wetten dürfen zusammen nicht %lld ergeben – wähle einen anderen Wert."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bets may not add up to %lld – choose another value."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Reason.GameFinished" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Spiel ist vorbei. Der Endstand wurde in deiner Spieleliste gespeichert."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The game is over. The final scoreboard was saved in your game list."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Reason.GameNotStarted" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Spiel hat noch nicht begonnen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The game has not started yet."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Reason.HostEnded" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Host hat die Sitzung beendet."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The host ended the session."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Reason.Internal" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beim Host ist etwas schiefgelaufen. Bitte versuche es erneut."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong on the host. Please try again."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Reason.InvalidValue" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Wert ist nicht erlaubt."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This value is not allowed."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Reason.Kicked" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Host hat dich von deinem Platz entfernt."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The host removed you from your seat."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Reason.NameInvalid" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gib einen Namen mit 1 bis 24 Zeichen ein."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter a name with 1 to 24 characters."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Reason.NameTaken" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein anderer Spieler verwendet diesen Namen bereits. Wähle einen anderen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Another player already uses this name. Choose a different one."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Reason.NotAuthorized" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das kann nur der Host."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only the host can do that."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Reason.NotCurrentRound" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Runde ist nicht mehr aktiv."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This round is no longer active."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Reason.NotYourSeat" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du kannst nur Werte für deinen eigenen Spieler eingeben."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can only enter values for your own player."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Reason.RoundFinalized" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Host hat diese Runde bereits abgeschlossen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The host has already finished this round."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Reason.SeatNotFound" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diesen Platz gibt es nicht mehr. Wähle einen anderen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This seat no longer exists. Pick another one."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Reason.SeatTaken" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Platz ist bereits vergeben. Wähle einen anderen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This seat is already taken. Pick another one."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Reason.SessionNotFound" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Sitzung ist nicht mehr verfügbar. Wähle sie erneut aus der Liste."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This session is no longer available. Pick it again from the list."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Reason.TokenInvalid" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Platz ist nicht mehr reserviert. Wähle erneut einen Platz."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your seat is no longer reserved. Pick a seat again."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Reason.Unknown" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Host hat eine unbekannte Antwort gesendet. Bitte aktualisiere die App auf beiden Geräten."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The host sent an unknown answer. Please update the app on both devices."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Reason.VersionMismatch" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Host verwendet eine andere App-Version. Bitte aktualisiere die App auf beiden Geräten."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The host uses a different app version. Please update the app on both devices."
+          }
+        }
+      }
+    },
+    "Error.Multiplayer.Session.Left" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast die Sitzung verlassen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You left the session."
+          }
+        }
+      }
+    },
     "Error.Store.NotReady" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1137,13 +1713,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Andere Handys können per Code beitreten und einen der bestehenden Spieler übernehmen. Neue Spieler können nicht hinzugefügt werden."
+            "value" : "Andere Handys im selben WLAN können dieser Sitzung unter „Beitreten“ beitreten und einen der bestehenden Spieler übernehmen. Neue Spieler können nicht hinzugefügt werden."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Other phones can join with the code and take one of the existing players. You cannot add new players here."
+            "value" : "Other phones on the same Wi-Fi can join this session under Join and take one of the existing players. You cannot add new players here."
           }
         }
       }
@@ -1547,13 +2123,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sitzung und Beitrittscode anzeigen"
+            "value" : "Sitzung anzeigen"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Show session and join code"
+            "value" : "Show session"
           }
         }
       }
@@ -2176,13 +2752,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gäste geben diesen Code beim Beitreten ein."
+            "value" : "Gäste im selben WLAN tippen diese Sitzung unter „Beitreten“ an – ohne Code-Eingabe. Der Code kennzeichnet nur die Sitzung."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guests enter this code when joining."
+            "value" : "Guests on the same Wi-Fi tap this session under Join – no code to type. The code just identifies the session."
           }
         }
       }
@@ -2192,13 +2768,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Beitrittscode"
+            "value" : "Sitzungscode"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Join Code"
+            "value" : "Session Code"
           }
         }
       }
@@ -2357,13 +2933,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nicht jeder braucht ein Handy. Verbundene Spieler joinen mit dem Code; fehlende Wetten und Stiche trägst du als Host ein."
+            "value" : "Nicht jeder braucht ein Handy. Gäste tippen diese Sitzung unter „Beitreten“ an und wählen einen Platz; fehlende Wetten und Stiche trägst du als Host ein."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Not everyone needs a phone. Connected players join with the code; you enter missing bets and tricks as host."
+            "value" : "Not everyone needs a phone. Guests tap this session under Join and pick a seat; you enter missing bets and tricks as host."
           }
         }
       }

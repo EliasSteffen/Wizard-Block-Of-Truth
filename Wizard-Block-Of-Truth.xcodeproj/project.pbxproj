@@ -58,6 +58,8 @@
 		00000000000000000000012E /* ValueStepperControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000022E /* ValueStepperControl.swift */; };
 		00000000000000000000012F /* GuestEntryPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000022F /* GuestEntryPhase.swift */; };
 		000000000000000000000130 /* SavedGuestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000230 /* SavedGuestSession.swift */; };
+		000000000000000000000162 /* MultiplayerReasonText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000262 /* MultiplayerReasonText.swift */; };
+		000000000000000000000163 /* MultiplayerPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000263 /* MultiplayerPersistence.swift */; };
 		000000000000000000000131 /* WizardPrimaryActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000231 /* WizardPrimaryActionButton.swift */; };
 		000000000000000000000132 /* HostMultiplayerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000232 /* HostMultiplayerSheet.swift */; };
 		000000000000000000000133 /* GameSessionMultiplayerToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000233 /* GameSessionMultiplayerToolbar.swift */; };
@@ -116,6 +118,8 @@
 		00000000000000000000022E /* ValueStepperControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ValueStepperControl.swift; path = Sources/WizardApp/UI/ValueStepperControl.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000022F /* GuestEntryPhase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GuestEntryPhase.swift; path = Sources/WizardApp/UI/GuestEntryPhase.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000230 /* SavedGuestSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SavedGuestSession.swift; path = Sources/WizardApp/Multiplayer/SavedGuestSession.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000262 /* MultiplayerReasonText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MultiplayerReasonText.swift; path = Sources/WizardApp/Multiplayer/MultiplayerReasonText.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000263 /* MultiplayerPersistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MultiplayerPersistence.swift; path = Sources/WizardApp/Multiplayer/MultiplayerPersistence.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000231 /* WizardPrimaryActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WizardPrimaryActionButton.swift; path = Sources/WizardApp/UI/WizardPrimaryActionButton.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000232 /* HostMultiplayerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HostMultiplayerSheet.swift; path = Sources/WizardApp/UI/HostMultiplayerSheet.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000233 /* GameSessionMultiplayerToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameSessionMultiplayerToolbar.swift; path = Sources/WizardApp/UI/GameSessionMultiplayerToolbar.swift; sourceTree = SOURCE_ROOT; };
@@ -285,6 +289,8 @@
 			children = (
 				00000000000000000000021E /* MultiplayerCoordinator.swift */,
 				00000000000000000000021F /* MultiplayerGameStore.swift */,
+				000000000000000000000262 /* MultiplayerReasonText.swift */,
+				000000000000000000000263 /* MultiplayerPersistence.swift */,
 				00000000000000000000022C /* GuestJoinPreferences.swift */,
 				000000000000000000000230 /* SavedGuestSession.swift */,
 			);
@@ -390,6 +396,8 @@
 				00000000000000000000012E /* ValueStepperControl.swift in Sources */,
 				00000000000000000000012F /* GuestEntryPhase.swift in Sources */,
 				000000000000000000000130 /* SavedGuestSession.swift in Sources */,
+				000000000000000000000162 /* MultiplayerReasonText.swift in Sources */,
+				000000000000000000000163 /* MultiplayerPersistence.swift in Sources */,
 				000000000000000000000131 /* WizardPrimaryActionButton.swift in Sources */,
 				000000000000000000000132 /* HostMultiplayerSheet.swift in Sources */,
 				000000000000000000000133 /* GameSessionMultiplayerToolbar.swift in Sources */,

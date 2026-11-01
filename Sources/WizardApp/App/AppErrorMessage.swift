@@ -10,6 +10,9 @@ enum AppErrorMessage {
     if let domain = error as? DomainError {
       return domainMessage(domain, languageCode: languageCode)
     }
+    if let multiplayer = MultiplayerReasonText.message(forError: error, languageCode: languageCode) {
+      return multiplayer
+    }
     return (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
   }
 

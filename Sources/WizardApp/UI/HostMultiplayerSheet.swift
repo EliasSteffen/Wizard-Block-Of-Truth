@@ -200,7 +200,7 @@ struct HostMultiplayerSheet: View {
       GuestJoinPreferences.hostDisplayName = resolvedName
       didEnable = true
     } catch {
-      enableError = error.localizedDescription
+      enableError = AppErrorMessage.presentableMessage(for: error, languageCode: AppLanguage.catalogLookupLanguageCode)
     }
   }
 }

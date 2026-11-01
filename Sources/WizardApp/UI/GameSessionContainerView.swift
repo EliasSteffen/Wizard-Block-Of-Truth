@@ -3,6 +3,7 @@ import SwiftUI
 struct GameSessionContainerView: View {
   let gameId: UUID
 
+  @Environment(\.modelContext) private var modelContext
   @EnvironmentObject private var multiplayerCoordinator: MultiplayerCoordinator
   @State private var multiplayerSheetMode: GameSessionMultiplayerSheetMode?
 
@@ -24,6 +25,11 @@ struct GameSessionContainerView: View {
         isHosting: isHosting,
         sheetMode: $multiplayerSheetMode
       )
+      .task(id: gameId) {
+        // Re-host a session that was live when the app quit (same code, so guests reconnect). No-op otherwise;
+        // fails while another game is hosted (one session at a time).
+        _ = try? multiplayerCoordinator.resumeHosting(gameID: gameId, modelContext: modelContext)
+      }
   }
 
   @ViewBuilder

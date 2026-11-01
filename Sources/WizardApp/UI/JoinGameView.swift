@@ -8,6 +8,7 @@ struct JoinGameView: View {
 
   @Environment(\.dismiss) private var dismiss
   @Environment(\.locale) private var locale
+  @Environment(\.modelContext) private var modelContext
   @EnvironmentObject private var multiplayerCoordinator: MultiplayerCoordinator
 
   @State private var codeFilter: String = ""
@@ -20,6 +21,9 @@ struct JoinGameView: View {
   @State private var isWaitingForHost = false
   @State private var claimedPlayerName: String?
   @State private var savedSession: SavedGuestSession? = SavedGuestSession.load()
+  @State private var pendingServiceName: String?
+  /// The pending guest session was handed to a `MultiplayerGameStore` (it must stay connected).
+  @State private var didHandOff = false
 
   private var filteredSessions: [DiscoveredSession] {
     let normalized = codeFilter.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
@@ -94,7 +98,12 @@ struct JoinGameView: View {
       customDisplayName = GuestJoinPreferences.displayName
       savedSession = SavedGuestSession.load()
     }
-    .onDisappear { multiplayerCoordinator.browser.stop() }
+    .onDisappear {
+      multiplayerCoordinator.browser.stop()
+      if !didHandOff {
+        pendingGuest?.disconnect()
+      }
+    }
   }
 
   private var navigationTitle: String {
@@ -273,9 +282,14 @@ struct JoinGameView: View {
 
   private func rejoinSavedSession(_ saved: SavedGuestSession) {
     guard !isConnecting else { return }
-    guard let session = multiplayerCoordinator.browser.sessions.first(where: {
+    let discovered = multiplayerCoordinator.browser.sessions.first(where: {
       $0.code.uppercased() == saved.sessionCode.uppercased()
-    }) else {
+    })
+    // Sessions saved since protocol v2 know the host's Bonjour name: connect by name, no browse result needed.
+    let byName = saved.serviceName.map {
+      DiscoveredSession(id: $0, code: saved.sessionCode, displayName: saved.gameName ?? $0, serviceName: $0)
+    }
+    guard let session = discovered ?? byName else {
       joinError = String(
         localized: "UI.JoinGame.Rejoin.HostNotFound",
         defaultValue: "Host not found on the network. Open Join while near the host device."
@@ -304,6 +318,7 @@ struct JoinGameView: View {
   private func connectToSession(session: DiscoveredSession, sessionCode: String, guestToken: String?) {
     pendingGuest?.disconnect()
     pendingGuest = nil
+    pendingServiceName = session.serviceName
 
     joinError = nil
     isConnecting = true
@@ -319,7 +334,7 @@ struct JoinGameView: View {
       try guest.connect()
     } catch {
       isConnecting = false
-      joinError = error.localizedDescription
+      joinError = AppErrorMessage.presentableMessage(for: error, languageCode: AppLanguage.catalogLookupLanguageCode)
     }
   }
 
@@ -331,51 +346,39 @@ struct JoinGameView: View {
       }
     }
     guest.onSlotClaimed = {
+      // Hand over right at `claimAccepted`: the store persists the token and shows the waiting screen (H5).
       claimedPlayerName = guest.playerName ?? trimmedCustomName
-      isWaitingForHost = true
-      isConnecting = false
+      completeJoin(guest: guest, sessionCode: sessionCode)
     }
     guest.onJoinAccepted = {
       completeJoin(guest: guest, sessionCode: sessionCode)
     }
     guest.onError = { error in
       isConnecting = false
-      if guestTokenProvided(error: error) {
-        SavedGuestSession.clear()
+      if case GuestSessionError.joinRejected(.tokenInvalid) = error, let saved = savedSession {
+        // The saved seat is gone on the host; the host sends the lobby next, so the guest can pick again.
+        SavedGuestSession.clear(token: saved.guestToken)
         savedSession = nil
       }
-      joinError = error.localizedDescription
-      if case GuestSessionError.joinRejected = error {
-        resetPicker()
+      joinError = AppErrorMessage.presentableMessage(for: error, languageCode: AppLanguage.catalogLookupLanguageCode)
+      if guest.connectionState.isEnded {
+        resetPicker(keepError: true)
       }
     }
   }
 
-  private func guestTokenProvided(error: Error) -> Bool {
-    if case GuestSessionError.joinRejected = error { return SavedGuestSession.load() != nil }
-    return false
-  }
-
   private func completeJoin(guest: GuestSessionService, sessionCode: String) {
-    guard let playerId = guest.playerId,
-          let guestToken = guest.guestToken else { return }
-    let name = guest.playerName ?? trimmedCustomName
-    GuestJoinPreferences.displayName = name
-    SavedGuestSession.save(
-      SavedGuestSession(
-        guestToken: guestToken,
-        sessionCode: sessionCode,
-        playerId: playerId,
-        playerName: name,
-        hostDisplayName: nil
-      )
-    )
-    savedSession = SavedGuestSession.load()
+    guard !didHandOff, let playerId = guest.playerId, guest.guestToken != nil else { return }
+    didHandOff = true
+    // The store saves `SavedGuestSession` (keyed by token) and the display name.
     let sessionID = multiplayerCoordinator.registerJoinedGuest(
       guest,
       playerId: playerId,
-      setupPlayers: guest.setupPlayers
+      setupPlayers: guest.setupPlayers,
+      serviceName: pendingServiceName,
+      modelContext: modelContext
     )
+    savedSession = SavedGuestSession.load()
     isConnecting = false
     onJoined(sessionID)
     dismiss()
@@ -392,17 +395,21 @@ struct JoinGameView: View {
     do {
       try guest.claimPlayer(playerId: playerId, displayName: name)
     } catch {
-      joinError = error.localizedDescription
+      joinError = AppErrorMessage.presentableMessage(for: error, languageCode: AppLanguage.catalogLookupLanguageCode)
     }
   }
 
-  private func resetPicker() {
-    pendingGuest?.disconnect()
+  private func resetPicker(keepError: Bool = false) {
+    if !didHandOff {
+      pendingGuest?.disconnect()
+    }
     pendingGuest = nil
     lobbySlots = []
     isWaitingForHost = false
     claimedPlayerName = nil
     isConnecting = false
-    joinError = nil
+    if !keepError {
+      joinError = nil
+    }
   }
 }
