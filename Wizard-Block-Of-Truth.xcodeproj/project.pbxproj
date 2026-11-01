@@ -22,6 +22,12 @@
 		00000000000000000000010D /* AppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000020D /* AppLanguage.swift */; };
 		00000000000000000000010E /* AppLocalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000020E /* AppLocalization.swift */; };
 		00000000000000000000010F /* AppErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000020F /* AppErrorMessage.swift */; };
+		000000000000000000000140 /* AppStoreInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000240 /* AppStoreInfo.swift */; };
+		000000000000000000000141 /* AppVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000241 /* AppVersion.swift */; };
+		000000000000000000000142 /* AppUpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000242 /* AppUpdateChecker.swift */; };
+		000000000000000000000143 /* ReviewPromptPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000243 /* ReviewPromptPolicy.swift */; };
+		000000000000000000000144 /* AppUpdateCheckModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000244 /* AppUpdateCheckModifier.swift */; };
+		000000000000000000000145 /* ReviewPromptModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000245 /* ReviewPromptModifier.swift */; };
 		000000000000000000000111 /* Commands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000211 /* Commands.swift */; };
 		000000000000000000000112 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000212 /* Game.swift */; };
 		000000000000000000000113 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000213 /* Models.swift */; };
@@ -79,6 +85,12 @@
 		00000000000000000000020D /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppLanguage.swift; path = Sources/WizardApp/App/AppLanguage.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000020E /* AppLocalization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppLocalization.swift; path = Sources/WizardApp/App/AppLocalization.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000020F /* AppErrorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppErrorMessage.swift; path = Sources/WizardApp/App/AppErrorMessage.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000240 /* AppStoreInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppStoreInfo.swift; path = Sources/WizardApp/App/AppStoreInfo.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000241 /* AppVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppVersion.swift; path = Sources/WizardApp/App/AppVersion.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000242 /* AppUpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppUpdateChecker.swift; path = Sources/WizardApp/App/AppUpdateChecker.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000243 /* ReviewPromptPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ReviewPromptPolicy.swift; path = Sources/WizardApp/App/ReviewPromptPolicy.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000244 /* AppUpdateCheckModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppUpdateCheckModifier.swift; path = Sources/WizardApp/UI/AppUpdateCheckModifier.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000245 /* ReviewPromptModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ReviewPromptModifier.swift; path = Sources/WizardApp/UI/ReviewPromptModifier.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000211 /* Commands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Commands.swift; path = Sources/WizardDomain/Game/Commands.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000212 /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Game.swift; path = Sources/WizardDomain/Game/Game.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000213 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Models.swift; path = Sources/WizardDomain/Models/Models.swift; sourceTree = SOURCE_ROOT; };
@@ -182,6 +194,10 @@
 				00000000000000000000020D /* AppLanguage.swift */,
 				00000000000000000000020E /* AppLocalization.swift */,
 				00000000000000000000020F /* AppErrorMessage.swift */,
+				000000000000000000000240 /* AppStoreInfo.swift */,
+				000000000000000000000241 /* AppVersion.swift */,
+				000000000000000000000242 /* AppUpdateChecker.swift */,
+				000000000000000000000243 /* ReviewPromptPolicy.swift */,
 				000000000000000000000203 /* GameStore.swift */,
 				00000000000000000000021D /* GameStoring.swift */,
 			);
@@ -207,6 +223,8 @@
 				00000000000000000000020A /* WizardBackground.swift */,
 				00000000000000000000020C /* CloudCardAdjustmentRules.swift */,
 				00000000000000000000021B /* AboutInfoView.swift */,
+				000000000000000000000244 /* AppUpdateCheckModifier.swift */,
+				000000000000000000000245 /* ReviewPromptModifier.swift */,
 				00000000000000000000021C /* PlayerRoundHistorySheet.swift */,
 				000000000000000000000220 /* GameSessionContainerView.swift */,
 				000000000000000000000221 /* MultiplayerLobbyView.swift */,
@@ -361,6 +379,12 @@
 				00000000000000000000010D /* AppLanguage.swift in Sources */,
 				00000000000000000000010E /* AppLocalization.swift in Sources */,
 				00000000000000000000010F /* AppErrorMessage.swift in Sources */,
+				000000000000000000000140 /* AppStoreInfo.swift in Sources */,
+				000000000000000000000141 /* AppVersion.swift in Sources */,
+				000000000000000000000142 /* AppUpdateChecker.swift in Sources */,
+				000000000000000000000143 /* ReviewPromptPolicy.swift in Sources */,
+				000000000000000000000144 /* AppUpdateCheckModifier.swift in Sources */,
+				000000000000000000000145 /* ReviewPromptModifier.swift in Sources */,
 				000000000000000000000103 /* GameStore.swift in Sources */,
 				000000000000000000000104 /* GameSnapshotEntity.swift in Sources */,
 				000000000000000000000105 /* GameListView.swift in Sources */,
