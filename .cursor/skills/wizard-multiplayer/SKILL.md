@@ -102,6 +102,7 @@ after a relaunch (UserDefaults, `HostSessionPersistence`). `handleScenePhase(.ac
 | `MultiplayerGameStore.swift` | `GameStoring` for host (session-backed) and guest (mirror + pending commands) |
 | `MultiplayerPersistence.swift` | `HostSessionRecord` (code, host seat, token registry), `GuestFinishedGames` |
 | `MultiplayerReasonText.swift` | Reason codes / errors → localized text |
+| `UI/MultiPhoneHostRules.swift` | Host screen decisions: bulk-sheet rows (no device-bound seats), waiting state, finalize trick-sum message, lobby seat edits, session health |
 | `SavedGuestSession.swift` | Guest rejoin data (token-keyed clearing) |
 | `HostSessionService.swift` | Authoritative session, seats, heartbeat, auto-end |
 | `GuestSessionService.swift` | Join, claim, snapshots, commands, watchdog, reconnect |

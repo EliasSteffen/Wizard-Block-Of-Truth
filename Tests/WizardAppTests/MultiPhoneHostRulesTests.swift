@@ -146,11 +146,11 @@ final class MultiPhoneHostRulesTests: XCTestCase {
     )
     XCTAssertEqual(
       MultiPhoneHostRules.trickSumMismatch(in: round(bets: bets, gots: [1, 1, 2, 0]), playWithSpecialCards: true),
-      .init(handSize: 3, bombPlayed: false, bombAvailable: true, expected: 3, actual: 4)
+      MultiPhoneHostRules.TrickSumMismatch(handSize: 3, bombPlayed: false, bombAvailable: true, expected: 3, actual: 4)
     )
     XCTAssertEqual(
       MultiPhoneHostRules.trickSumMismatch(in: round(bets: bets, gots: [1, 0, 2, 0], bomb: true), playWithSpecialCards: true),
-      .init(handSize: 3, bombPlayed: true, bombAvailable: true, expected: 2, actual: 3)
+      MultiPhoneHostRules.TrickSumMismatch(handSize: 3, bombPlayed: true, bombAvailable: true, expected: 2, actual: 3)
     )
     XCTAssertNil(
       MultiPhoneHostRules.trickSumMismatch(in: round(bets: bets, gots: [1, 0, 1, 0], bomb: true), playWithSpecialCards: true)
@@ -202,9 +202,9 @@ final class MultiPhoneHostRulesTests: XCTestCase {
       isConnected: false,
       isPlaceholderName: true
     )
-    XCTAssertEqual(MultiPhoneHostRules.seatNameCommit(draft: "  ", slot: placeholderSeat, players: players), .none)
+    XCTAssertEqual(MultiPhoneHostRules.seatNameCommit(draft: "  ", slot: placeholderSeat, players: players), .unchanged)
     XCTAssertEqual(MultiPhoneHostRules.seatNameCommit(draft: "", slot: slot(cid), players: players), .revert)
-    XCTAssertEqual(MultiPhoneHostRules.seatNameCommit(draft: "Cid ", slot: slot(cid), players: players), .none)
+    XCTAssertEqual(MultiPhoneHostRules.seatNameCommit(draft: "Cid ", slot: slot(cid), players: players), .unchanged)
     XCTAssertEqual(
       MultiPhoneHostRules.seatNameCommit(draft: "anna", slot: slot(cid), players: players),
       .rejected(.nameTaken)

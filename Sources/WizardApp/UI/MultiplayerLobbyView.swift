@@ -383,7 +383,7 @@ struct MultiplayerLobbyView: View {
     else { return }
 
     switch MultiPhoneHostRules.seatNameCommit(draft: draft, slot: slot, players: lobby.players) {
-    case .none, .revert:
+    case .unchanged, .revert:
       return
     case .rejected(let code):
       errorMessage = MultiplayerReasonText.message(for: code, languageCode: languageCode)

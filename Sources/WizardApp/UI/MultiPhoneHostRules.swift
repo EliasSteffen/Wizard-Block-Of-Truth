@@ -201,7 +201,7 @@ enum MultiPhoneHostRules {
   /// What committing a name field (on submit / focus loss) should do.
   enum SeatNameCommit: Equatable {
     /// Nothing changed (or an empty field on a seat that still has its default name).
-    case none
+    case unchanged
     /// The field was emptied on a named seat: show the current name again.
     case revert
     case rename(String)
@@ -211,10 +211,10 @@ enum MultiPhoneHostRules {
   static func seatNameCommit(draft: String, slot: LobbyPlayerSlot, players: [Player]) -> SeatNameCommit {
     let trimmed = draft.trimmingCharacters(in: .whitespacesAndNewlines)
     if trimmed.isEmpty {
-      return slot.isPlaceholderName ? .none : .revert
+      return slot.isPlaceholderName ? .unchanged : .revert
     }
     if trimmed == slot.name {
-      return .none
+      return .unchanged
     }
     if let rejection = SeatNameRules.rejection(for: trimmed, in: players, seat: slot.playerId) {
       return .rejected(rejection)
