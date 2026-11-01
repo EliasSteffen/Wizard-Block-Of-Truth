@@ -129,7 +129,8 @@ public final class MockGuestTransport: GuestSessionTransport, @unchecked Sendabl
   public var chunkSize: Int?
   /// When false, `connect()` attaches to the host but does not emit `.connected` until `finishConnect()`.
   public var emitsConnectedOnConnect = true
-  /// Half-open connection: when true, frames in both directions are silently dropped.
+  /// Half-open *current* connection: when true, frames in both directions are silently dropped.
+  /// Like a real dead socket it does not outlive the connection: every `connect()` starts healthy again.
   public var isSilenced = false
   /// When set, the next `connect()` fails with this reason instead of attaching.
   public var nextConnectFailure: TransportDisconnectReason?
@@ -158,6 +159,7 @@ public final class MockGuestTransport: GuestSessionTransport, @unchecked Sendabl
     if connectCount > 1 {
       connectionID = UUID()
     }
+    isSilenced = false
     if let failure = nextConnectFailure {
       nextConnectFailure = nil
       emit(.disconnected(failure))

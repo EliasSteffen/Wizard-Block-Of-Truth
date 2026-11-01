@@ -9,6 +9,8 @@ final class SessionLifecycleTests: XCTestCase {
   private let code = NetTestSupport.sessionCode
   private let players = NetTestSupport.players(["Hanna", "Bob", "Carol"])
 
+  /// The caller must keep the returned session alive for the whole test: the transport only references it
+  /// weakly (in the app the coordinator owns it), so a discarded session silently stops answering.
   private func makeHost(
     game: Game? = nil,
     transport: MockHostTransport,
@@ -76,7 +78,7 @@ final class SessionLifecycleTests: XCTestCase {
 
   func testGuestDetectsSilenceAndReconnectsWithToken() throws {
     let hostTransport = MockHostTransport()
-    _ = try makeHost(game: try NetTestSupport.startedGame(players), transport: hostTransport)
+    let host = try makeHost(game: try NetTestSupport.startedGame(players), transport: hostTransport)
     let guestTransport = MockGuestTransport(host: hostTransport)
     let guest = makeGuest(guestTransport, timing: NetTestSupport.fastTiming(silenceTimeout: 0.25, reconnectDelays: [0.1]))
     try join(guest, seat: players[1].id, name: "Bob")
@@ -96,15 +98,20 @@ final class SessionLifecycleTests: XCTestCase {
       }
     }
 
-    // Host pings are disabled (quiet timing), so the guest hears nothing and must give up on this socket.
+    // The socket goes half-open (and host pings are disabled by the quiet timing), so the guest hears nothing
+    // and must give up on it. The mock's next connection is healthy again, like a fresh socket.
+    let firstConnection = guestTransport.connectionID
     guestTransport.isSilenced = true
     wait(for: [reconnecting], timeout: 3)
-    guestTransport.isSilenced = false
     wait(for: [reconnected], timeout: 3)
 
     XCTAssertEqual(guest.guestToken, token)
     XCTAssertEqual(guest.playerId, players[1].id)
     XCTAssertGreaterThanOrEqual(guestTransport.connectCount, 2)
+    // The host resumed the seat on the new connection; the old one is gone.
+    XCTAssertEqual(host.connectedGuestPlayerIDs, [players[1].id])
+    XCTAssertEqual(host.guestsByConnection.values.first?.connectionID, guestTransport.connectionID)
+    XCTAssertNotEqual(guestTransport.connectionID, firstConnection)
   }
 
   // MARK: - Connection lost vs. session ended
@@ -363,18 +370,19 @@ final class SessionLifecycleTests: XCTestCase {
 
   func testGuestCannotEnterWonTricksBeforeAllBets() throws {
     let hostTransport = MockHostTransport()
-    _ = try makeHost(game: try NetTestSupport.startedGame(players), transport: hostTransport)
+    let host = try makeHost(game: try NetTestSupport.startedGame(players), transport: hostTransport)
     let guest = makeGuest(MockGuestTransport(host: hostTransport))
     try join(guest, seat: players[1].id, name: "Bob")
     XCTAssertEqual(
       try submit(.submitGot(playerId: players[1].id, roundIndex: 0, got: 1), as: guest),
       .rejected(.betsIncomplete)
     )
+    XCTAssertNil(host.game.rounds[0].entries[players[1].id]?.got)
   }
 
   func testCommandWithoutAnswerTimesOut() throws {
     let hostTransport = MockHostTransport()
-    _ = try makeHost(game: try NetTestSupport.startedGame(players), transport: hostTransport)
+    let host = try makeHost(game: try NetTestSupport.startedGame(players), transport: hostTransport)
     let guestTransport = MockGuestTransport(host: hostTransport)
     let guest = makeGuest(guestTransport, timing: NetTestSupport.fastTiming(commandTimeout: 0.2))
     try join(guest, seat: players[1].id, name: "Bob")
@@ -382,6 +390,7 @@ final class SessionLifecycleTests: XCTestCase {
     guestTransport.isSilenced = true
     XCTAssertEqual(try submit(.submitBet(playerId: players[1].id, roundIndex: 0, bet: 0), as: guest), .timedOut)
     XCTAssertTrue(guest.pendingCommands.isEmpty)
+    XCTAssertNil(host.game.rounds[0].entries[players[1].id]?.bet, "the dropped command never reached the host")
   }
 
   // MARK: - Host authority
@@ -526,7 +535,7 @@ final class SessionLifecycleTests: XCTestCase {
 
   func testV1HelloGetsV1DecodableRejectionAndIsClosed() throws {
     let hostTransport = MockHostTransport()
-    _ = try makeHost(transport: hostTransport)
+    let host = try makeHost(transport: hostTransport)
     let oldGuest = MockGuestTransport(host: hostTransport)
     try oldGuest.connect()
     oldGuest.sendRawFrame(NetTestSupport.legacyV1HelloFrame(sessionCode: code))
@@ -538,6 +547,8 @@ final class SessionLifecycleTests: XCTestCase {
     XCTAssertEqual(v1.payload.type, .joinRejected)
     XCTAssertTrue(v1.payload.joinRejected.reason.contains("update"))
     XCTAssertEqual(hostTransport.closedConnectionIDs, [oldGuest.connectionID])
+    XCTAssertTrue(host.guestsByConnection.isEmpty)
+    XCTAssertTrue(host.isActive, "an old guest does not affect the session")
   }
 
   func testGuestReportsIncompatibleHostWhenHelloIsNeverAnswered() throws {
