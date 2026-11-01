@@ -1,3 +1,8 @@
-Wir verbessern Wizard Block of Truth fortlaufend und passen die App an, wie Sie Ihre Runden am Tisch erfassen.
+Neu in 1.2:
 
-Was in dieser Version neu ist, finden Sie in unseren Release Notes: https://eliassteffen.github.io/Wizard-Block-Of-Truth/release-notes/
+- Frühere Runden korrigieren: Tippen Sie im Verlauf eines Spielers auf eine abgeschlossene Runde, um Gebote, Stiche, Bombe oder Wolke für alle zu korrigieren – die Gesamtpunkte werden automatisch neu berechnet.
+- Neue Hausregel „Erste Runde darf aufgehen“: In Runde 1 dürfen die Gebote der Handgröße entsprechen.
+- Mehrere iPhones überarbeitet: Hosts erscheinen sofort, Geräte verbinden sich nach der Bildschirmsperre automatisch neu, Gäste erhalten klare Rückmeldungen und der Host ordnet Plätze und Namen in der Lobby.
+- Die App weist Sie auf neue Versionen hin.
+
+Alle Release Notes: https://eliassteffen.github.io/Wizard-Block-Of-Truth/release-notes/
