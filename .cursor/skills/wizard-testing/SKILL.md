@@ -76,7 +76,7 @@ Protocol and lobby logic: `swift test --filter SessionSyncTests` and `CommandAut
 **Two simulators (host + guest):**
 
 1. Boot two devices in Simulator.app (e.g. iPhone 16 + iPhone 16 Pro).
-2. Run the app on simulator A from Xcode (⌘R) → **Multi Phone** game → note join code.
+2. Run the app on simulator A from Xcode (⌘R) → **Multi Phone** game → note the session code (shown in the lobby; guests just tap the session).
 3. Change run destination to simulator B → Run again (second instance).
 4. On B: **Join** → pick session under “Available Sessions” → Connect → claim slot.
 5. On A: start game (works without every player having a device). Host enters bets/gots for offline players in `GameSessionView`.
