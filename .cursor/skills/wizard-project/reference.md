@@ -44,7 +44,9 @@ Tests/
 | Path | Purpose |
 |------|---------|
 | `site/` | Astro marketing / support / privacy site (builds to GitHub Pages) |
-| `.github/workflows/` | CI (e.g. Pages deploy) |
+| `.github/workflows/` | CI: `pages.yml` deploys `site/`; `ios.yml` runs `swift test` + an unsigned iOS Simulator build on every push/PR and, on every push to `main`, archives, uploads to TestFlight and syncs the App Store texts (README → Release pipeline) |
+| `scripts/asc-*.ts`, `ci/ExportOptions.plist` | Release pipeline: App Store Connect pre-flight, upload and metadata sync (Node, run directly with `node`), signed export options |
+| `fastlane/metadata/<locale>/` | App Store texts (description, promotional text, release notes) synced by `ios.yml`; fastlane itself is not used |
 | `Assets/icon.png` | App icon source asset |
 
 ## Docs in repo

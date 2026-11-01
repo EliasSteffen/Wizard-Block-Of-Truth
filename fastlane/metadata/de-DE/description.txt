@@ -1,4 +1,4 @@
-**WizardBlock – der digitale „Block der Wahrheit“ für Ihre Wizard-Runden**
+WizardBlock – der digitale „Block der Wahrheit“ für Ihre Wizard-Runden
 
 Keine zerknitterten Zettel mehr: Diese App ersetzt den klassischen Papier-Spielblock für das Kartenspiel Wizard. Geben Sie Gebote und Stiche ein – die App berechnet die Punkte und zeigt Ihnen klar den aktuellen Stand, die Handgröße, den Geber und die letzte Punktänderung.
 
@@ -7,4 +7,4 @@ Keine zerknitterten Zettel mehr: Diese App ersetzt den klassischen Papier-Spielb
 - Verlauf: Runden mit Geboten, Stichen und Punktänderungen einsehen; bei Korrekturen werden die Gesamtpunkte konsistent neu berechnet.
 - Speichern & Fortsetzen: Spiele bleiben auf Ihrem Gerät gespeichert – Sie können jederzeit dort weitermachen, wo Sie aufgehört haben.
 
-Wizard ist ein veröffentlichtes Kartenspiel. Diese App ist ein **unabhängiges Punkte-Tool** und **steht in keiner Verbindung zum Verlag oder den Rechteinhabern** des Spiels.
+Wizard ist ein veröffentlichtes Kartenspiel. Diese App ist ein unabhängiges Punkte-Tool und steht in keiner Verbindung zum Verlag oder den Rechteinhabern des Spiels.

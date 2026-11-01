@@ -10,6 +10,9 @@ enum AppErrorMessage {
     if let domain = error as? DomainError {
       return domainMessage(domain, languageCode: languageCode)
     }
+    if let multiplayer = MultiplayerReasonText.message(forError: error, languageCode: languageCode) {
+      return multiplayer
+    }
     return (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
   }
 
@@ -126,6 +129,18 @@ enum AppErrorMessage {
         "Error.Domain.ConstraintsLocked",
         languageCode: languageCode,
         fallback: "Constraints are locked after the first finalized round."
+      )
+    case .roundNotFinalized:
+      return AppLocalization.string(
+        "Error.Domain.RoundNotFinalized",
+        languageCode: languageCode,
+        fallback: "Round is not finalized yet."
+      )
+    case .specialCardsNotEnabled:
+      return AppLocalization.string(
+        "Error.Domain.SpecialCardsNotEnabled",
+        languageCode: languageCode,
+        fallback: "Special cards are not enabled for this game."
       )
     }
   }

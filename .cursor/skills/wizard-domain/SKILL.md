@@ -13,8 +13,8 @@ All authoritative game state changes live in **WizardDomain**. UI and network la
 
 ## State model
 
-- **`Game`** — players, rounds, `currentRoundIndex`, `gameConstraints`, `playWithSpecialCards`, `mode` (`.singlePhone` / `.multiPhone`).
-- **`Round`** — `handSize`, `dealer`, `entries` per player, `isFinalized`, `cloudCardResolved`.
+- **`Game`** — players, rounds, `currentRoundIndex`, `gameConstraints`, `firstRoundBetSumMayEqualHandSize`, `playWithSpecialCards`, `mode` (`.singlePhone` / `.multiPhone`).
+- **`Round`** — `handSize`, `dealer`, `entries` per player, `isFinalized`, `cloudCardResolved`, `bombPlayed` (declared while the round is open via `setBombPlayed`, and set by `finalizeCurrentRound` when `.gotSumEqualsHandSizeMinusOne` was used). Read the Bomb via `round.inferredBombPlayed`, which also infers it for legacy finalized rounds (won-tricks sum == `handSize - 1`).
 - **`RoundEntry`** — optional `bet` and `got`; scoring via `pointsDelta()`.
 - **`Player`** — `id`, `name`.
 
@@ -40,9 +40,11 @@ Never patch `game.rounds[...].entries[...]` from WizardApp or WizardNet except t
 | `submitBet(playerId:roundIndex:bet:)` | Round not finalized; bet in `0...handSize`. |
 | `submitGot(playerId:roundIndex:got:)` | Round not finalized; got in `0...handSize`. |
 | `markCloudCardResolved(roundIndex:)` | Round not finalized; sets `cloudCardResolved` (one cloud adjustment per round). |
+| `setBombPlayed(roundIndex:played:)` | Host / single-phone only (guests denied by `CommandAuthorizer`). Round must exist (`invalidRoundIndex`) and not be finalized (`roundAlreadyFinalized`); `played: true` needs `playWithSpecialCards` (`specialCardsNotEnabled`). Sets `Round.bombPlayed` so guests see the Bomb in snapshots. |
 | `finalizeCurrentRound(roundConstraints:)` | All bets and gots set; runs round constraint validation; marks round finalized; may append next round (hand size up/down per game rules). |
+| `editFinalizedRound(roundIndex:entries:bombPlayed:cloudCardPlayed:)` | Host / single-phone only (guests denied by `CommandAuthorizer`). Round must exist (`invalidRoundIndex`) and be finalized (`roundNotFinalized`); Bomb/Cloud need `playWithSpecialCards` (`specialCardsNotEnabled`); `entries` must cover exactly the players (`entriesDoNotMatchPlayers`) with every bet/got set (`missingInputs`) and in `0...handSize`; won tricks sum to `handSize - 1` with Bomb else `handSize`; bet-sum rule from `gameConstraints(forRoundAt:)` unless `cloudCardPlayed`. Atomic: validated on a copy, then replaces `entries`, `bombPlayed`, `cloudCardResolved` (keeps `handSize`, `dealer`, `isFinalized`, other rounds, `currentRoundIndex`). Totals recompute from finalized rounds. |
 
-`finalizeCurrentRound` defaults `roundConstraints` to `[.gotSumEqualsHandSize]` when nil. Game constraints (e.g. bet sum ≠ hand size) apply during bidding, not necessarily at finalize—see comments in `Commands.swift`.
+`finalizeCurrentRound` defaults `roundConstraints` (when nil) to the round's declared Bomb: `[.gotSumEqualsHandSizeMinusOne]` if `bombPlayed`, else `[.gotSumEqualsHandSize]`; explicit constraints win and decide the stored flag. Game constraints (e.g. bet sum ≠ hand size) apply during bidding, not necessarily at finalize—see comments in `Commands.swift`.
 
 ## Constraints
 
@@ -53,15 +55,22 @@ Defined in `Sources/WizardDomain/Rules/Constraints.swift`. New games default to 
 
 Validate with `round.validateConstraints(players:gameConstraints:roundConstraints:)`.
 
+**Which game constraints apply to a round:** always ask `game.gameConstraints(forRoundAt: roundIndex)` (never `game.gameConstraints` directly) when validating bets. With the house rule `firstRoundBetSumMayEqualHandSize` ("Erste Runde darf aufgehen", default off, set at creation via `GameStore.createGame` / `HostSessionService.startGame`) it drops `.betSumNotEqualHandSize` for round 1 (index 0). Change it only via `setFirstRoundBetSumMayEqualHandSize(_:)`, which—like `setGameConstraints(_:)`—throws `constraintsLocked` after the first finalized round.
+
 ## Errors
 
-Throw and compare **`DomainError`** (`Sources/WizardDomain/Support/Errors.swift`). Cases include `missingInputs`, `roundAlreadyFinalized`, `invalidBet`, `constraintNotSatisfied`, etc.
+Throw and compare **`DomainError`** (`Sources/WizardDomain/Support/Errors.swift`). Cases include `missingInputs`, `roundAlreadyFinalized`, `roundNotFinalized`, `specialCardsNotEnabled`, `invalidBet`, `constraintNotSatisfied`, etc.
 
 `DomainError` conforms to `LocalizedError` with catalog keys—add matching keys in `Localizable.xcstrings` when exposing new cases to users.
+New cases also need a branch in `AppErrorMessage.domainMessage` (exhaustive switch in WizardApp).
 
 ## App-only: cloud card UI
 
 Bet/got adjustment when the cloud card is played is orchestrated in `Sources/WizardApp/UI/CloudCardAdjustmentRules.swift`. Persist outcomes via `GameCommand` (`markCloudCardResolved`, bet/got submits, finalize)—domain state remains the source of truth.
+
+## App-only: round editor
+
+Finalized rounds are corrected in `Sources/WizardApp/UI/RoundEditorView.swift`, opened by tapping a finalized row in `PlayerRoundHistorySheet` (only when it gets an `applyRoundEdit` closure: `GameSessionView` passes one for single-phone and the multi-phone host; guest views pass none). Saving sends `.editFinalizedRound` through `store.applyBatch([command])` (on the host, `MultiplayerGameStore` persists it and broadcasts the snapshot).
 
 ## Tests
 

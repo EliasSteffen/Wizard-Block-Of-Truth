@@ -4,6 +4,10 @@ import SwiftData
 import WizardDomain
 #endif
 
+private struct LobbySheetItem: Identifiable {
+  let id: UUID
+}
+
 struct NewGameView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.modelContext) private var modelContext
@@ -22,11 +26,16 @@ struct NewGameView: View {
   @State private var startingDealerIndex: Int = 0
 
   @State private var enabledGameConstraints: Set<Constraint.GameConstraint> = [.betSumNotEqualHandSize]
+  @State private var firstRoundBetSumMayEqualHandSize: Bool = false
   @State private var playWithSpecialCards: Bool = true
   @State private var gameMode: GameMode = .singlePhone
-  @State private var hostLobbyGameID: UUID?
-  @State private var hostPlayerId: UUID?
+  /// The multi-phone game this sheet created (at most one: "Create Lobby" again reopens it instead of a new game).
+  @State private var createdLobbyGameID: UUID?
+  @State private var createdLobbyHostPlayerId: UUID?
+  @State private var presentedLobby: LobbySheetItem?
   @State private var hostDisplayName: String = GuestJoinPreferences.hostDisplayName
+  @State private var hostingConflict: HostSessionConflict?
+  @State private var hostingError: String?
 
   @FocusState private var focusedField: Field?
 
@@ -69,9 +78,9 @@ struct NewGameView: View {
         }
 
         Section {
-          Picker("Mode", selection: $gameMode) {
-            Text("Single Phone").tag(GameMode.singlePhone)
-            Text("Multi Phone").tag(GameMode.multiPhone)
+          Picker("UI.NewGame.Mode.Title", selection: $gameMode) {
+            Text("UI.NewGame.Mode.SinglePhone").tag(GameMode.singlePhone)
+            Text("UI.NewGame.Mode.MultiPhone").tag(GameMode.multiPhone)
           }
           .pickerStyle(.segmented)
         }
@@ -130,6 +139,11 @@ struct NewGameView: View {
               )) {
                 Text(LocalizedStringKey(constraint.titleKey))
               }
+              if constraint == .betSumNotEqualHandSize, enabledGameConstraints.contains(.betSumNotEqualHandSize) {
+                Toggle(isOn: $firstRoundBetSumMayEqualHandSize) {
+                  Text("UI.NewGame.HouseRules.FirstRoundMayEqualHandSize")
+                }
+              }
             }
           } header: {
             Text("UI.NewGame.HouseRules.Header")
@@ -145,15 +159,15 @@ struct NewGameView: View {
           Button("UI.Common.Cancel") { dismiss() }
         }
         ToolbarItem(placement: .confirmationAction) {
-          Button(isMultiPhone ? "UI.NewGame.CreateLobby" : "UI.Common.Create") {
-            if let id = create() {
-              if isMultiPhone {
-                hostLobbyGameID = id
-              } else {
-                onCreated(id)
-                dismiss()
-              }
+          Button {
+            if isMultiPhone {
+              openOrCreateLobby()
+            } else if let id = create() {
+              onCreated(id)
+              dismiss()
             }
+          } label: {
+            Text(confirmButtonTitleKey)
           }
           .disabled(!canCreate)
         }
@@ -172,20 +186,59 @@ struct NewGameView: View {
       }
       focusedField = nil
     }
-    .sheet(isPresented: Binding(
-      get: { hostLobbyGameID != nil },
-      set: { newValue in if !newValue { hostLobbyGameID = nil } }
-    )) {
-      if let hostLobbyGameID {
-        MultiplayerLobbyView(gameID: hostLobbyGameID) {
-          onMultiplayerGameStarted?(hostLobbyGameID)
-          onCreated(hostLobbyGameID)
-          dismiss()
+    .sheet(item: $presentedLobby) { item in
+      NavigationStack {
+        MultiplayerLobbyView(
+          gameID: item.id,
+          onGameStarted: {
+            // Dismissing this sheet also closes the lobby sheet on top of it; the list then opens the game.
+            onMultiplayerGameStarted?(item.id)
+            onCreated(item.id)
+            dismiss()
+          },
+          onSessionEnded: {
+            presentedLobby = nil
+          }
+        )
+        .toolbar {
+          ToolbarItem(placement: .cancellationAction) {
+            Button("UI.MultiplayerLobby.Close") { presentedLobby = nil }
+          }
         }
-        .environmentObject(multiplayerCoordinator)
-        .presentationDetents([.medium, .large])
+      }
+      .environmentObject(multiplayerCoordinator)
+      .presentationDetents([.large])
+    }
+    .hostSessionConflictDialog($hostingConflict) { pending in
+      multiplayerCoordinator.endSession(gameID: pending.otherGameID)
+      if let retryGameID = pending.retryGameID {
+        hostLobby(gameID: retryGameID)
+      } else {
+        openOrCreateLobby()
       }
     }
+    .alert(
+      "UI.Common.Error",
+      isPresented: Binding(
+        get: { hostingError != nil },
+        set: { isPresented in if !isPresented { hostingError = nil } }
+      )
+    ) {
+      Button("UI.Common.OK", role: .cancel) { hostingError = nil }
+    } message: {
+      Text(hostingError ?? "")
+    }
+  }
+
+  /// "Create Lobby", or "Open Lobby" once this sheet created one (never a second game).
+  private var confirmButtonTitleKey: LocalizedStringKey {
+    guard isMultiPhone else { return "UI.Common.Create" }
+    return createdLobbyGameID == nil ? "UI.NewGame.CreateLobby" : "UI.MultiplayerLobby.Open"
+  }
+
+  /// The player count is fixed once the lobby exists (its seats were created with it).
+  private var isPlayerCountLocked: Bool {
+    isMultiPhone && createdLobbyGameID != nil
   }
 
   private var playerCountBar: some View {
@@ -199,7 +252,7 @@ struct NewGameView: View {
       }
       .buttonStyle(.plain)
       .accessibilityLabel("UI.NewGame.PlayerCount.Decrease")
-      .disabled(playerCount <= 2)
+      .disabled(playerCount <= 2 || isPlayerCountLocked)
 
       pillText(
         Text(
@@ -225,7 +278,7 @@ struct NewGameView: View {
       }
       .buttonStyle(.plain)
       .accessibilityLabel("UI.NewGame.PlayerCount.Increase")
-      .disabled(playerCount >= 6)
+      .disabled(playerCount >= 6 || isPlayerCountLocked)
 
       Spacer(minLength: 0)
     }
@@ -274,6 +327,8 @@ struct NewGameView: View {
     startingDealerIndex = min(startingDealerIndex, max(0, count - 1))
   }
 
+  /// Single-phone: creates and starts the game. Multi-phone: creates the unstarted game with "Player N" seats (the
+  /// first seat is the host's); hosting is started by `hostLobby(gameID:)`.
   private func create() -> UUID? {
     let players: [Player]
     if isMultiPhone {
@@ -296,30 +351,73 @@ struct NewGameView: View {
       mode: gameMode,
       players: players,
       playWithSpecialCards: playWithSpecialCards,
-      gameConstraints: isMultiPhone ? [.betSumNotEqualHandSize] : constraints
+      gameConstraints: isMultiPhone ? [.betSumNotEqualHandSize] : constraints,
+      // Multi-phone games pick their house rules in the lobby (`MultiplayerLobbyView`).
+      firstRoundBetSumMayEqualHandSize: !isMultiPhone
+        && firstRoundBetSumMayEqualHandSize
+        && constraints.contains(.betSumNotEqualHandSize)
     )
 
     if !isMultiPhone, let dealerId = players[safe: startingDealerIndex]?.id {
       store.apply(.startNewGame(startingDealer: dealerId))
     }
 
-    guard let gameID = store.currentGame?.id else { return nil }
-
+    guard let gameID = store.currentGame?.id else {
+      if let error = store.lastError {
+        hostingError = AppErrorMessage.presentableMessage(for: error, languageCode: AppLanguage.catalogLookupLanguageCode)
+      }
+      return nil
+    }
     if isMultiPhone {
-      let hostId = players[0].id
-      hostPlayerId = hostId
-      let hostName = hostDisplayName.trimmingCharacters(in: .whitespacesAndNewlines)
-      let resolvedHostName = hostName.isEmpty ? String(localized: "UI.MultiplayerLobby.HostDefaultName", defaultValue: "Host", locale: locale) : hostName
-      GuestJoinPreferences.hostDisplayName = resolvedHostName
-      _ = try? multiplayerCoordinator.startHosting(
+      createdLobbyHostPlayerId = players[0].id
+    }
+    return gameID
+  }
+
+  /// Multi-phone "Create Lobby": asks to end another running session first (one session at a time), creates the
+  /// game once and opens its lobby. Tapping again reopens the same lobby instead of creating another game.
+  private func openOrCreateLobby() {
+    if let createdLobbyGameID {
+      hostLobby(gameID: createdLobbyGameID)
+      return
+    }
+    if let activeGameID = multiplayerCoordinator.activeHostedGameID {
+      hostingConflict = HostSessionConflict(
+        otherGameID: activeGameID,
+        otherGameName: multiplayerCoordinator.hostLobbyState?.gameName ?? "",
+        retryGameID: nil
+      )
+      return
+    }
+    guard let gameID = create() else { return }
+    createdLobbyGameID = gameID
+    hostLobby(gameID: gameID)
+  }
+
+  /// Starts (or rejoins) hosting `gameID` and shows its lobby. Errors are shown, never swallowed.
+  private func hostLobby(gameID: UUID) {
+    let hostName = hostDisplayName.trimmingCharacters(in: .whitespacesAndNewlines)
+    let resolvedHostName = hostName.isEmpty
+      ? String(localized: "UI.MultiplayerLobby.HostDefaultName", defaultValue: "Host", locale: locale)
+      : hostName
+    guard let hostPlayerId = createdLobbyHostPlayerId else { return }
+    do {
+      try multiplayerCoordinator.startHosting(
         gameID: gameID,
         modelContext: modelContext,
-        hostPlayerId: hostId,
+        hostPlayerId: hostPlayerId,
         hostDisplayName: resolvedHostName
       )
+      presentedLobby = LobbySheetItem(id: gameID)
+    } catch MultiplayerCoordinatorError.anotherSessionActive(let otherGameID, let otherGameName) {
+      hostingConflict = HostSessionConflict(
+        otherGameID: otherGameID,
+        otherGameName: otherGameName,
+        retryGameID: gameID
+      )
+    } catch {
+      hostingError = AppErrorMessage.presentableMessage(for: error, languageCode: AppLanguage.catalogLookupLanguageCode)
     }
-
-    return gameID
   }
 }
 

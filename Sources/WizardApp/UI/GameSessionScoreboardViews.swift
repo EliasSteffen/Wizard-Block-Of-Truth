@@ -8,6 +8,8 @@ struct GameSessionScoreboardOptions {
   var onPlayerCardTap: ((UUID) -> Void)?
   var onBetChipTap: ((UUID) -> Void)?
   var onWonChipTap: (() -> Void)?
+  /// Per-player won-tricks chip (multi-phone host: edit one player's value). Wins over `onWonChipTap` when set.
+  var onWonChipTapForPlayer: ((UUID) -> Void)?
 
   static let readOnly = GameSessionScoreboardOptions()
 }
@@ -151,8 +153,10 @@ struct GameSessionScoreboardView: View {
         scoreboardEntryChip(
           titleKey: "UI.GameSession.Entry.Won",
           value: display.got,
-          onTap: options.onWonChipTap,
-          accessibilityHintKey: "UI.GameSession.Score.Chip.EditWonTricks.AccessibilityHint"
+          onTap: wonChipAction(for: player.id),
+          accessibilityHintKey: options.onWonChipTapForPlayer == nil
+            ? "UI.GameSession.Score.Chip.EditWonTricks.AccessibilityHint"
+            : "UI.GameSession.Score.Chip.EditSingleWon.AccessibilityHint"
         )
 
         HStack(alignment: .bottom, spacing: 10) {
@@ -212,6 +216,14 @@ struct GameSessionScoreboardView: View {
     .contentShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     .modifier(PlayerCardTapModifier(playerId: player.id, onTap: options.onPlayerCardTap))
     .accessibilityElement(children: .contain)
+  }
+
+  /// Won-tricks chip: the per-player handler (multi-phone host) or the shared one (single-phone: whole round).
+  private func wonChipAction(for playerId: UUID) -> (() -> Void)? {
+    if let perPlayer = options.onWonChipTapForPlayer {
+      return { perPlayer(playerId) }
+    }
+    return options.onWonChipTap
   }
 
   @ViewBuilder

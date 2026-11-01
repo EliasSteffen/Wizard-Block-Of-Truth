@@ -9,6 +9,9 @@ public struct Game: Hashable, Codable, Sendable {
   public var rounds: [Round]
   public var currentRoundIndex: Int
   public private(set) var gameConstraints: [Constraint.GameConstraint]
+  /// House rule "Erste Runde darf aufgehen": in the first round (index 0) the bets may add up to the hand size,
+  /// i.e. `.betSumNotEqualHandSize` is waived there. Use `gameConstraints(forRoundAt:)` instead of reading this directly.
+  public private(set) var firstRoundBetSumMayEqualHandSize: Bool
 
   private enum CodingKeys: String, CodingKey {
     case id
@@ -19,6 +22,7 @@ public struct Game: Hashable, Codable, Sendable {
     case rounds
     case currentRoundIndex
     case gameConstraints
+    case firstRoundBetSumMayEqualHandSize
 
     // Legacy key (pre split into game/round constraints).
     case additionalConstraints
@@ -32,7 +36,8 @@ public struct Game: Hashable, Codable, Sendable {
     players: [Player],
     rounds: [Round] = [],
     currentRoundIndex: Int? = nil,
-    gameConstraints: [Constraint.GameConstraint] = [.betSumNotEqualHandSize]
+    gameConstraints: [Constraint.GameConstraint] = [.betSumNotEqualHandSize],
+    firstRoundBetSumMayEqualHandSize: Bool = false
   ) throws {
     guard (2...6).contains(players.count) else {
       throw DomainError.invalidPlayerCount(players.count)
@@ -48,6 +53,7 @@ public struct Game: Hashable, Codable, Sendable {
     self.rounds = rounds
     self.currentRoundIndex = currentRoundIndex ?? max(0, rounds.count - 1)
     self.gameConstraints = gameConstraints
+    self.firstRoundBetSumMayEqualHandSize = firstRoundBetSumMayEqualHandSize
 
     if rounds.isEmpty {
       // Require caller to create first round via command so rules are consistent.
@@ -77,6 +83,8 @@ public struct Game: Hashable, Codable, Sendable {
     } else {
       decodedGameConstraints = []
     }
+    let firstRoundBetSumMayEqualHandSize =
+      try container.decodeIfPresent(Bool.self, forKey: .firstRoundBetSumMayEqualHandSize) ?? false
 
     try self.init(
       id: id,
@@ -86,7 +94,8 @@ public struct Game: Hashable, Codable, Sendable {
       players: players,
       rounds: rounds,
       currentRoundIndex: currentRoundIndex,
-      gameConstraints: decodedGameConstraints
+      gameConstraints: decodedGameConstraints,
+      firstRoundBetSumMayEqualHandSize: firstRoundBetSumMayEqualHandSize
     )
   }
 
@@ -100,6 +109,7 @@ public struct Game: Hashable, Codable, Sendable {
     try container.encode(rounds, forKey: .rounds)
     try container.encode(currentRoundIndex, forKey: .currentRoundIndex)
     try container.encode(gameConstraints, forKey: .gameConstraints)
+    try container.encode(firstRoundBetSumMayEqualHandSize, forKey: .firstRoundBetSumMayEqualHandSize)
 
     // Encode legacy key too, so older stored snapshots stay readable by older builds.
     var legacy: [String] = [Constraint.RoundConstraint.gotSumEqualsHandSize.rawValue]
@@ -169,6 +179,23 @@ public struct Game: Hashable, Codable, Sendable {
       throw DomainError.constraintsLocked
     }
     gameConstraints = constraints
+  }
+
+  /// Same lock rule as `setGameConstraints(_:)`: only before the first round is finalized.
+  public mutating func setFirstRoundBetSumMayEqualHandSize(_ enabled: Bool) throws {
+    if rounds.contains(where: { $0.isFinalized }) {
+      throw DomainError.constraintsLocked
+    }
+    firstRoundBetSumMayEqualHandSize = enabled
+  }
+
+  /// Game constraints that apply to bidding in the round at `index`.
+  ///
+  /// Single source of truth for bet-sum validation: with `firstRoundBetSumMayEqualHandSize`,
+  /// `.betSumNotEqualHandSize` is dropped for the first round (index 0); later rounds use `gameConstraints` unchanged.
+  public func gameConstraints(forRoundAt index: Int) -> [Constraint.GameConstraint] {
+    guard index == 0, firstRoundBetSumMayEqualHandSize else { return gameConstraints }
+    return gameConstraints.filter { $0 != .betSumNotEqualHandSize }
   }
 }
 

@@ -69,6 +69,20 @@ When adding `Codable` fields to persisted models, add a decode test without the 
 
 CLI `swift test` uses SPM targets from `Package.swift`. The Xcode project shares the same sources; prefer `swift test` for fast agent/CI feedback.
 
+## CI
+
+`.github/workflows/ios.yml` (job `test`, macOS runner) runs on every push and pull request:
+
+1. `swift test`
+2. an unsigned iOS Simulator build of the Xcode app target via the shared scheme:
+
+   ```bash
+   xcodebuild -project Wizard-Block-Of-Truth.xcodeproj -scheme "Wizard Block of Truth" -configuration Debug \
+     -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
+   ```
+
+Step 2 compiles only the files listed in `project.pbxproj`, not the SPM targets: if a new Swift file under `Sources/` is used by other code but not added to the app target, `swift test` passes and this build fails ("cannot find … in scope"). Add new files to the Xcode target too. Pushes to `main` then also run the `release` job (TestFlight upload) – see README → Release pipeline.
+
 ## Multiplayer manual E2E (iOS Simulator)
 
 Protocol and lobby logic: `swift test --filter SessionSyncTests` and `CommandAuthorizerTests` (uses `MockTransport`, no Bonjour).
@@ -76,9 +90,9 @@ Protocol and lobby logic: `swift test --filter SessionSyncTests` and `CommandAut
 **Two simulators (host + guest):**
 
 1. Boot two devices in Simulator.app (e.g. iPhone 16 + iPhone 16 Pro).
-2. Run the app on simulator A from Xcode (⌘R) → **Multi Phone** game → note join code.
+2. Run the app on simulator A from Xcode (⌘R) → **Multi Phone** game → note the session code (shown in the lobby; guests just tap the session).
 3. Change run destination to simulator B → Run again (second instance).
-4. On B: **Join** → pick session under “Available Sessions” → Connect → claim slot.
+4. On B: **Join** → tap the host's game under “Games on this Wi-Fi” → pick a seat, enter a name → Join (waiting room until the host starts).
 5. On A: start game (works without every player having a device). Host enters bets/gots for offline players in `GameSessionView`.
 
 Grant **Local Network** on both simulators when prompted (`NSBonjourServices`: `_wizardbot._tcp` in app `Info.plist`).

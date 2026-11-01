@@ -1,0 +1,12 @@
+{
+  "version": "1.2",
+  "date": "2026-11",
+  "sortOrder": 3,
+  "items": [
+    "Correct earlier rounds: edit bids, tricks, Bomb and Cloud of any finished round; totals are recalculated automatically.",
+    "New house rule: the bids in the first round may add up to the hand size.",
+    "Rebuilt multi-phone play: instant host discovery, automatic reconnect after screen lock, clear feedback for guests, and seat/name arrangement by the host in the lobby.",
+    "Multi-phone sessions end cleanly when the game is finished; guests keep the final scoreboard.",
+    "Update notice when a new version is available in the App Store, and a way to rate the app in Settings."
+  ]
+}

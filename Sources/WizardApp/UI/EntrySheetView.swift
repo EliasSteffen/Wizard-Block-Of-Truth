@@ -31,6 +31,9 @@ struct EntrySheetView: View {
   let onSubmit: ([UUID: Int]) -> Error?
   /// When set, the sum row shows `effectiveTotal/roundNumber` (bets progress) instead of validation `total/expected`.
   let liveBetsProgressRoundNumber: Int?
+  /// Informational target without blocking "Done" (e.g. the multi-phone host's won tricks, whose sum is checked when
+  /// the round is finalized): the sum row shows `effectiveTotal/sumTarget`.
+  let sumTarget: Int?
 
   @AppStorage("app.language") private var appLanguageRaw: String = AppLanguage.system.rawValue
   @Environment(\.dismiss) private var dismiss
@@ -53,7 +56,8 @@ struct EntrySheetView: View {
     isPlayerDisabled: ((UUID, [UUID: Int]) -> Bool)?,
     additionalSumForValidation: Int?,
     onSubmit: @escaping ([UUID: Int]) -> Error?,
-    liveBetsProgressRoundNumber: Int? = nil
+    liveBetsProgressRoundNumber: Int? = nil,
+    sumTarget: Int? = nil
   ) {
     self.title = title
     self.handSize = handSize
@@ -68,6 +72,7 @@ struct EntrySheetView: View {
     self.additionalSumForValidation = additionalSumForValidation
     self.onSubmit = onSubmit
     self.liveBetsProgressRoundNumber = liveBetsProgressRoundNumber
+    self.sumTarget = sumTarget
   }
 
   var body: some View {
@@ -239,8 +244,13 @@ struct EntrySheetView: View {
     if let liveBetsProgressRoundNumber {
       return "\(effectiveTotal)/\(liveBetsProgressRoundNumber)"
     }
-    guard let sumValidation else { return "\(effectiveTotal)" }
-    return "\(effectiveTotal)/\(sumValidation.expectedSum)"
+    if let sumValidation {
+      return "\(effectiveTotal)/\(sumValidation.expectedSum)"
+    }
+    if let sumTarget {
+      return "\(effectiveTotal)/\(sumTarget)"
+    }
+    return "\(effectiveTotal)"
   }
 
   private var sumBar: some View {
@@ -307,7 +317,7 @@ struct EntrySheetView: View {
     }
 
     guard isLiveSumValidationEnabled else {
-      return effectiveTotal == handSize ? .primary : .secondary
+      return effectiveTotal == (sumTarget ?? handSize) ? .primary : .secondary
     }
     return isSumValid ? .green : .red
   }

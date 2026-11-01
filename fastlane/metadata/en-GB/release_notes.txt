@@ -1,3 +1,8 @@
-We continue improving and adapting Wizard Block of Truth to better suit how you score rounds at the table.
+What's new in 1.2:
 
-For what's new in this version, see our release notes: https://eliassteffen.github.io/Wizard-Block-Of-Truth/release-notes/
+- Correct earlier rounds: tap a finished round in a player's history to fix bids, tricks, Bomb or Cloud for everyone – totals update automatically.
+- New house rule: "First round may add up" lets the bids in round 1 equal the hand size.
+- Multi-phone play rebuilt: hosts appear instantly, phones reconnect automatically after a screen lock, guests get clear feedback, and the host arranges seats and names in the lobby.
+- The app lets you know when a new version is available.
+
+All release notes: https://eliassteffen.github.io/Wizard-Block-Of-Truth/release-notes/

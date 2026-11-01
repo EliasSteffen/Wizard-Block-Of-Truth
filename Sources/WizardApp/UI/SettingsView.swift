@@ -5,6 +5,7 @@ struct SettingsView: View {
   @AppStorage("app.language") private var appLanguageRaw: String = AppLanguage.system.rawValue
   @AppStorage("newGame.defaultPlayerCount") private var defaultPlayerCount: Int = 4
   @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.openURL) private var openURL
 
   private var selection: Binding<AppColorScheme> {
     Binding(
@@ -114,6 +115,18 @@ struct SettingsView: View {
           .padding(.vertical, 4)
         } header: {
           Text("UI.Settings.DefaultValues.Header")
+        }
+
+        Section {
+          Button {
+            openURL(AppStoreInfo.writeReviewURL)
+          } label: {
+            Label("UI.Settings.RateApp.Title", systemImage: "star")
+          }
+        } header: {
+          Text("UI.Settings.Feedback.Header")
+        } footer: {
+          Text("UI.Settings.RateApp.Description")
         }
       }
 #if os(iOS)

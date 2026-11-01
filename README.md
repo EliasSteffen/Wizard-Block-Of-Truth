@@ -69,9 +69,89 @@ The modern score sheet for Wizard nights. Replace paper chaos with a fast, trans
 Sources/       App source code (Swift)
 Tests/         Unit tests
 Assets/        App assets
-fastlane/      Build & release automation
+fastlane/      App Store texts per locale (synced by the release pipeline; fastlane itself is not used)
+scripts/       App Store Connect scripts for the release pipeline (Node, no dependencies)
+ci/            ExportOptions.plist for the signed App Store export
 screenshots/   App Store screenshots
 site/          Marketing website (Astro, GitHub Pages)
+```
+
+---
+
+## 🚀 Release pipeline
+
+`.github/workflows/ios.yml` runs on GitHub's `macos-26` runners.
+
+| Trigger | `test` job | `release` job |
+| :--- | :--- | :--- |
+| Push to any branch, pull request | `swift test` + unsigned iOS Simulator build of the Xcode app target | – |
+| Push to `main` | ✓ | archive, sign, upload to TestFlight, sync App Store texts |
+| *Actions → iOS → Run workflow* | ✓ | if **Upload** is checked (default), from the selected branch |
+
+- The Simulator build compiles the Xcode project, not the SPM package: code that uses a Swift file missing from `project.pbxproj` fails here, even though `swift test` passes.
+- Pushes that only touch `site/**`, `*.md`, `screenshots/**` or `.github/workflows/pages.yml` don't start the workflow.
+- On `main` a running release is never cancelled (the next push waits); on other branches a newer push cancels the older run.
+- **Every push to `main` produces a new TestFlight build** as long as the version in `MARKETING_VERSION` is not released yet.
+
+What the `release` job does:
+
+1. **Pre-flight** (`scripts/asc-check.ts`): checks the API key and that the app (bundle id from the project) exists, looks up the App Store version for `MARKETING_VERSION` and picks the build number = highest build number in App Store Connect (all versions, TestFlight included) + 1. If that version, or a higher one, is already released, the job stops here with a warning and stays green – bump `MARKETING_VERSION`.
+2. **Archive** with cloud-managed signing through the API key (`-allowProvisioningUpdates`). Version and build number are passed as `xcodebuild` overrides; nothing is committed back to the repo.
+3. **Export** the signed `.ipa` with `ci/ExportOptions.plist` (the workflow fills in the team ID).
+4. **Upload** (`scripts/asc-upload.ts`) through the App Store Connect API (`buildUploads`) and wait for Apple's processing; Apple's error messages end up in the log. Xcode's own upload is not used because it rejects team keys with "Cannot verify client's JWT headers".
+5. **App Store texts** (`scripts/asc-metadata.ts`): finds or creates the App Store version for `MARKETING_VERSION` and writes, for every locale folder in `fastlane/metadata/` (`de-DE`, `en-GB`, …):
+
+   | File | App Store Connect field |
+   | :--- | :--- |
+   | `description.txt` | Description |
+   | `promotional_text.txt` | Promotional Text |
+   | `release_notes.txt` | What's New in This Version |
+
+   Missing or empty files leave the field in App Store Connect untouched. Once Apple has processed the build, it is attached to the version. **Nothing is submitted for review.** While a version is in review its texts are locked; the build still goes to TestFlight.
+
+The job summary shows the version, build number and what was synced. Signing keys are removed at the end of every run.
+
+### One-time setup
+
+1. **API key:** App Store Connect → *Users and Access → Integrations → App Store Connect API → Team Keys* → **+**, role **Admin** (Xcode needs it to manage certificates and profiles). Download the `.p8` file (possible only once) and note the key ID and the issuer ID shown above the list.
+2. **GitHub secrets** (*Settings → Secrets and variables → Actions*, or with the CLI):
+
+   ```bash
+   gh secret set ASC_KEY_ID
+   ```
+
+   ```bash
+   gh secret set ASC_ISSUER_ID
+   ```
+
+   ```bash
+   gh secret set ASC_KEY_P8 < AuthKey_XXXXXXXXXX.p8
+   ```
+
+3. **Optional:**
+   - Secrets `IOS_CERT_P12_BASE64` and `IOS_CERT_PASSWORD`: your "Apple Development" certificate exported from Keychain Access as `.p12`. Without it, Xcode creates a new development certificate on every release run.
+
+     ```bash
+     base64 -i certificate.p12 | gh secret set IOS_CERT_P12_BASE64
+     ```
+
+   - Repository variable `APPLE_TEAM_ID` (`gh variable set APPLE_TEAM_ID`); defaults to the project's team `5CZDRHVFCY`.
+
+Without the three `ASC_*` secrets the `release` job only prints a warning.
+
+### Shipping a new version
+
+1. Bump `MARKETING_VERSION` (Xcode → target *Wizard Block of Truth* → *General* → *Version*, e.g. `1.1` → `1.2`). The build number is set by CI; `CURRENT_PROJECT_VERSION` only serves as a minimum.
+2. Update `fastlane/metadata/de-DE/release_notes.txt` and `fastlane/metadata/en-GB/release_notes.txt` (and the other texts if needed).
+3. Merge to `main`. The build appears in TestFlight, the texts are in the App Store version.
+4. In App Store Connect: check the version (screenshots, attached build) and **submit it for review manually**.
+
+After the version is released, pushes to `main` skip the upload with a warning until `MARKETING_VERSION` is bumped again.
+
+**Locally** (Node ≥ 22.18, no `npm install`): `asc-check.ts` only reads, `asc-metadata.ts` writes to App Store Connect.
+
+```bash
+ASC_KEY_ID=XXXXXXXXXX ASC_ISSUER_ID=<issuer-uuid> ASC_KEY_PATH=AuthKey_XXXXXXXXXX.p8 node scripts/asc-check.ts
 ```
 
 ---
