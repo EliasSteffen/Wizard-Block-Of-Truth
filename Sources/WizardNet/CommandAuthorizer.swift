@@ -72,11 +72,9 @@ public enum CommandAuthorizer {
 
   /// Game constraints that apply while bidding in the round at `roundIndex`.
   ///
-  /// The single place the host derives them from, so the "first round may add up" house rule only needs to be
-  /// wired in here.
+  /// The single place the host derives them from; honours the "first round may add up" house rule.
   public static func applicableGameConstraints(for game: Game, roundIndex: Int) -> [Constraint.GameConstraint] {
-    // TODO(merge): use Game.gameConstraints(forRoundAt:)
-    game.gameConstraints
+    game.gameConstraints(forRoundAt: roundIndex)
   }
 
   /// `.betSumEqualsHandSize` when every bet of the round is in, they add up to the hand size and the bet-sum rule

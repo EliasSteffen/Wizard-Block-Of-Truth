@@ -152,6 +152,14 @@ final class CommandAuthorizerTests: XCTestCase {
     XCTAssertEqual(CommandAuthorizer.applicableGameConstraints(for: current, roundIndex: 0), [])
   }
 
+  func testFirstRoundMayAddUpHouseRuleExemptsOnlyRoundOne() throws {
+    var exempt = try game(bets: [0, 1, 0])
+    try exempt.setFirstRoundBetSumMayEqualHandSize(true)
+    XCTAssertEqual(CommandAuthorizer.applicableGameConstraints(for: exempt, roundIndex: 0), [])
+    XCTAssertEqual(CommandAuthorizer.applicableGameConstraints(for: exempt, roundIndex: 1), [.betSumNotEqualHandSize])
+    XCTAssertNil(CommandAuthorizer.betSumViolation(in: exempt, roundIndex: 0))
+  }
+
   func testDomainErrorsMapToReasonCodes() {
     XCTAssertEqual(CommandAuthorizer.reasonCode(for: DomainError.roundAlreadyFinalized), .roundFinalized)
     XCTAssertEqual(
