@@ -84,6 +84,7 @@ struct GameSessionView: View {
       )
     }
     .wizardBackground()
+    .reviewPromptOnGameFinish(gameId: gameId, isFinished: storeHolder.store?.currentGame.map { isGameFinished($0) })
     .onChange(of: multiplayerCoordinator.hostLobbyState?.gameID) { _, _ in
       attachMultiplayerStoreIfNeeded()
     }

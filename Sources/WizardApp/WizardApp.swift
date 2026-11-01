@@ -17,6 +17,7 @@ struct WizardApp: App {
   var body: some Scene {
     WindowGroup {
       GameListView()
+        .appUpdateCheck()
         .preferredColorScheme(AppColorScheme(rawValue: colorSchemeRaw)?.colorScheme)
         .environment(\.locale, appLocale)
         .environmentObject(multiplayerCoordinator)

@@ -27,7 +27,7 @@ enum GuestEntryPhaseResolver {
     return .waiting
   }
 
-  private static func isGameFinished(_ game: Game) -> Bool {
+  static func isGameFinished(_ game: Game) -> Bool {
     guard !game.rounds.isEmpty else { return false }
     guard game.rounds.count >= game.totalRoundsPlanned else { return false }
     return game.rounds.last?.isFinalized == true

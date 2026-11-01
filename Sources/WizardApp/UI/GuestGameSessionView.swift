@@ -27,6 +27,7 @@ struct GuestGameSessionView: View {
     .navigationBarTitleDisplayMode(.inline)
 #endif
     .wizardBackground()
+    .reviewPromptOnGameFinish(gameId: store.currentGame?.id, isFinished: store.currentGame.map { GuestEntryPhaseResolver.isGameFinished($0) })
     .onChange(of: store.currentGame?.currentRoundIndex) { _, _ in
       seedDraftFromCurrentRound()
     }
