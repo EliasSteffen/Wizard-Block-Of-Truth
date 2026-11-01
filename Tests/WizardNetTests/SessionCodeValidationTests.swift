@@ -22,6 +22,26 @@ final class SessionCodeValidationTests: XCTestCase {
     XCTAssertEqual(parsed.displayName, "Malformed")
   }
 
+  func testServiceNameIsTruncatedToBonjourLimitOnCharacterBoundary() {
+    let name = BonjourAdvertiser.serviceName(sessionCode: "ABCD12", gameName: String(repeating: "ä", count: 40))
+    // "ABCD12-" (7 bytes) + 28 × "ä" (2 bytes each) = 63 bytes.
+    XCTAssertEqual(name.utf8.count, 63)
+    XCTAssertEqual(name, "ABCD12-" + String(repeating: "ä", count: 28))
+    XCTAssertEqual(BonjourServiceDescriptor.parse(serviceName: name).code, "ABCD12")
+
+    let emoji = BonjourAdvertiser.serviceName(sessionCode: "ABCD12", gameName: String(repeating: "👨‍👩‍👧", count: 10))
+    XCTAssertLessThanOrEqual(emoji.utf8.count, 63)
+    XCTAssertTrue(emoji.hasPrefix("ABCD12-👨‍👩‍👧"))
+  }
+
+  func testServiceNameIsStableForSameCodeAndGame() {
+    XCTAssertEqual(
+      BonjourAdvertiser.serviceName(sessionCode: "ABCD12", gameName: " Friday "),
+      BonjourAdvertiser.serviceName(sessionCode: "ABCD12", gameName: "Friday")
+    )
+    XCTAssertEqual(BonjourAdvertiser.serviceName(sessionCode: "ABCD12", gameName: "  "), "ABCD12-Wizard")
+  }
+
   func testSessionCodeMatchIsCaseInsensitive() throws {
     let hostTransport = MockHostTransport()
     let host = HostSessionService(

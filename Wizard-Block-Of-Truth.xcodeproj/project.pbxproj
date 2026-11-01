@@ -51,6 +51,8 @@
 		000000000000000000000129 /* WireProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000229 /* WireProtocol.swift */; };
 		00000000000000000000012A /* TCPNetworkTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000022A /* TCPNetworkTransport.swift */; };
 		00000000000000000000012B /* CommandAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000022B /* CommandAuthorizer.swift */; };
+		000000000000000000000160 /* MultiplayerReasonCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000260 /* MultiplayerReasonCode.swift */; };
+		000000000000000000000161 /* SessionSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000261 /* SessionSupport.swift */; };
 		00000000000000000000012C /* GuestJoinPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000022C /* GuestJoinPreferences.swift */; };
 		00000000000000000000012D /* GuestWaitingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000022D /* GuestWaitingView.swift */; };
 		00000000000000000000012E /* ValueStepperControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000022E /* ValueStepperControl.swift */; };
@@ -107,6 +109,8 @@
 		000000000000000000000229 /* WireProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WireProtocol.swift; path = Sources/WizardNet/WireProtocol.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000022A /* TCPNetworkTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TCPNetworkTransport.swift; path = Sources/WizardNet/TCPNetworkTransport.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000022B /* CommandAuthorizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CommandAuthorizer.swift; path = Sources/WizardNet/CommandAuthorizer.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000260 /* MultiplayerReasonCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MultiplayerReasonCode.swift; path = Sources/WizardNet/MultiplayerReasonCode.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000261 /* SessionSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SessionSupport.swift; path = Sources/WizardNet/SessionSupport.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000022C /* GuestJoinPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GuestJoinPreferences.swift; path = Sources/WizardApp/Multiplayer/GuestJoinPreferences.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000022D /* GuestWaitingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GuestWaitingView.swift; path = Sources/WizardApp/UI/GuestWaitingView.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000022E /* ValueStepperControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ValueStepperControl.swift; path = Sources/WizardApp/UI/ValueStepperControl.swift; sourceTree = SOURCE_ROOT; };
@@ -267,7 +271,9 @@
 				000000000000000000000226 /* FrameCodec.swift */,
 				000000000000000000000227 /* GuestSessionService.swift */,
 				000000000000000000000228 /* SessionTransport.swift */,
+				000000000000000000000261 /* SessionSupport.swift */,
 				000000000000000000000229 /* WireProtocol.swift */,
+				000000000000000000000260 /* MultiplayerReasonCode.swift */,
 				00000000000000000000022A /* TCPNetworkTransport.swift */,
 				00000000000000000000022B /* CommandAuthorizer.swift */,
 			);
@@ -396,6 +402,8 @@
 				000000000000000000000129 /* WireProtocol.swift in Sources */,
 				00000000000000000000012A /* TCPNetworkTransport.swift in Sources */,
 				00000000000000000000012B /* CommandAuthorizer.swift in Sources */,
+				000000000000000000000160 /* MultiplayerReasonCode.swift in Sources */,
+				000000000000000000000161 /* SessionSupport.swift in Sources */,
 				000000000000000000000111 /* Commands.swift in Sources */,
 				000000000000000000000112 /* Game.swift in Sources */,
 				000000000000000000000113 /* Models.swift in Sources */,
