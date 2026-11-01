@@ -271,7 +271,7 @@ final class MultiplayerCoordinator: ObservableObject {
     gameConstraints: [Constraint.GameConstraint],
     playWithSpecialCards: Bool
   ) throws {
-    guard let hostSession = hostSession(for: gameID) else {
+    guard let hostSession = activeHostSession(for: gameID) else {
       throw MultiplayerCoordinatorError.noActiveHostSession
     }
     try hostSession.startGame(
@@ -284,7 +284,7 @@ final class MultiplayerCoordinator: ObservableObject {
 
   /// Host lobby: rename a seat (`SeatNameRules`; throws `HostSessionError.nameInvalid` / `.nameTaken`).
   func renameSeat(gameID: UUID, playerId: UUID, name: String) throws {
-    guard let hostSession = hostSession(for: gameID) else {
+    guard let hostSession = activeHostSession(for: gameID) else {
       throw MultiplayerCoordinatorError.noActiveHostSession
     }
     try hostSession.renameSeat(playerId: playerId, to: name)
@@ -292,7 +292,7 @@ final class MultiplayerCoordinator: ObservableObject {
 
   /// Host lobby: new seat order (before the start; every seat exactly once).
   func reorderSeats(gameID: UUID, orderedPlayerIDs: [UUID]) throws {
-    guard let hostSession = hostSession(for: gameID) else {
+    guard let hostSession = activeHostSession(for: gameID) else {
       throw MultiplayerCoordinatorError.noActiveHostSession
     }
     try hostSession.reorderSeats(orderedPlayerIDs)
@@ -301,15 +301,15 @@ final class MultiplayerCoordinator: ObservableObject {
   /// Host: unassign (kick) a guest's seat; the seat keeps its name and becomes claimable.
   @discardableResult
   func unassignSeat(gameID: UUID, playerId: UUID) -> Bool {
-    hostSession(for: gameID)?.unassignSeat(playerId: playerId) ?? false
+    activeHostSession(for: gameID)?.unassignSeat(playerId: playerId) ?? false
   }
 
   /// Host: is this player bound to a guest's device (connected or not)?
   func isSeatBoundToDevice(gameID: UUID, playerId: UUID) -> Bool {
-    hostSession(for: gameID)?.isSeatBoundToDevice(playerId) ?? false
+    activeHostSession(for: gameID)?.isSeatBoundToDevice(playerId) ?? false
   }
 
-  private func hostSession(for gameID: UUID) -> HostSessionService? {
+  private func activeHostSession(for gameID: UUID) -> HostSessionService? {
     guard let context = hostContext, context.gameID == gameID else { return nil }
     return context.session
   }
