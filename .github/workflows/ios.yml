@@ -1,0 +1,227 @@
+# iOS app CI and release (README.md → Release pipeline):
+# - test: on every push and pull request – `swift test` plus an unsigned iOS Simulator build of the Xcode app target
+#   (catches Swift files that are missing from project.pbxproj).
+# - release: on every push to main (and manually via Actions → iOS → Run workflow) – archive, sign (cloud-managed via the
+#   App Store Connect API key), upload to App Store Connect / TestFlight and sync the App Store texts from
+#   fastlane/metadata. Never submits for review. Skipped with a warning when the secrets are missing or the version in
+#   MARKETING_VERSION is already released.
+name: iOS
+
+on:
+  push:
+    branches: ["**"]
+    paths-ignore:
+      - "site/**"
+      - "**/*.md"
+      - "screenshots/**"
+      - ".github/workflows/pages.yml"
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      upload:
+        description: Upload to App Store Connect (TestFlight) and sync the App Store texts
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+# One run per ref. On main a running release is never cancelled (a newer push waits); elsewhere newer pushes win.
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  test:
+    name: Test (swift test + Simulator build)
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          # /Applications/Xcode.app points to the runner image's default Xcode
+          if [ -d /Applications/Xcode.app ]; then sudo xcode-select -s /Applications/Xcode.app; fi
+          xcodebuild -version
+          swift --version
+
+      - name: Unit tests (swift test)
+        run: swift test
+
+      # Builds the Xcode project (not the SPM package): code that uses a Swift file which is on disk but not added to the
+      # app target in project.pbxproj fails here instead of at release time.
+      # -quiet drops the per-file progress lines but still prints every warning and compiler error (file:line: error: …).
+      - name: Build app for iOS Simulator (unsigned)
+        shell: bash
+        run: |
+          xcodebuild -project Wizard-Block-Of-Truth.xcodeproj -scheme "Wizard Block of Truth" -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO -quiet build
+
+  release:
+    name: Release (TestFlight + App Store texts)
+    needs: test
+    if: >-
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_dispatch' && inputs.upload)
+    runs-on: macos-26
+    timeout-minutes: 75
+    env:
+      # Repository variable APPLE_TEAM_ID overrides the project's team
+      TEAM_ID: ${{ vars.APPLE_TEAM_ID || '5CZDRHVFCY' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # Runs scripts/*.ts directly (type stripping), no npm install
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Select Xcode
+        run: |
+          if [ -d /Applications/Xcode.app ]; then sudo xcode-select -s /Applications/Xcode.app; fi
+          xcodebuild -version
+
+      - name: Check App Store Connect secrets
+        id: secrets
+        shell: bash
+        env:
+          HAS_KEY: ${{ secrets.ASC_KEY_P8 != '' && secrets.ASC_KEY_ID != '' && secrets.ASC_ISSUER_ID != '' }}
+        run: |
+          if [ "$HAS_KEY" = true ]; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::Upload skipped: secrets ASC_KEY_ID, ASC_ISSUER_ID and ASC_KEY_P8 are not set (README → Release pipeline)"
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            echo "### Upload skipped: App Store Connect secrets are not set" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # Signing: Xcode manages certificates and profiles through the App Store Connect API key (role Admin).
+      # Optionally an own certificate (.p12, e.g. "Apple Development" exported from your Mac), so that runs don't create
+      # a new development certificate every time.
+      - name: Provide API key and signing certificate
+        if: steps.secrets.outputs.ok == 'true'
+        shell: bash
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          CERT_P12: ${{ secrets.IOS_CERT_P12_BASE64 }}
+          CERT_PASSWORD: ${{ secrets.IOS_CERT_PASSWORD }}
+        run: |
+          # Xcode's tooling reads the key ID from the file name AuthKey_<KEY_ID>.p8, also at ~/.appstoreconnect/private_keys
+          mkdir -p "$RUNNER_TEMP/asc" "$HOME/.appstoreconnect/private_keys"
+          key="$RUNNER_TEMP/asc/AuthKey_$ASC_KEY_ID.p8"
+          printf '%s\n' "$ASC_KEY_P8" > "$key"
+          chmod 600 "$key"
+          cp "$key" "$HOME/.appstoreconnect/private_keys/"
+          echo "ASC_KEY_PATH=$key" >> "$GITHUB_ENV"
+          if [ -n "$CERT_P12" ]; then
+            keychain="$RUNNER_TEMP/signing.keychain-db"
+            pass=$(openssl rand -hex 16)
+            security create-keychain -p "$pass" "$keychain"
+            security set-keychain-settings -lut 3600 "$keychain"
+            security unlock-keychain -p "$pass" "$keychain"
+            printf '%s' "$CERT_P12" | base64 --decode > "$RUNNER_TEMP/cert.p12"
+            security import "$RUNNER_TEMP/cert.p12" -P "$CERT_PASSWORD" -A -t cert -f pkcs12 -k "$keychain"
+            security set-key-partition-list -S apple-tool:,apple: -k "$pass" "$keychain" >/dev/null
+            security list-keychains -d user -s "$keychain" $(security list-keychains -d user | tr -d '"')
+            rm "$RUNNER_TEMP/cert.p12"
+          fi
+
+      # Fails early with a clear message if the key or the app is wrong. Decides whether to ship (MARKETING_VERSION not
+      # released yet) and picks the build number (highest in App Store Connect + 1).
+      - name: Pre-flight (key, app, version state, build number)
+        id: plan
+        if: steps.secrets.outputs.ok == 'true'
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: node scripts/asc-check.ts
+
+      - name: Archive (Release)
+        if: steps.plan.outputs.ship == 'true'
+        shell: bash
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          VERSION: ${{ steps.plan.outputs.version }}
+          BUILD: ${{ steps.plan.outputs.build }}
+        run: |
+          archive="$RUNNER_TEMP/WizardBlockOfTruth.xcarchive"
+          xcodebuild -project Wizard-Block-Of-Truth.xcodeproj -scheme "Wizard Block of Truth" -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath "$archive" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_KEY_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            DEVELOPMENT_TEAM="$TEAM_ID" MARKETING_VERSION="$VERSION" CURRENT_PROJECT_VERSION="$BUILD" \
+            -quiet archive
+          # The overrides only work while Info.plist uses $(MARKETING_VERSION) and $(CURRENT_PROJECT_VERSION)
+          got_version=$(/usr/libexec/PlistBuddy -c 'Print :ApplicationProperties:CFBundleShortVersionString' "$archive/Info.plist")
+          got_build=$(/usr/libexec/PlistBuddy -c 'Print :ApplicationProperties:CFBundleVersion' "$archive/Info.plist")
+          echo "Archived version $got_version ($got_build)"
+          if [ "$got_version" != "$VERSION" ] || [ "$got_build" != "$BUILD" ]; then
+            echo "::error::Archive has version $got_version ($got_build), expected $VERSION ($BUILD): Info.plist must use \$(MARKETING_VERSION) and \$(CURRENT_PROJECT_VERSION)"
+            exit 1
+          fi
+
+      # Xcode only signs and exports the .ipa; the upload goes through the App Store Connect API
+      # (Xcode's own upload service rejects team keys with "Cannot verify client's JWT headers").
+      - name: Export signed .ipa
+        if: steps.plan.outputs.ship == 'true'
+        shell: bash
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          sed "s/__TEAM_ID__/$TEAM_ID/" ci/ExportOptions.plist > "$RUNNER_TEMP/ExportOptions.plist"
+          if ! xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/WizardBlockOfTruth.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath "$RUNNER_TEMP/export" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_KEY_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID"; then
+            # Error lines from Xcode's distribution logs (without tokens; the logs are not uploaded as an artifact)
+            find "${TMPDIR:-/tmp}" -path '*.xcdistributionlogs/*' -name '*.log' -print0 2>/dev/null \
+              | xargs -0 grep -hiE 'error|fail|status code|statusCode|denied|forbidden|unauthori' 2>/dev/null \
+              | grep -viE 'bearer|eyJ' | cut -c1-400 | tail -n 40 || true
+            exit 1
+          fi
+          ls -la "$RUNNER_TEMP/export"
+
+      - name: Upload to App Store Connect (TestFlight)
+        if: steps.plan.outputs.ship == 'true'
+        shell: bash
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          VERSION: ${{ steps.plan.outputs.version }}
+          BUILD: ${{ steps.plan.outputs.build }}
+        run: |
+          shopt -s nullglob
+          ipas=("$RUNNER_TEMP"/export/*.ipa)
+          if [ ${#ipas[@]} -ne 1 ]; then
+            echo "::error::Expected exactly one .ipa in the export folder, found ${#ipas[@]}"
+            exit 1
+          fi
+          # The product name contains spaces; upload under a plain file name
+          ipa="$RUNNER_TEMP/export/WizardBlockOfTruth.ipa"
+          if [ "${ipas[0]}" != "$ipa" ]; then mv "${ipas[0]}" "$ipa"; fi
+          node scripts/asc-upload.ts "$ipa" "$VERSION" "$BUILD"
+
+      # Texts from fastlane/metadata/<locale>/ → App Store version MARKETING_VERSION; attaches the build when it is
+      # processed. Does NOT submit for review.
+      - name: Sync App Store texts (no submission)
+        if: steps.plan.outputs.ship == 'true'
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          VERSION: ${{ steps.plan.outputs.version }}
+          BUILD: ${{ steps.plan.outputs.build }}
+        run: node scripts/asc-metadata.ts
+
+      - name: Remove keys
+        if: always()
+        shell: bash
+        run: |
+          if [ -f "$RUNNER_TEMP/signing.keychain-db" ]; then security delete-keychain "$RUNNER_TEMP/signing.keychain-db" || true; fi
+          rm -rf "$RUNNER_TEMP/asc" "$RUNNER_TEMP/signing.keychain-db" "$RUNNER_TEMP/cert.p12" "$HOME/.appstoreconnect/private_keys"

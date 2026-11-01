@@ -8,3 +8,10 @@ build/
 *.xcworkspace/xcuserdata/
 *.xcodeproj/xcuserdata/
 *.xcodeproj/project.xcworkspace/xcuserdata/
+
+# Signing material and release artifacts (CI writes keys to $RUNNER_TEMP; never commit them)
+*.p8
+*.p12
+*.mobileprovision
+*.ipa
+*.xcarchive/
