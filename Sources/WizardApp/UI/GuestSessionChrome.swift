@@ -277,7 +277,7 @@ private struct GuestSessionLeaveControlsModifier: ViewModifier {
 
   func body(content: Content) -> some View {
     let isLive = !store.connectionState.isEnded
-    content
+    return content
       .navigationBarBackButtonHidden(isLive)
       .toolbar {
         if isLive {
