@@ -1538,6 +1538,102 @@
         }
       }
     },
+    "UI.GameList.ActiveSession.Status.Connecting" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verbindung wird hergestellt…"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connecting…"
+          }
+        }
+      }
+    },
+    "UI.GameList.ActiveSession.Status.Ended" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sitzung beendet – für Details antippen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Session ended – tap for details"
+          }
+        }
+      }
+    },
+    "UI.GameList.ActiveSession.Status.Finished" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spiel beendet"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Game over"
+          }
+        }
+      }
+    },
+    "UI.GameList.ActiveSession.Status.Lobby" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lobby – warte auf den Start"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lobby – waiting for the start"
+          }
+        }
+      }
+    },
+    "UI.GameList.ActiveSession.Status.Reconnecting" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verbindung wird wiederhergestellt…"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reconnecting…"
+          }
+        }
+      }
+    },
+    "UI.GameList.ActiveSession.Status.Round" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runde %1$lld von %2$lld"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Round %1$lld of %2$lld"
+          }
+        }
+      }
+    },
     "UI.GameList.Empty.Description" : {
       "localizations" : {
         "de" : {
@@ -2247,13 +2343,157 @@
         }
       }
     },
+    "UI.GuestSession.Banner.Connecting" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verbindung zum Host wird hergestellt…"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connecting to the host…"
+          }
+        }
+      }
+    },
+    "UI.GuestSession.Banner.Reconnecting" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verbindung unterbrochen – wird wiederhergestellt… (Versuch %lld)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connection lost – reconnecting… (attempt %lld)"
+          }
+        }
+      }
+    },
+    "UI.GuestSession.Banner.Reconnecting.Hint" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Platz bleibt reserviert. Bleib im selben WLAN wie der Host."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your seat stays reserved. Stay on the same Wi-Fi as the host."
+          }
+        }
+      }
+    },
+    "UI.GuestSession.Banner.RetryNow" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jetzt erneut versuchen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry now"
+          }
+        }
+      }
+    },
+    "UI.GuestSession.ChangeBet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ansage ändern"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change Your Bet"
+          }
+        }
+      }
+    },
+    "UI.GuestSession.ChangeWonTricks" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiche korrigieren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Correct Your Won Tricks"
+          }
+        }
+      }
+    },
+    "UI.GuestSession.Edit" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ändern"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit"
+          }
+        }
+      }
+    },
+    "UI.GuestSession.Ended.Close" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zurück zur Spieleliste"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back to game list"
+          }
+        }
+      }
+    },
+    "UI.GuestSession.Ended.PickSeatAgain" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erneut Platz wählen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick a seat again"
+          }
+        }
+      }
+    },
     "UI.GuestSession.EnterBet" : {
       "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wette eingeben"
+            "value" : "Ansage eingeben"
           }
         },
         "en" : {
@@ -2281,6 +2521,134 @@
         }
       }
     },
+    "UI.GuestSession.Finished.Done" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zurück zur Spieleliste"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back to game list"
+          }
+        }
+      }
+    },
+    "UI.GuestSession.Finished.SavedCopy" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Spiel ist vorbei. Eine schreibgeschützte Kopie des Endstands wurde in deiner Spieleliste gespeichert."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The game is over. A read-only copy of the final scoreboard was saved to your game list."
+          }
+        }
+      }
+    },
+    "UI.GuestSession.Hint.ForbiddenBet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld ist nicht erlaubt – die Ansagen dürfen zusammen nicht %2$lld ergeben."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld is not allowed – the bets may not add up to %2$lld."
+          }
+        }
+      }
+    },
+    "UI.GuestSession.Leave.Confirm" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sitzung verlassen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leave session"
+          }
+        }
+      }
+    },
+    "UI.GuestSession.Leave.Message" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn du die Sitzung verlässt, wird dein Platz frei und der Host trägt deine Werte ein. Du kannst auch zur Spieleliste zurückkehren und im Spiel bleiben."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leaving frees your seat – the host then enters your values. You can also go back to the game list and stay in the game."
+          }
+        }
+      }
+    },
+    "UI.GuestSession.Leave.StayConnected" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zur Spieleliste, im Spiel bleiben"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back to game list, stay in the game"
+          }
+        }
+      }
+    },
+    "UI.GuestSession.Leave.Title" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sitzung verlassen?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leave the session?"
+          }
+        }
+      }
+    },
+    "UI.GuestSession.OpenSettings" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einstellungen öffnen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings"
+          }
+        }
+      }
+    },
     "UI.GuestSession.Points" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2298,6 +2666,150 @@
         }
       }
     },
+    "UI.GuestSession.Rejection.BetSum" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Ansagen dürfen zusammen nicht %lld ergeben – wähle eine andere Zahl."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The bets may not add up to %lld – choose another number."
+          }
+        }
+      }
+    },
+    "UI.GuestSession.Review.BetHint" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warte auf die anderen Ansagen. Du kannst deine ändern, bis alle Ansagen abgegeben sind."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for the other bets. You can change yours until all bets are in."
+          }
+        }
+      }
+    },
+    "UI.GuestSession.Review.WonTricksHint" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warte, bis der Host die Runde abschliesst. Bis dahin kannst du deine Stiche korrigieren."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for the host to finish the round. You can correct your tricks until then."
+          }
+        }
+      }
+    },
+    "UI.GuestSession.Review.YourBet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Ansage"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your bet"
+          }
+        }
+      }
+    },
+    "UI.GuestSession.Review.YourWonTricks" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Stiche"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your won tricks"
+          }
+        }
+      }
+    },
+    "UI.GuestSession.SpecialCards.BombPreviousRound" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runde %lld: Die Bombe wurde gespielt."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Round %lld: the Bomb was played."
+          }
+        }
+      }
+    },
+    "UI.GuestSession.SpecialCards.BombThisRound" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bombe in dieser Runde gespielt – die Stiche ergeben in Summe eins weniger."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bomb played this round – the won tricks add up to one less."
+          }
+        }
+      }
+    },
+    "UI.GuestSession.SpecialCards.CloudPreviousRound" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runde %lld: Die Wolke wurde gespielt."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Round %lld: the Cloud was played."
+          }
+        }
+      }
+    },
+    "UI.GuestSession.SpecialCards.CloudThisRound" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wolke in dieser Runde gespielt – eine Ansage wurde um 1 geändert."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cloud played this round – one bet was changed by 1."
+          }
+        }
+      }
+    },
     "UI.GuestSession.Submit" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2311,6 +2823,70 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Submit"
+          }
+        }
+      }
+    },
+    "UI.GuestSession.Submit.Sending" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wird gesendet…"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sending…"
+          }
+        }
+      }
+    },
+    "UI.GuestSession.Toolbar.Back" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spiele"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Games"
+          }
+        }
+      }
+    },
+    "UI.GuestSession.Toolbar.Back.AccessibilityHint" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fragt, ob du die Sitzung verlassen oder im Spiel bleiben möchtest."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asks whether to leave the session or to stay in the game."
+          }
+        }
+      }
+    },
+    "UI.GuestSession.Toolbar.Leave" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verlassen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leave"
           }
         }
       }
@@ -2360,6 +2936,102 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Players"
+          }
+        }
+      }
+    },
+    "UI.GuestWaiting.PlayingAs" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du spielst als %@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You play as %@."
+          }
+        }
+      }
+    },
+    "UI.GuestWaiting.Seat.Host" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Host"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Host"
+          }
+        }
+      }
+    },
+    "UI.GuestWaiting.Seat.HostEnters" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ohne Handy – Host trägt ein"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No phone – host enters"
+          }
+        }
+      }
+    },
+    "UI.GuestWaiting.Seat.Offline" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offline"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offline"
+          }
+        }
+      }
+    },
+    "UI.GuestWaiting.Seat.Phone" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Handy"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phone"
+          }
+        }
+      }
+    },
+    "UI.GuestWaiting.SeatOrder.Footer" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das ist die Sitzreihenfolge am Tisch – sie bestimmt die Geberfolge und die Reihenfolge der Ansagen. Der Host legt Geber und Regeln fest und startet das Spiel."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This is the seating order at the table – it sets the dealer rotation and the betting order. The host sets the dealer and the rules and starts the game."
           }
         }
       }
