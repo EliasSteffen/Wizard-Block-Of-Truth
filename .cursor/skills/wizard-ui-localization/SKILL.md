@@ -62,7 +62,13 @@ Run `swift test --filter LocalizationCatalogTests` after string changes.
 
 Host lobby / join flows: `MultiplayerLobbyView`, `JoinGameView`, `GuestWaitingView`, `GuestGameSessionView`. Respect host vs guest capabilities from `wizard-multiplayer`—disable or hide controls guests must not use.
 
-Guest in-game UI (`GuestGameSessionView`): full-screen bet or won-tricks entry via `ValueStepperControl(style: .prominent)`; after submit, compact read-only scoreboard. Rejoin: `SavedGuestSession` + `JoinGameView` rejoin section.
+Guest flow: `JoinGameView` (tap-to-join list of hosts on the same Wi-Fi, seat picker validated with `SeatNameRules`,
+"Rejoin" from `SavedGuestSession`) → `GuestWaitingView` (live lobby) → `GuestGameSessionView` (bet / won-tricks entry via
+`ValueStepperControl(style: .prominent)`; the own bet stays editable until all bets are in, the own won tricks until the
+host finalizes — decided client-side by `GuestEntryPhaseResolver`, which mirrors `CommandAuthorizer`). Shared chrome
+(connection banner, leave controls, Bomb/Cloud indicator) lives in `GuestSessionChrome.swift`, pure logic in
+`GuestSessionPresentation.swift` (tests: `GuestSessionPresentationTests`). The game list shows live sessions at the top and
+a "Guest copy" badge on read-only finished guest games.
 
 ## Persistence
 

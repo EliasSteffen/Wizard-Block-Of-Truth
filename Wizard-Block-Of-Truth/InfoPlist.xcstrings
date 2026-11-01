@@ -1,0 +1,24 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "NSLocalNetworkUsageDescription" : {
+      "comment" : "Privacy - Local Network Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wizard Block of Truth nutzt dein lokales Netzwerk, um Mehrspieler-Spiele auf Geräten in der Nähe zu hosten und ihnen beizutreten."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wizard Block of Truth uses your local network to host and join multiplayer games on nearby devices."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

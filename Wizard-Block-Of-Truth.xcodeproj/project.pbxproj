@@ -38,6 +38,7 @@
 		000000000000000000000135 /* GameSessionScoreboardViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000235 /* GameSessionScoreboardViews.swift */; };
 		000000000000000000000117 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000217 /* Assets.xcassets */; };
 		000000000000000000000118 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000218 /* Localizable.xcstrings */; };
+		00000000000000000000018F /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000028F /* InfoPlist.xcstrings */; };
 		000000000000000000000119 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000219 /* Card.swift */; };
 		00000000000000000000011A /* Cards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000021A /* Cards.swift */; };
 		00000000000000000000011B /* AboutInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000021B /* AboutInfoView.swift */; };
@@ -64,6 +65,8 @@
 		00000000000000000000012D /* GuestWaitingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000022D /* GuestWaitingView.swift */; };
 		00000000000000000000012E /* ValueStepperControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000022E /* ValueStepperControl.swift */; };
 		00000000000000000000012F /* GuestEntryPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000022F /* GuestEntryPhase.swift */; };
+		000000000000000000000180 /* GuestSessionPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000280 /* GuestSessionPresentation.swift */; };
+		000000000000000000000181 /* GuestSessionChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000281 /* GuestSessionChrome.swift */; };
 		000000000000000000000164 /* KeepsScreenAwake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000264 /* KeepsScreenAwake.swift */; };
 		000000000000000000000130 /* SavedGuestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000230 /* SavedGuestSession.swift */; };
 		000000000000000000000162 /* MultiplayerReasonText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000262 /* MultiplayerReasonText.swift */; };
@@ -106,6 +109,7 @@
 		000000000000000000000234 /* PlayerNaming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlayerNaming.swift; path = Sources/WizardDomain/PlayerNaming.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000217 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		000000000000000000000218 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		00000000000000000000028F /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		000000000000000000000219 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Card.swift; path = Sources/WizardDomain/Models/Card.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000021A /* Cards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Cards.swift; path = Sources/WizardDomain/Models/Cards.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000021B /* AboutInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AboutInfoView.swift; path = Sources/WizardApp/UI/AboutInfoView.swift; sourceTree = SOURCE_ROOT; };
@@ -132,6 +136,8 @@
 		00000000000000000000022D /* GuestWaitingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GuestWaitingView.swift; path = Sources/WizardApp/UI/GuestWaitingView.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000022E /* ValueStepperControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ValueStepperControl.swift; path = Sources/WizardApp/UI/ValueStepperControl.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000022F /* GuestEntryPhase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GuestEntryPhase.swift; path = Sources/WizardApp/UI/GuestEntryPhase.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000280 /* GuestSessionPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GuestSessionPresentation.swift; path = Sources/WizardApp/UI/GuestSessionPresentation.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000281 /* GuestSessionChrome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GuestSessionChrome.swift; path = Sources/WizardApp/UI/GuestSessionChrome.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000264 /* KeepsScreenAwake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KeepsScreenAwake.swift; path = Sources/WizardApp/UI/KeepsScreenAwake.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000230 /* SavedGuestSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SavedGuestSession.swift; path = Sources/WizardApp/Multiplayer/SavedGuestSession.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000262 /* MultiplayerReasonText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MultiplayerReasonText.swift; path = Sources/WizardApp/Multiplayer/MultiplayerReasonText.swift; sourceTree = SOURCE_ROOT; };
@@ -168,6 +174,7 @@
 			children = (
 				000000000000000000000217 /* Assets.xcassets */,
 				000000000000000000000218 /* Localizable.xcstrings */,
+				00000000000000000000028F /* InfoPlist.xcstrings */,
 				000000000000000000000010 /* Info.plist */,
 				000000000000000000000201 /* WizardApp.swift */,
 				000000000000000000000404 /* App */,
@@ -246,6 +253,8 @@
 				00000000000000000000022D /* GuestWaitingView.swift */,
 				00000000000000000000022E /* ValueStepperControl.swift */,
 				00000000000000000000022F /* GuestEntryPhase.swift */,
+				000000000000000000000280 /* GuestSessionPresentation.swift */,
+				000000000000000000000281 /* GuestSessionChrome.swift */,
 				000000000000000000000264 /* KeepsScreenAwake.swift */,
 				000000000000000000000231 /* WizardPrimaryActionButton.swift */,
 				000000000000000000000232 /* HostMultiplayerSheet.swift */,
@@ -381,6 +390,7 @@
 			files = (
 				000000000000000000000117 /* Assets.xcassets in Resources */,
 				000000000000000000000118 /* Localizable.xcstrings in Resources */,
+				00000000000000000000018F /* InfoPlist.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -426,6 +436,8 @@
 				00000000000000000000012D /* GuestWaitingView.swift in Sources */,
 				00000000000000000000012E /* ValueStepperControl.swift in Sources */,
 				00000000000000000000012F /* GuestEntryPhase.swift in Sources */,
+				000000000000000000000180 /* GuestSessionPresentation.swift in Sources */,
+				000000000000000000000181 /* GuestSessionChrome.swift in Sources */,
 				000000000000000000000164 /* KeepsScreenAwake.swift in Sources */,
 				000000000000000000000130 /* SavedGuestSession.swift in Sources */,
 				000000000000000000000162 /* MultiplayerReasonText.swift in Sources */,
