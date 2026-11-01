@@ -23,7 +23,8 @@ the source of truth** for `Game` state. Wire protocol **v2** (`WireProtocolVersi
   unassigns (kicks) a guest's seat; sets dealer and rules; starts without requiring every seat to have a device.
 - Applies any valid `GameCommand` (incl. bets/gots of any player — host overrides guests). Bulk entry sheets only
   cover phone-less players (`MultiplayerGameStore.isPlayerBoundToGuestDevice`), single values can always be corrected.
-- Bomb / Cloud card are host-only.
+- Bomb / Cloud card are host-only, declared on the host's game screen: `GameCommand.setBombPlayed` persists the Bomb on
+  the open round (guests see `Round.bombPlayed` in snapshots); Cloud via `markCloudCardResolved` + bet adjustment.
 - Ends the session ("End session"); it also ends automatically when the game is finished.
 - The session survives an app relaunch / screen lock: same code (persisted per game), listener restarted on
   foreground, guests reconnect with their tokens.

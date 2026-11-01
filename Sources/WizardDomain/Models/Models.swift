@@ -42,7 +42,8 @@ public struct Round: Hashable, Sendable {
   public var isFinalized: Bool
   /// True after the cloud-card adjustment was committed for this round (only one cloud card per round).
   public var cloudCardResolved: Bool
-  /// True when the Bomb was played, i.e. the round was finalized with `.gotSumEqualsHandSizeMinusOne`.
+  /// True when the Bomb was played: declared while the round is open (`GameCommand.setBombPlayed`, host only) and/or
+  /// set when the round was finalized with `.gotSumEqualsHandSizeMinusOne`.
   /// Rounds stored before this flag existed decode as `false`; use `inferredBombPlayed` to read it.
   public var bombPlayed: Bool
 

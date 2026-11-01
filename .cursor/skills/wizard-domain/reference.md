@@ -7,6 +7,7 @@
 .submitBet(playerId: UUID, roundIndex: Int, bet: Int)
 .submitGot(playerId: UUID, roundIndex: Int, got: Int)
 .markCloudCardResolved(roundIndex: Int)
+.setBombPlayed(roundIndex: Int, played: Bool) // host-only Bomb declaration on the open round
 .finalizeCurrentRound(roundConstraints: [Constraint.RoundConstraint]? = nil)
 .editFinalizedRound(roundIndex: Int, entries: [UUID: RoundEntry], bombPlayed: Bool, cloudCardPlayed: Bool) // host-only correction
 ```
