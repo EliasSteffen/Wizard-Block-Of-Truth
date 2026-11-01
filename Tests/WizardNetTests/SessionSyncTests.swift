@@ -130,7 +130,7 @@ final class SessionSyncTests: XCTestCase {
     }
     guest.onSlotClaimed = { claimed.fulfill() }
     guest.onCommandResult = { result in
-      if !result.accepted, result.reason?.contains("not started") == true {
+      if !result.accepted, result.code == .gameNotStarted {
         rejected.fulfill()
       }
     }
@@ -149,12 +149,15 @@ final class SessionSyncTests: XCTestCase {
     let guest = GuestSessionService(sessionCode: "WRONG1", transport: MockGuestTransport(host: hostTransport))
     let rejected = expectation(description: "join rejected")
     guest.onError = { error in
-      if case GuestSessionError.joinRejected = error {
+      if case GuestSessionError.joinRejected(.sessionNotFound) = error {
         rejected.fulfill()
       }
     }
     try guest.connect()
     wait(for: [rejected], timeout: 1.0)
+    drainMainQueue()
+    XCTAssertEqual(guest.connectionState, .ended(.rejected(.sessionNotFound)))
+    XCTAssertEqual(hostTransport.closedConnectionIDs.count, 1)
   }
 
   func testHelloWaitsForTransportReady() throws {
@@ -231,7 +234,7 @@ final class SessionSyncTests: XCTestCase {
       try? guestB.claimPlayer(playerId: players[1].id, displayName: players[1].name)
     }
     guestB.onError = { error in
-      if case GuestSessionError.joinRejected(let reason) = error, reason.contains("taken") {
+      if case GuestSessionError.joinRejected(.seatTaken) = error {
         bRejected.fulfill()
       }
     }
@@ -402,29 +405,24 @@ final class SessionSyncTests: XCTestCase {
     wait(for: [lobby], timeout: 1.0)
   }
 
-  func testCustomNameJoinRejectedWhenOnlyNamedSlotsFree() throws {
+  func testClaimWithoutSeatTakesFirstOpenSeat() throws {
     let players = makeNamedPlayers()
     let hostTransport = MockHostTransport()
     let host = HostSessionService(
       initialGame: try makeSetupGame(players: players),
       sessionCode: sessionCode,
-      transport: hostTransport
+      transport: hostTransport,
+      hostReservedPlayerId: players[0].id
     )
     try host.start()
 
     let guest = GuestSessionService(sessionCode: sessionCode, transport: MockGuestTransport(host: hostTransport))
-    let rejected = expectation(description: "custom join rejected")
-    guest.onJoinLobby = { _ in
-      try? guest.claimPlayer(playerId: nil, displayName: "New Guest")
-    }
-    guest.onError = { error in
-      if case GuestSessionError.joinRejected(let reason) = error,
-         reason.contains("custom name") {
-        rejected.fulfill()
-      }
-    }
-    try guest.connect()
-    wait(for: [rejected], timeout: 1.0)
+    try join(guest, seat: nil, name: "New Guest")
+
+    // Seat 0 is the host's; the first open seat is Bob's, which takes the guest's name.
+    XCTAssertEqual(guest.playerId, players[1].id)
+    XCTAssertEqual(guest.playerName, "New Guest")
+    XCTAssertEqual(host.game.players[1].name, "New Guest")
   }
 
   func testClaimNamedPlayerWithMatchingName() throws {
@@ -450,7 +448,7 @@ final class SessionSyncTests: XCTestCase {
     XCTAssertEqual(host.game.players.first(where: { $0.id == players[1].id })?.name, "Bob")
   }
 
-  func testClaimRejectedWhenDisplayNameMismatches() throws {
+  func testGuestMayRenameHostNamedSeat() throws {
     let players = makeNamedPlayers()
     let hostTransport = MockHostTransport()
     let host = HostSessionService(
@@ -461,21 +459,14 @@ final class SessionSyncTests: XCTestCase {
     try host.start()
 
     let guest = GuestSessionService(sessionCode: sessionCode, transport: MockGuestTransport(host: hostTransport))
-    let rejected = expectation(description: "name mismatch rejected")
-    guest.onJoinLobby = { _ in
-      try? guest.claimPlayer(playerId: players[0].id, displayName: "Wrong Name")
-    }
-    guest.onError = { error in
-      if case GuestSessionError.joinRejected(let reason) = error,
-         reason.contains("match") {
-        rejected.fulfill()
-      }
-    }
-    try guest.connect()
-    wait(for: [rejected], timeout: 1.0)
+    try join(guest, seat: players[0].id, name: "  Alicia  ")
+
+    XCTAssertEqual(guest.playerId, players[0].id)
+    XCTAssertEqual(guest.playerName, "Alicia")
+    XCTAssertEqual(host.game.players[0].name, "Alicia")
   }
 
-  func testClaimPlaceholderSlotByPlayerIdRejected() throws {
+  func testClaimPlaceholderSeatByIdWithOwnName() throws {
     let players = makePlaceholderPlayers()
     let hostTransport = MockHostTransport()
     let host = HostSessionService(
@@ -486,17 +477,11 @@ final class SessionSyncTests: XCTestCase {
     try host.start()
 
     let guest = GuestSessionService(sessionCode: sessionCode, transport: MockGuestTransport(host: hostTransport))
-    let rejected = expectation(description: "placeholder claim by id rejected")
-    guest.onJoinLobby = { _ in
-      try? guest.claimPlayer(playerId: players[0].id, displayName: players[0].name)
-    }
-    guest.onError = { error in
-      if case GuestSessionError.joinRejected(let reason) = error,
-         reason.contains("own name") {
-        rejected.fulfill()
-      }
-    }
-    try guest.connect()
-    wait(for: [rejected], timeout: 1.0)
+    try join(guest, seat: players[2].id, name: "Dana")
+
+    XCTAssertEqual(host.game.players[2].name, "Dana")
+    XCTAssertTrue(host.lobbySlots[2].isBoundToDevice)
+    XCTAssertTrue(host.lobbySlots[2].isConnected)
+    XCTAssertFalse(host.lobbySlots[2].isPlaceholderName)
   }
 }
