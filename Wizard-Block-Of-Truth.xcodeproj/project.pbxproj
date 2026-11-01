@@ -73,6 +73,8 @@
 		000000000000000000000163 /* MultiplayerPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000263 /* MultiplayerPersistence.swift */; };
 		000000000000000000000131 /* WizardPrimaryActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000231 /* WizardPrimaryActionButton.swift */; };
 		000000000000000000000132 /* HostMultiplayerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000232 /* HostMultiplayerSheet.swift */; };
+		000000000000000000000170 /* MultiPhoneHostRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000270 /* MultiPhoneHostRules.swift */; };
+		000000000000000000000171 /* HostSessionStatusViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000271 /* HostSessionStatusViews.swift */; };
 		000000000000000000000133 /* GameSessionMultiplayerToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000233 /* GameSessionMultiplayerToolbar.swift */; };
 /* End PBXBuildFile section */
 
@@ -144,6 +146,8 @@
 		000000000000000000000263 /* MultiplayerPersistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MultiplayerPersistence.swift; path = Sources/WizardApp/Multiplayer/MultiplayerPersistence.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000231 /* WizardPrimaryActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WizardPrimaryActionButton.swift; path = Sources/WizardApp/UI/WizardPrimaryActionButton.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000232 /* HostMultiplayerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HostMultiplayerSheet.swift; path = Sources/WizardApp/UI/HostMultiplayerSheet.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000270 /* MultiPhoneHostRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MultiPhoneHostRules.swift; path = Sources/WizardApp/UI/MultiPhoneHostRules.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000271 /* HostSessionStatusViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HostSessionStatusViews.swift; path = Sources/WizardApp/UI/HostSessionStatusViews.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000233 /* GameSessionMultiplayerToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameSessionMultiplayerToolbar.swift; path = Sources/WizardApp/UI/GameSessionMultiplayerToolbar.swift; sourceTree = SOURCE_ROOT; };
 		000000000000000000000235 /* GameSessionScoreboardViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameSessionScoreboardViews.swift; path = Sources/WizardApp/UI/GameSessionScoreboardViews.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -258,6 +262,8 @@
 				000000000000000000000264 /* KeepsScreenAwake.swift */,
 				000000000000000000000231 /* WizardPrimaryActionButton.swift */,
 				000000000000000000000232 /* HostMultiplayerSheet.swift */,
+				000000000000000000000270 /* MultiPhoneHostRules.swift */,
+				000000000000000000000271 /* HostSessionStatusViews.swift */,
 				000000000000000000000233 /* GameSessionMultiplayerToolbar.swift */,
 				000000000000000000000235 /* GameSessionScoreboardViews.swift */,
 			);
@@ -444,6 +450,8 @@
 				000000000000000000000163 /* MultiplayerPersistence.swift in Sources */,
 				000000000000000000000131 /* WizardPrimaryActionButton.swift in Sources */,
 				000000000000000000000132 /* HostMultiplayerSheet.swift in Sources */,
+				000000000000000000000170 /* MultiPhoneHostRules.swift in Sources */,
+				000000000000000000000171 /* HostSessionStatusViews.swift in Sources */,
 				000000000000000000000133 /* GameSessionMultiplayerToolbar.swift in Sources */,
 				000000000000000000000135 /* GameSessionScoreboardViews.swift in Sources */,
 				000000000000000000000124 /* MockTransport.swift in Sources */,

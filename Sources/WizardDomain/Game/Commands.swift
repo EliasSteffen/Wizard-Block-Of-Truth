@@ -6,6 +6,10 @@ public enum GameCommand: Hashable, Codable, Sendable {
   case submitGot(playerId: UUID, roundIndex: Int, got: Int)
   case finalizeCurrentRound(roundConstraints: [Constraint.RoundConstraint]? = nil)
   case markCloudCardResolved(roundIndex: Int)
+  /// Declares (or clears) the Bomb for a round that is still open (host / single-phone only). Persisted on the round
+  /// (`Round.bombPlayed`) so guests see it; `finalizeCurrentRound` without explicit constraints then expects the won
+  /// tricks to add up to `handSize - 1`. Declaring requires `playWithSpecialCards`; clearing is always allowed.
+  case setBombPlayed(roundIndex: Int, played: Bool)
   /// Corrects an already finalized round (host / single-phone only): replaces every player's bet and won tricks and
   /// records whether the Bomb / Cloud card were played. Validated atomically; see `applyEditFinalizedRound`.
   case editFinalizedRound(roundIndex: Int, entries: [UUID: RoundEntry], bombPlayed: Bool, cloudCardPlayed: Bool)
@@ -52,6 +56,18 @@ extension GameCommand {
       }
       game.rounds[roundIndex].cloudCardResolved = true
 
+    case .setBombPlayed(let roundIndex, let played):
+      guard (0..<game.rounds.count).contains(roundIndex) else {
+        throw DomainError.invalidRoundIndex(roundIndex)
+      }
+      if game.rounds[roundIndex].isFinalized {
+        throw DomainError.roundAlreadyFinalized
+      }
+      if played && !game.playWithSpecialCards {
+        throw DomainError.specialCardsNotEnabled
+      }
+      game.rounds[roundIndex].bombPlayed = played
+
     case .editFinalizedRound(let roundIndex, let entries, let bombPlayed, let cloudCardPlayed):
       try applyEditFinalizedRound(
         game: &game,
@@ -74,7 +90,9 @@ extension GameCommand {
       }
       // Validate constraints before finalizing. Game constraints (e.g. bet sum ≠ hand size)
       // apply only during bidding; after cloud adjustment the bet sum may equal hand size.
-      let roundConstraintsToUse = roundConstraints ?? [.gotSumEqualsHandSize]
+      // Without explicit constraints the round's declared Bomb (`setBombPlayed`) picks the won-tricks sum rule.
+      let roundConstraintsToUse = roundConstraints
+        ?? [game.rounds[roundIndex].bombPlayed ? .gotSumEqualsHandSizeMinusOne : .gotSumEqualsHandSize]
       try game.rounds[roundIndex].validateConstraints(
         players: game.players,
         gameConstraints: [],

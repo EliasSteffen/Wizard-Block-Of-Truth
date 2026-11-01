@@ -14,7 +14,7 @@ All authoritative game state changes live in **WizardDomain**. UI and network la
 ## State model
 
 - **`Game`** — players, rounds, `currentRoundIndex`, `gameConstraints`, `firstRoundBetSumMayEqualHandSize`, `playWithSpecialCards`, `mode` (`.singlePhone` / `.multiPhone`).
-- **`Round`** — `handSize`, `dealer`, `entries` per player, `isFinalized`, `cloudCardResolved`, `bombPlayed` (set by `finalizeCurrentRound` when `.gotSumEqualsHandSizeMinusOne` was used). Read the Bomb via `round.inferredBombPlayed`, which also infers it for legacy finalized rounds (won-tricks sum == `handSize - 1`).
+- **`Round`** — `handSize`, `dealer`, `entries` per player, `isFinalized`, `cloudCardResolved`, `bombPlayed` (declared while the round is open via `setBombPlayed`, and set by `finalizeCurrentRound` when `.gotSumEqualsHandSizeMinusOne` was used). Read the Bomb via `round.inferredBombPlayed`, which also infers it for legacy finalized rounds (won-tricks sum == `handSize - 1`).
 - **`RoundEntry`** — optional `bet` and `got`; scoring via `pointsDelta()`.
 - **`Player`** — `id`, `name`.
 
@@ -40,10 +40,11 @@ Never patch `game.rounds[...].entries[...]` from WizardApp or WizardNet except t
 | `submitBet(playerId:roundIndex:bet:)` | Round not finalized; bet in `0...handSize`. |
 | `submitGot(playerId:roundIndex:got:)` | Round not finalized; got in `0...handSize`. |
 | `markCloudCardResolved(roundIndex:)` | Round not finalized; sets `cloudCardResolved` (one cloud adjustment per round). |
+| `setBombPlayed(roundIndex:played:)` | Host / single-phone only (guests denied by `CommandAuthorizer`). Round must exist (`invalidRoundIndex`) and not be finalized (`roundAlreadyFinalized`); `played: true` needs `playWithSpecialCards` (`specialCardsNotEnabled`). Sets `Round.bombPlayed` so guests see the Bomb in snapshots. |
 | `finalizeCurrentRound(roundConstraints:)` | All bets and gots set; runs round constraint validation; marks round finalized; may append next round (hand size up/down per game rules). |
 | `editFinalizedRound(roundIndex:entries:bombPlayed:cloudCardPlayed:)` | Host / single-phone only (guests denied by `CommandAuthorizer`). Round must exist (`invalidRoundIndex`) and be finalized (`roundNotFinalized`); Bomb/Cloud need `playWithSpecialCards` (`specialCardsNotEnabled`); `entries` must cover exactly the players (`entriesDoNotMatchPlayers`) with every bet/got set (`missingInputs`) and in `0...handSize`; won tricks sum to `handSize - 1` with Bomb else `handSize`; bet-sum rule from `gameConstraints(forRoundAt:)` unless `cloudCardPlayed`. Atomic: validated on a copy, then replaces `entries`, `bombPlayed`, `cloudCardResolved` (keeps `handSize`, `dealer`, `isFinalized`, other rounds, `currentRoundIndex`). Totals recompute from finalized rounds. |
 
-`finalizeCurrentRound` defaults `roundConstraints` to `[.gotSumEqualsHandSize]` when nil. Game constraints (e.g. bet sum ≠ hand size) apply during bidding, not necessarily at finalize—see comments in `Commands.swift`.
+`finalizeCurrentRound` defaults `roundConstraints` (when nil) to the round's declared Bomb: `[.gotSumEqualsHandSizeMinusOne]` if `bombPlayed`, else `[.gotSumEqualsHandSize]`; explicit constraints win and decide the stored flag. Game constraints (e.g. bet sum ≠ hand size) apply during bidding, not necessarily at finalize—see comments in `Commands.swift`.
 
 ## Constraints
 
