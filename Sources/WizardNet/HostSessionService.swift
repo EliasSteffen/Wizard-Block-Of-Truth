@@ -105,13 +105,15 @@ public final class HostSessionService {
   public func startGame(
     startingDealer: UUID,
     gameConstraints: [Constraint.GameConstraint],
-    playWithSpecialCards: Bool
+    playWithSpecialCards: Bool,
+    firstRoundBetSumMayEqualHandSize: Bool = false
   ) throws {
     guard isInSetup else { throw HostSessionError.gameAlreadyStarted }
     guard game.players.contains(where: { $0.id == startingDealer }) else {
       throw DomainError.unknownPlayerId(startingDealer)
     }
     try game.setGameConstraints(gameConstraints)
+    try game.setFirstRoundBetSumMayEqualHandSize(firstRoundBetSumMayEqualHandSize)
     game.playWithSpecialCards = playWithSpecialCards
     try game.apply(.startNewGame(startingDealer: startingDealer))
     revision += 1

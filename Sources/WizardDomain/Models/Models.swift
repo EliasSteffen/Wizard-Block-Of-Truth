@@ -42,19 +42,24 @@ public struct Round: Hashable, Sendable {
   public var isFinalized: Bool
   /// True after the cloud-card adjustment was committed for this round (only one cloud card per round).
   public var cloudCardResolved: Bool
+  /// True when the Bomb was played, i.e. the round was finalized with `.gotSumEqualsHandSizeMinusOne`.
+  /// Rounds stored before this flag existed decode as `false`; use `inferredBombPlayed` to read it.
+  public var bombPlayed: Bool
 
   public init(
     handSize: Int,
     dealer: UUID,
     entries: [UUID: RoundEntry],
     isFinalized: Bool = false,
-    cloudCardResolved: Bool = false
+    cloudCardResolved: Bool = false,
+    bombPlayed: Bool = false
   ) {
     self.handSize = handSize
     self.dealer = dealer
     self.entries = entries
     self.isFinalized = isFinalized
     self.cloudCardResolved = cloudCardResolved
+    self.bombPlayed = bombPlayed
   }
 }
 
@@ -65,6 +70,7 @@ extension Round: Codable {
     case entries
     case isFinalized
     case cloudCardResolved
+    case bombPlayed
   }
 
   public init(from decoder: any Decoder) throws {
@@ -74,6 +80,7 @@ extension Round: Codable {
     entries = try container.decode([UUID: RoundEntry].self, forKey: .entries)
     isFinalized = try container.decode(Bool.self, forKey: .isFinalized)
     cloudCardResolved = try container.decodeIfPresent(Bool.self, forKey: .cloudCardResolved) ?? false
+    bombPlayed = try container.decodeIfPresent(Bool.self, forKey: .bombPlayed) ?? false
   }
 
   public func encode(to encoder: any Encoder) throws {
@@ -83,10 +90,19 @@ extension Round: Codable {
     try container.encode(entries, forKey: .entries)
     try container.encode(isFinalized, forKey: .isFinalized)
     try container.encode(cloudCardResolved, forKey: .cloudCardResolved)
+    try container.encode(bombPlayed, forKey: .bombPlayed)
   }
 }
 
 extension Round {
+  /// Whether the Bomb was played in this round: the stored `bombPlayed` flag, or—for finalized rounds saved before
+  /// that flag existed—inferred from the won tricks (sum == `handSize - 1`, which finalize only accepts with the Bomb).
+  public var inferredBombPlayed: Bool {
+    if bombPlayed { return true }
+    guard isFinalized, entries.values.allSatisfy({ $0.got != nil }) else { return false }
+    let gotSum = entries.values.reduce(0) { $0 + ($1.got ?? 0) }
+    return gotSum == handSize - 1
+  }
 
   public func validateConstraints(
     players: [Player],

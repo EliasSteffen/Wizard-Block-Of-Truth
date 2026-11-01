@@ -22,6 +22,7 @@ struct NewGameView: View {
   @State private var startingDealerIndex: Int = 0
 
   @State private var enabledGameConstraints: Set<Constraint.GameConstraint> = [.betSumNotEqualHandSize]
+  @State private var firstRoundBetSumMayEqualHandSize: Bool = false
   @State private var playWithSpecialCards: Bool = true
   @State private var gameMode: GameMode = .singlePhone
   @State private var hostLobbyGameID: UUID?
@@ -129,6 +130,11 @@ struct NewGameView: View {
                 }
               )) {
                 Text(LocalizedStringKey(constraint.titleKey))
+              }
+              if constraint == .betSumNotEqualHandSize, enabledGameConstraints.contains(.betSumNotEqualHandSize) {
+                Toggle(isOn: $firstRoundBetSumMayEqualHandSize) {
+                  Text("UI.NewGame.HouseRules.FirstRoundMayEqualHandSize")
+                }
               }
             }
           } header: {
@@ -296,7 +302,11 @@ struct NewGameView: View {
       mode: gameMode,
       players: players,
       playWithSpecialCards: playWithSpecialCards,
-      gameConstraints: isMultiPhone ? [.betSumNotEqualHandSize] : constraints
+      gameConstraints: isMultiPhone ? [.betSumNotEqualHandSize] : constraints,
+      // Multi-phone games pick their house rules in the lobby (`MultiplayerLobbyView`).
+      firstRoundBetSumMayEqualHandSize: !isMultiPhone
+        && firstRoundBetSumMayEqualHandSize
+        && constraints.contains(.betSumNotEqualHandSize)
     )
 
     if !isMultiPhone, let dealerId = players[safe: startingDealerIndex]?.id {

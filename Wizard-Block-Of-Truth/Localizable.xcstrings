@@ -534,6 +534,38 @@
         }
       }
     },
+    "Error.Domain.RoundNotFinalized" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runde ist noch nicht abgeschlossen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Round is not finalized yet."
+          }
+        }
+      }
+    },
+    "Error.Domain.SpecialCardsNotEnabled" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spezialkarten sind in diesem Spiel nicht aktiviert."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Special cards are not enabled for this game."
+          }
+        }
+      }
+    },
     "Error.Domain.UnknownPlayerId" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1453,6 +1485,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Round"
+          }
+        }
+      }
+    },
+    "UI.GameSession.PlayerHistory.EditRound.AccessibilityHint" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bearbeitet die Ansagen und Stiche dieser Runde für alle Spieler."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edits the bets and won tricks of this round for all players."
+          }
+        }
+      }
+    },
+    "UI.GameSession.PlayerHistory.EditRound.Hint" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippe auf eine abgeschlossene Runde, um sie für alle Spieler zu korrigieren."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap a finished round to correct it for all players."
           }
         }
       }
@@ -2402,6 +2466,22 @@
         }
       }
     },
+    "UI.NewGame.HouseRules.FirstRoundMayEqualHandSize" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erste Runde darf aufgehen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First round: bets may add up to the hand size"
+          }
+        }
+      }
+    },
     "UI.NewGame.HouseRules.Header" : {
       "localizations" : {
         "de" : {
@@ -2565,6 +2645,150 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Starting dealer"
+          }
+        }
+      }
+    },
+    "UI.RoundEditor.BetSum.Label" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Summe der Ansagen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sum of bets"
+          }
+        }
+      }
+    },
+    "UI.RoundEditor.CloudCardPlayed.Toggle" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wolke wurde gespielt"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cloud was played"
+          }
+        }
+      }
+    },
+    "UI.RoundEditor.Footer" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gesamtpunkte und Platzierungen werden automatisch neu berechnet."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total points and standings are recalculated automatically."
+          }
+        }
+      }
+    },
+    "UI.RoundEditor.HandSize" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Handgrösse: %lld"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hand size: %lld"
+          }
+        }
+      }
+    },
+    "UI.RoundEditor.Save" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speichern"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
+          }
+        }
+      }
+    },
+    "UI.RoundEditor.SpecialCards.Footer" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bombe: Die Stiche ergeben in Summe Handgrösse − 1. Wolke: Die Ansagen dürfen aufgehen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bomb: won tricks add up to the hand size − 1. Cloud: bets may add up to the hand size."
+          }
+        }
+      }
+    },
+    "UI.RoundEditor.SpecialCards.Header" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spezialkarten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Special cards"
+          }
+        }
+      }
+    },
+    "UI.RoundEditor.Title" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Runde %lld bearbeiten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit round %lld"
+          }
+        }
+      }
+    },
+    "UI.RoundEditor.WonSum.Label" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Summe der Stiche"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sum of won tricks"
           }
         }
       }

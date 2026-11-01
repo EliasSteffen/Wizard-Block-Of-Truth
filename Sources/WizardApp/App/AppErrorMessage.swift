@@ -127,6 +127,18 @@ enum AppErrorMessage {
         languageCode: languageCode,
         fallback: "Constraints are locked after the first finalized round."
       )
+    case .roundNotFinalized:
+      return AppLocalization.string(
+        "Error.Domain.RoundNotFinalized",
+        languageCode: languageCode,
+        fallback: "Round is not finalized yet."
+      )
+    case .specialCardsNotEnabled:
+      return AppLocalization.string(
+        "Error.Domain.SpecialCardsNotEnabled",
+        languageCode: languageCode,
+        fallback: "Special cards are not enabled for this game."
+      )
     }
   }
 

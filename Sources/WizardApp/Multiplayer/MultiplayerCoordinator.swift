@@ -147,7 +147,8 @@ final class MultiplayerCoordinator: ObservableObject {
     gameID: UUID,
     startingDealerId: UUID,
     gameConstraints: [Constraint.GameConstraint],
-    playWithSpecialCards: Bool
+    playWithSpecialCards: Bool,
+    firstRoundBetSumMayEqualHandSize: Bool = false
   ) throws {
     guard let hostSession = hostSessions[gameID] else {
       throw NSError(domain: "WizardNet", code: 11, userInfo: [
@@ -157,7 +158,8 @@ final class MultiplayerCoordinator: ObservableObject {
     try hostSession.startGame(
       startingDealer: startingDealerId,
       gameConstraints: gameConstraints,
-      playWithSpecialCards: playWithSpecialCards
+      playWithSpecialCards: playWithSpecialCards,
+      firstRoundBetSumMayEqualHandSize: firstRoundBetSumMayEqualHandSize
     )
     multiplayerStores[gameID]?.syncHostGameFromNetwork(hostSession.game)
     if var lobby = hostLobbyState, lobby.gameID == gameID {
