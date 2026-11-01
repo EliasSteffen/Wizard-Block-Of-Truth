@@ -353,7 +353,25 @@ struct GameSessionView: View {
       }
     }
     .sheet(item: $playerHistorySheetItem) { item in
-      PlayerRoundHistorySheet(game: game, playerId: item.id)
+      PlayerRoundHistorySheet(game: game, playerId: item.id, applyRoundEdit: roundEditHandler)
+    }
+  }
+
+  /// Corrections of finalized rounds (round editor in the player history). Host / single-phone only: guests use
+  /// `GuestGameSessionView`, and a guest-role store never gets a handler. On the multi-phone host, `applyBatch` on
+  /// `MultiplayerGameStore` persists the edit and broadcasts the new snapshot to all guests.
+  private var roundEditHandler: ((GameCommand) -> Error?)? {
+    if let multiplayerStore = storeHolder.store as? MultiplayerGameStore, multiplayerStore.role != .host {
+      return nil
+    }
+    return { command in
+      guard let store = storeHolder.store else { return storeNotReadyNSError() }
+      let error = store.applyBatch([command])
+      if error != nil {
+        // Shown inline in `RoundEditorView`; don't surface it again as a global alert once the sheets close.
+        store.lastError = nil
+      }
+      return error
     }
   }
 
@@ -433,7 +451,10 @@ struct GameSessionView: View {
 
 
   private func scoreboardOptions(game: Game) -> GameSessionScoreboardOptions {
-    guard canOpenBetsFromScoreboard(game: game) else { return .readOnly }
+    guard canOpenBetsFromScoreboard(game: game) else {
+      // Finished game: no more entries, but the round history (and correcting finalized rounds) stays reachable.
+      return GameSessionScoreboardOptions(onPlayerCardTap: { playerHistorySheetItem = PlayerHistorySheetItem(id: $0) })
+    }
     return GameSessionScoreboardOptions(
       onPlayerCardTap: { playerHistorySheetItem = PlayerHistorySheetItem(id: $0) },
       onBetChipTap: { openBetChipTapped(game: game, playerId: $0) },

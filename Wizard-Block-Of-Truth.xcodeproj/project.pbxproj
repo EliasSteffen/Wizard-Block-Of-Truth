@@ -36,6 +36,7 @@
 		00000000000000000000011A /* Cards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000021A /* Cards.swift */; };
 		00000000000000000000011B /* AboutInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000021B /* AboutInfoView.swift */; };
 		00000000000000000000011C /* PlayerRoundHistorySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000021C /* PlayerRoundHistorySheet.swift */; };
+		000000000000000000000150 /* RoundEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000000000000000000000250 /* RoundEditorView.swift */; };
 		00000000000000000000011D /* GameStoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000021D /* GameStoring.swift */; };
 		00000000000000000000011E /* MultiplayerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000021E /* MultiplayerCoordinator.swift */; };
 		00000000000000000000011F /* MultiplayerGameStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00000000000000000000021F /* MultiplayerGameStore.swift */; };
@@ -92,6 +93,7 @@
 		00000000000000000000021A /* Cards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Cards.swift; path = Sources/WizardDomain/Models/Cards.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000021B /* AboutInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AboutInfoView.swift; path = Sources/WizardApp/UI/AboutInfoView.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000021C /* PlayerRoundHistorySheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlayerRoundHistorySheet.swift; path = Sources/WizardApp/UI/PlayerRoundHistorySheet.swift; sourceTree = SOURCE_ROOT; };
+		000000000000000000000250 /* RoundEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RoundEditorView.swift; path = Sources/WizardApp/UI/RoundEditorView.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000021D /* GameStoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameStoring.swift; path = Sources/WizardApp/App/GameStoring.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000021E /* MultiplayerCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MultiplayerCoordinator.swift; path = Sources/WizardApp/Multiplayer/MultiplayerCoordinator.swift; sourceTree = SOURCE_ROOT; };
 		00000000000000000000021F /* MultiplayerGameStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MultiplayerGameStore.swift; path = Sources/WizardApp/Multiplayer/MultiplayerGameStore.swift; sourceTree = SOURCE_ROOT; };
@@ -208,6 +210,7 @@
 				00000000000000000000020C /* CloudCardAdjustmentRules.swift */,
 				00000000000000000000021B /* AboutInfoView.swift */,
 				00000000000000000000021C /* PlayerRoundHistorySheet.swift */,
+				000000000000000000000250 /* RoundEditorView.swift */,
 				000000000000000000000220 /* GameSessionContainerView.swift */,
 				000000000000000000000221 /* MultiplayerLobbyView.swift */,
 				000000000000000000000222 /* JoinGameView.swift */,
@@ -372,6 +375,7 @@
 				00000000000000000000010C /* CloudCardAdjustmentRules.swift in Sources */,
 				00000000000000000000011B /* AboutInfoView.swift in Sources */,
 				00000000000000000000011C /* PlayerRoundHistorySheet.swift in Sources */,
+				000000000000000000000150 /* RoundEditorView.swift in Sources */,
 				00000000000000000000011D /* GameStoring.swift in Sources */,
 				00000000000000000000011E /* MultiplayerCoordinator.swift in Sources */,
 				00000000000000000000011F /* MultiplayerGameStore.swift in Sources */,

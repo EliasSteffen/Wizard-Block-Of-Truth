@@ -8,7 +8,10 @@
 .submitGot(playerId: UUID, roundIndex: Int, got: Int)
 .markCloudCardResolved(roundIndex: Int)
 .finalizeCurrentRound(roundConstraints: [Constraint.RoundConstraint]? = nil)
+.editFinalizedRound(roundIndex: Int, entries: [UUID: RoundEntry], bombPlayed: Bool, cloudCardPlayed: Bool) // host-only correction
 ```
+
+Helpers: `game.gameConstraints(forRoundAt:)` (game constraints for bidding in that round), `round.inferredBombPlayed` (stored or inferred Bomb flag).
 
 `Game.apply(_:)` and `GameCommand.apply(to:)` are equivalent entry points.
 
@@ -33,4 +36,4 @@ Requires both `bet` and `got`; otherwise throws `DomainError.missingInputs`.
 
 ## Legacy JSON
 
-`Round` decoding tolerates missing `cloudCardResolved` (defaults to `false`). `Game` decoding tolerates missing `firstRoundBetSumMayEqualHandSize` (defaults to `false`). Preserve backward compatibility when changing `Codable` models—add tests like `testRoundDecodesLegacyJSONWithoutCloudCardResolved` in `GameFlowTests.swift`.
+`Round` decoding tolerates missing `cloudCardResolved` (defaults to `false`). `Game` decoding tolerates missing `firstRoundBetSumMayEqualHandSize` (defaults to `false`). `Round` decoding tolerates missing `bombPlayed` (defaults to `false`; use `inferredBombPlayed` for legacy rounds). Preserve backward compatibility when changing `Codable` models—add tests like `testRoundDecodesLegacyJSONWithoutCloudCardResolved` in `GameFlowTests.swift`.

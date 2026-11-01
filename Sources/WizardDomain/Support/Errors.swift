@@ -17,6 +17,8 @@ public enum DomainError: Error, Equatable {
   case invalidBetSum(disallowed: Int)
   case constraintNotSatisfied(Constraint)
   case constraintsLocked
+  case roundNotFinalized
+  case specialCardsNotEnabled
 }
 
 extension DomainError: LocalizedError {
@@ -54,6 +56,10 @@ extension DomainError: LocalizedError {
       return String(localized: "Error.Domain.ConstraintNotSatisfied", defaultValue: "Constraint not satisfied: \(constraint.title).")
     case .constraintsLocked:
       return String(localized: "Error.Domain.ConstraintsLocked", defaultValue: "Constraints are locked after the first finalized round.")
+    case .roundNotFinalized:
+      return String(localized: "Error.Domain.RoundNotFinalized", defaultValue: "Round is not finalized yet.")
+    case .specialCardsNotEnabled:
+      return String(localized: "Error.Domain.SpecialCardsNotEnabled", defaultValue: "Special cards are not enabled for this game.")
     }
   }
 }

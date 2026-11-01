@@ -39,4 +39,40 @@ final class GameStoreRoundRulesTests: XCTestCase {
     store.createGame(name: "Default", mode: .singlePhone, players: makePlayers(3))
     XCTAssertFalse(store.currentGame?.firstRoundBetSumMayEqualHandSize ?? true)
   }
+
+  func testEditFinalizedRoundIsPersisted() throws {
+    let store = try makeStore()
+    let players = makePlayers(3)
+    store.createGame(name: "Edit", mode: .singlePhone, players: players)
+    let id = try XCTUnwrap(store.currentGame?.id)
+
+    store.apply(.startNewGame(startingDealer: players[0].id))
+    var setup: [GameCommand] = players.map { .submitBet(playerId: $0.id, roundIndex: 0, bet: 0) }
+    setup.append(.submitGot(playerId: players[0].id, roundIndex: 0, got: 1))
+    setup.append(.submitGot(playerId: players[1].id, roundIndex: 0, got: 0))
+    setup.append(.submitGot(playerId: players[2].id, roundIndex: 0, got: 0))
+    setup.append(.finalizeCurrentRound())
+    XCTAssertNil(store.applyBatch(setup, validate: nil))
+
+    let corrected: [UUID: RoundEntry] = [
+      players[0].id: RoundEntry(bet: 0, got: 0),
+      players[1].id: RoundEntry(bet: 0, got: 1),
+      players[2].id: RoundEntry(bet: 0, got: 0),
+    ]
+    XCTAssertNil(store.applyBatch([
+      .editFinalizedRound(roundIndex: 0, entries: corrected, bombPlayed: false, cloudCardPlayed: false),
+    ], validate: nil))
+
+    store.loadGame(id: id)
+    XCTAssertEqual(store.currentGame?.rounds[0].entries, corrected)
+    XCTAssertEqual(store.currentGame?.currentRoundIndex, 1)
+
+    // A rejected edit leaves the stored game unchanged and reports the error.
+    let error = store.applyBatch([
+      .editFinalizedRound(roundIndex: 1, entries: corrected, bombPlayed: false, cloudCardPlayed: false),
+    ], validate: nil)
+    XCTAssertEqual(error as? DomainError, .roundNotFinalized)
+    store.loadGame(id: id)
+    XCTAssertEqual(store.currentGame?.rounds[0].entries, corrected)
+  }
 }

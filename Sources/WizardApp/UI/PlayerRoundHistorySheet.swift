@@ -7,11 +7,19 @@ struct PlayerHistorySheetItem: Identifiable, Hashable {
   let id: UUID
 }
 
+private struct RoundEditorItem: Identifiable {
+  let roundIndex: Int
+  var id: Int { roundIndex }
+}
+
 struct PlayerRoundHistorySheet: View {
   let game: Game
   let playerId: UUID
+  /// Applies a correction of a finalized round (host / single-phone only). When `nil` the history stays read-only.
+  var applyRoundEdit: ((GameCommand) -> Error?)? = nil
 
   @Environment(\.dismiss) private var dismiss
+  @State private var roundEditorItem: RoundEditorItem? = nil
 
   /// Wide enough for “Round” / “Runde” on one line (header + values share this width).
   private static let roundColumnWidth: CGFloat = 58
@@ -51,9 +59,7 @@ struct PlayerRoundHistorySheet: View {
                   .padding(.horizontal, Self.tableHorizontalPadding)
 
                 ForEach(Array(game.rounds.enumerated()), id: \.offset) { index, round in
-                  roundRow(roundIndex: index, round: round)
-                    .padding(.horizontal, Self.tableHorizontalPadding)
-                    .padding(.vertical, 12)
+                  editableRoundRow(roundIndex: index, round: round)
                   if index < game.rounds.count - 1 {
                     Divider()
                       .padding(.horizontal, Self.tableHorizontalPadding)
@@ -65,6 +71,14 @@ struct PlayerRoundHistorySheet: View {
               .shadow(color: Color.black.opacity(0.10), radius: 10, x: 0, y: 6)
               .padding(.horizontal, 16)
               .padding(.bottom, 8)
+            }
+            if applyRoundEdit != nil, game.rounds.contains(where: \.isFinalized) {
+              Text("UI.GameSession.PlayerHistory.EditRound.Hint")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 8)
             }
           }
         }
@@ -78,8 +92,36 @@ struct PlayerRoundHistorySheet: View {
           Button("UI.Common.Done") { dismiss() }
         }
       }
+      .sheet(item: $roundEditorItem) { item in
+        if let applyRoundEdit {
+          RoundEditorView(game: game, roundIndex: item.roundIndex, onSave: applyRoundEdit)
+        }
+      }
     }
     .wizardBackground()
+  }
+
+  private func canEditRound(_ round: Round) -> Bool {
+    applyRoundEdit != nil && round.isFinalized
+  }
+
+  /// Finalized rounds open the round editor when editing is allowed; other rows stay plain.
+  @ViewBuilder
+  private func editableRoundRow(roundIndex: Int, round: Round) -> some View {
+    let row = roundRow(roundIndex: roundIndex, round: round)
+      .padding(.horizontal, Self.tableHorizontalPadding)
+      .padding(.vertical, 12)
+    if canEditRound(round) {
+      Button {
+        roundEditorItem = RoundEditorItem(roundIndex: roundIndex)
+      } label: {
+        row.contentShape(Rectangle())
+      }
+      .buttonStyle(.plain)
+      .accessibilityHint(Text("UI.GameSession.PlayerHistory.EditRound.AccessibilityHint"))
+    } else {
+      row
+    }
   }
 
   private var standingsSummaryBanner: some View {
@@ -160,9 +202,18 @@ struct PlayerRoundHistorySheet: View {
     let runningRank = rank(for: playerId, totals: cumulative)
 
     return HStack(spacing: Self.betWonSpacing) {
-      Text("\(roundIndex + 1)")
-        .font(.body.weight(.medium).monospacedDigit())
-        .frame(width: Self.roundColumnWidth, alignment: .leading)
+      HStack(spacing: 4) {
+        Text("\(roundIndex + 1)")
+          .font(.body.weight(.medium).monospacedDigit())
+        if canEditRound(round) {
+          // Subtle affordance: finalized rounds can be corrected (fits in the round column, no layout shift).
+          Image(systemName: "pencil")
+            .font(.caption2.weight(.semibold))
+            .foregroundStyle(.secondary)
+            .accessibilityHidden(true)
+        }
+      }
+      .frame(width: Self.roundColumnWidth, alignment: .leading)
 
       Text(betText)
         .font(.body.weight(.semibold).monospacedDigit())
